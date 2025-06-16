@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import bitnagil.bitnagil_backend.enums.SocialType;
-import bitnagil.bitnagil_backend.user.entity.User;
+import bitnagil.bitnagil_backend.user.domain.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

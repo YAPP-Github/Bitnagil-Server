@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.infrastructure.oauth2.dto;
+package bitnagil.bitnagil_backend.auth.kakao.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,5 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class KakaoAccount {
+    private Profile profile;
     private String email;
+
+    @Getter
+    @NoArgsConstructor
+    public static class Profile {
+        private String nickname;
+    }
 }
