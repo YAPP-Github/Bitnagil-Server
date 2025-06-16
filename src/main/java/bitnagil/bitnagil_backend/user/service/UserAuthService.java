@@ -1,6 +1,5 @@
 package bitnagil.bitnagil_backend.user.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class AuthService {
+public class UserAuthService {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;

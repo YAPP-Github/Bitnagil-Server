@@ -8,22 +8,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.enums.SocialType;
-import bitnagil.bitnagil_backend.user.service.AuthService;
+import bitnagil.bitnagil_backend.user.service.UserAuthService;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/auth")
-public class AuthController {
-    private final AuthService authService;
+public class UserAuthController {
+    private final UserAuthService userAuthService;
 
     @PostMapping("/login")
     public CustomResponseDto<TokenResponse> login(
         @RequestParam("socialType") SocialType socialType,
             @RequestHeader("Authorization") String socialAccessToken) {
 
-        TokenResponse tokenResponse = authService.socialLogin(socialType, socialAccessToken);
+        TokenResponse tokenResponse = userAuthService.socialLogin(socialType, socialAccessToken);
 
         return CustomResponseDto.from(tokenResponse);
     }
@@ -31,7 +31,7 @@ public class AuthController {
     @PostMapping("/token/reissue")
     public CustomResponseDto<TokenResponse> refreshToken(@RequestHeader("Refresh-Token") String refreshToken) {
 
-        TokenResponse tokenResponse = authService.reissueToken(refreshToken);
+        TokenResponse tokenResponse = userAuthService.reissueToken(refreshToken);
 
         return CustomResponseDto.from(tokenResponse);
     }
