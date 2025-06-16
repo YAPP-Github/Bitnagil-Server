@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.entity.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import lombok.Builder;
@@ -35,7 +37,7 @@ public class OAuth2Attribute {
         if (socialType == SocialType.KAKAO) {
             return ofKakao(userNameAttributeName, attributes);
         }
-        throw new IllegalArgumentException("Unsupported social type: " + socialType);
+        throw new CustomException(ErrorCode.UNSUPPORTED_SOCIAL_TYPE);
     }
 
     private static OAuth2Attribute ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
