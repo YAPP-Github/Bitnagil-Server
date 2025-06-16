@@ -7,7 +7,6 @@ import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
 import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoClient;
-import bitnagil.bitnagil_backend.auth.kakao.service.OAuth2TokenService;
 import bitnagil.bitnagil_backend.auth.kakao.service.RedisService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
@@ -34,7 +33,6 @@ public class UserAuthService {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final KakaoUserInfoClient kakaoUserInfoClient;
-    private final OAuth2TokenService oauth2TokenService;
     private final RedisService redisService;
 
     @Transactional
@@ -94,6 +92,7 @@ public class UserAuthService {
             .socialId(socialId)
             .role(Role.USER)
             .email(kakaoAccount.getEmail())
+            .nickname(kakaoAccount.getProfile().getNickname())
             .build();
 
         return userRepository.save(user);

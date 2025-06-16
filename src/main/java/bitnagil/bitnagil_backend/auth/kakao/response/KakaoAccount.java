@@ -9,5 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class KakaoAccount {
+    private Profile profile;
     private String email;
+
+    @Getter
+    @NoArgsConstructor
+    public static class Profile {
+        private String nickname;
+    }
 }
