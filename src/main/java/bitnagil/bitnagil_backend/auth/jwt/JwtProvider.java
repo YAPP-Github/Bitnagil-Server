@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.Repository.UserRepository;
-import bitnagil.bitnagil_backend.user.entity.User;
+import bitnagil.bitnagil_backend.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

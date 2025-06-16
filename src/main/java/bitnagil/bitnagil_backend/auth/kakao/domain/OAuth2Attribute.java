@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.auth.kakao.model;
+package bitnagil.bitnagil_backend.auth.kakao.domain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
-import bitnagil.bitnagil_backend.user.entity.User;
+import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import lombok.Builder;
 import lombok.Getter;

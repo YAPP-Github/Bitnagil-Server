@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.auth.kakao.model;
+package bitnagil.bitnagil_backend.auth.kakao.domain;
 
 import java.util.Collection;
 import java.util.Map;

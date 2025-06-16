@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.user.entity;
+package bitnagil.bitnagil_backend.user.domain;
 
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
