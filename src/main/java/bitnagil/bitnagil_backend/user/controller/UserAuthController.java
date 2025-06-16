@@ -21,7 +21,7 @@ public class UserAuthController {
     @PostMapping("/login")
     public CustomResponseDto<TokenResponse> login(
         @RequestParam("socialType") SocialType socialType,
-            @RequestHeader("Authorization") String socialAccessToken) {
+        @RequestHeader("Authorization") String socialAccessToken) {
 
         TokenResponse tokenResponse = userAuthService.socialLogin(socialType, socialAccessToken);
 

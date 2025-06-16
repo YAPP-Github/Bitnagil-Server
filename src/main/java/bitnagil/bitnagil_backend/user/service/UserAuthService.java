@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
 import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
+import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoClient;
 import bitnagil.bitnagil_backend.auth.kakao.service.OAuth2TokenService;
 import bitnagil.bitnagil_backend.auth.kakao.service.RedisService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
@@ -28,9 +29,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserAuthService {
+    private static final String AUTHORIZATION_TYPE = "Bearer ";
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+    private final KakaoUserInfoClient kakaoUserInfoClient;
     private final OAuth2TokenService oauth2TokenService;
     private final RedisService redisService;
 
@@ -47,7 +50,7 @@ public class UserAuthService {
 
     private TokenResponse kakaoLogin(String kakaoAccessToken) {
 
-        KakaoUserInfoResponse userInfo = oauth2TokenService.getUserInfo(kakaoAccessToken);
+        KakaoUserInfoResponse userInfo = kakaoUserInfoClient.getUserInfo(AUTHORIZATION_TYPE + kakaoAccessToken);
 
         User user = signUpOrLogin(SocialType.KAKAO, userInfo.getId(), userInfo.getKakaoAccount());
 
