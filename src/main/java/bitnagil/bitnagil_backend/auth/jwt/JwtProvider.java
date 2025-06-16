@@ -12,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_backend.auth.kakao.service.RedisService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.Repository.UserRepository;
@@ -33,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class JwtProvider {
-    private final RedisService redisService;
+    private final AuthRedisService authRedisService;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -76,7 +75,7 @@ public class JwtProvider {
             .signWith(key, SignatureAlgorithm.HS512)
             .compact();
 
-        redisService.saveRefreshToken(userId, refreshToken);
+        authRedisService.saveRefreshToken(userId, refreshToken);
 
         return Token.builder()
             .accessToken(accessToken)

@@ -1,16 +1,14 @@
-package bitnagil.bitnagil_backend.auth.kakao.service;
+package bitnagil.bitnagil_backend.auth.jwt;
 
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
-import bitnagil.bitnagil_backend.auth.jwt.RefreshTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class RedisService {
+public class AuthRedisService {
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     // 🔸 저장

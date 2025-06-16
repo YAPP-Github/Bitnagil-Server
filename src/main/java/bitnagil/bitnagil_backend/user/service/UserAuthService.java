@@ -7,7 +7,7 @@ import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
 import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoClient;
-import bitnagil.bitnagil_backend.auth.kakao.service.RedisService;
+import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.Repository.UserRepository;
@@ -33,7 +33,7 @@ public class UserAuthService {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final KakaoUserInfoClient kakaoUserInfoClient;
-    private final RedisService redisService;
+    private final AuthRedisService authRedisService;
 
     @Transactional
     public TokenResponse socialLogin(SocialType socialType, String socialAccessToken) {
@@ -67,7 +67,7 @@ public class UserAuthService {
         // 실제로 DB에 있는 userId 인지 검증
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        RefreshToken refreshTokenByRedis = redisService.getRefreshTokenByUserId(user.getUserId())
+        RefreshToken refreshTokenByRedis = authRedisService.getRefreshTokenByUserId(user.getUserId())
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_JWT_TOKEN));
 
         if(!refreshTokenByRedis.getRefreshToken().equals(refreshToken)) {
