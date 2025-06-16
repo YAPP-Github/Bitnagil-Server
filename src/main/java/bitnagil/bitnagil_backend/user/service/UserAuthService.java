@@ -72,21 +72,17 @@ public class UserAuthService {
 
     // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
     private UserAuthInfo getUserAuthInfo(SocialType socialType, String socialAccessToken) {
-        switch (socialType) {
-            case KAKAO:
+        return switch (socialType) {
+            case KAKAO -> {
                 KakaoUserInfoResponse kakaoUserInfoResponse = kakaoUserInfoClient.getUserInfo(
                     AUTHORIZATION_TYPE + socialAccessToken);
-
-                return UserAuthInfo.from(kakaoUserInfoResponse);
-
-            case APPLE:
+                yield UserAuthInfo.from(kakaoUserInfoResponse);
+            }
+            case APPLE ->
                 // TODO 애플 회원 정보 요청 API
                 // TODO 애플 회원 정보를 UserAuthInfo에 매핑
-                return null;
-
-            default:
-                throw new CustomException(ErrorCode.UNSUPPORTED_SOCIAL_TYPE);
-        }
+                null;
+        };
     }
 
     private User signUpOrLogin(SocialType socialType, UserAuthInfo userAuthInfo) {
