@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.auth.oauth2.service;
+package bitnagil.bitnagil_backend.auth.kakao.service;
 
 import java.util.Optional;
 

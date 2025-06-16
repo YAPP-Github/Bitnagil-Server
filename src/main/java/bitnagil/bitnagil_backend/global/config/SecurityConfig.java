@@ -17,7 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAccessDeniedHandler;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAuthenticationEntryPoint;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAuthenticationFilter;
-import bitnagil.bitnagil_backend.auth.oauth2.service.CustomOAuth2UserService;
+import bitnagil.bitnagil_backend.auth.kakao.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

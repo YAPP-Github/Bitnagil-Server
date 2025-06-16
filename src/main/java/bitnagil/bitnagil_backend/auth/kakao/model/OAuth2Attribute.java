@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.auth.oauth2.model;
+package bitnagil.bitnagil_backend.auth.kakao.model;
 
 import java.util.HashMap;
 import java.util.Map;

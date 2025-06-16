@@ -12,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_backend.auth.oauth2.service.RedisService;
+import bitnagil.bitnagil_backend.auth.kakao.service.RedisService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.Repository.UserRepository;

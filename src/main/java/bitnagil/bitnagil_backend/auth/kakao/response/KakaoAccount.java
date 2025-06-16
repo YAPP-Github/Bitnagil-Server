@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.auth.oauth2.response;
+package bitnagil.bitnagil_backend.auth.kakao.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
