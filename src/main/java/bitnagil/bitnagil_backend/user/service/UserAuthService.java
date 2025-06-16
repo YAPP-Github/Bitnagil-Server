@@ -15,8 +15,8 @@ import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
-import bitnagil.bitnagil_backend.auth.kakao.response.KakaoAccount;
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
+import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -35,22 +35,13 @@ public class UserAuthService {
     private final KakaoUserInfoClient kakaoUserInfoClient;
     private final AuthRedisService authRedisService;
 
+    // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
     public TokenResponse socialLogin(SocialType socialType, String socialAccessToken) {
-        if (socialType.equals(SocialType.KAKAO)) {
 
-            return kakaoLogin(socialAccessToken);
-        }
+        UserAuthInfo userAuthInfo = getUserAuthInfo(socialType, socialAccessToken);
 
-        // TODO 애플 로그인 추가
-        return null;
-    }
-
-    private TokenResponse kakaoLogin(String kakaoAccessToken) {
-
-        KakaoUserInfoResponse userInfo = kakaoUserInfoClient.getUserInfo(AUTHORIZATION_TYPE + kakaoAccessToken);
-
-        User user = signUpOrLogin(SocialType.KAKAO, userInfo.getId(), userInfo.getKakaoAccount());
+        User user = signUpOrLogin(socialType, userAuthInfo);
 
         Token token = jwtProvider.generateToken(user.getUserId());
 
@@ -77,22 +68,39 @@ public class UserAuthService {
         Token token = jwtProvider.generateToken(userId);
 
         return TokenResponse.of(token);
-
-        // TODO 애플 로그인 토큰 재발행 로직 추가
     }
 
-    private User signUpOrLogin(SocialType socialType, String socialId, KakaoAccount kakaoAccount) {
-        return userRepository.findBySocialTypeAndSocialId(socialType, socialId)
-            .orElseGet(() -> saveMember(socialType, socialId, kakaoAccount));
+    // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
+    private UserAuthInfo getUserAuthInfo(SocialType socialType, String socialAccessToken) {
+        switch (socialType) {
+            case KAKAO:
+                KakaoUserInfoResponse kakaoUserInfoResponse = kakaoUserInfoClient.getUserInfo(
+                    AUTHORIZATION_TYPE + socialAccessToken);
+
+                return UserAuthInfo.from(kakaoUserInfoResponse);
+
+            case APPLE:
+                // TODO 애플 회원 정보 요청 API
+                // TODO 애플 회원 정보를 UserAuthInfo에 매핑
+                return null;
+
+            default:
+                throw new CustomException(ErrorCode.UNSUPPORTED_SOCIAL_TYPE);
+        }
     }
 
-    private User saveMember(SocialType socialType, String socialId, KakaoAccount kakaoAccount) {
+    private User signUpOrLogin(SocialType socialType, UserAuthInfo userAuthInfo) {
+        return userRepository.findBySocialTypeAndSocialId(socialType, userAuthInfo.getSocialId())
+            .orElseGet(() -> saveMember(socialType, userAuthInfo));
+    }
+
+    private User saveMember(SocialType socialType, UserAuthInfo userAuthInfo) {
         User user = User.builder()
             .socialType(socialType)
-            .socialId(socialId)
+            .socialId(userAuthInfo.getSocialId())
             .role(Role.USER)
-            .email(kakaoAccount.getEmail())
-            .nickname(kakaoAccount.getProfile().getNickname())
+            .email(userAuthInfo.getEmail())
+            .nickname(userAuthInfo.getNickname())
             .build();
 
         return userRepository.save(user);
