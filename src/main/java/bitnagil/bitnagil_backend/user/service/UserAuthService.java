@@ -17,6 +17,7 @@ import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -48,6 +49,7 @@ public class UserAuthService {
         return TokenResponse.of(token);
     }
 
+    @Transactional
     public TokenResponse reissueToken(String refreshToken) {
 
         if (!jwtProvider.validateToken(refreshToken)) {
@@ -68,6 +70,17 @@ public class UserAuthService {
         Token token = jwtProvider.generateToken(userId);
 
         return TokenResponse.of(token);
+    }
+
+    // 로그아웃 - refreshToken 삭제 및 accessToken 블랙리스트 등록
+    @Transactional
+    public void logout(User user, HttpServletRequest request) {
+        authRedisService.deleteRefreshToken(user.getUserId());
+
+        String accessToken = jwtProvider.resolveToken(request);
+        Long expirationTime = jwtProvider.getExpirationTime(accessToken);
+
+        authRedisService.addAccessTokenToBlacklist(accessToken, expirationTime);
     }
 
     // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑

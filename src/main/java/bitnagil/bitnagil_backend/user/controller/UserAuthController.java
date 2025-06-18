@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
+import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.service.UserAuthService;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,6 +29,13 @@ public class UserAuthController {
         TokenResponse tokenResponse = userAuthService.socialLogin(socialType, socialAccessToken);
 
         return CustomResponseDto.from(tokenResponse);
+    }
+
+    @PostMapping("/logout")
+    public CustomResponseDto<Object> logout(@CurrentUser User user, HttpServletRequest request) {
+        userAuthService.logout(user, request);
+
+        return CustomResponseDto.from(null);
     }
 
     @PostMapping("/token/reissue")
