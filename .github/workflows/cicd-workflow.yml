@@ -55,11 +55,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      # 4. AWS CLI 설치 (사전 설치되어 있지 않은 경우)
-      - name: Install AWS CLI (if not pre-installed)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
+#      # 4. AWS CLI 설치 (사전 설치되어 있지 않은 경우)
+#      - name: Install AWS CLI (if not pre-installed)
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y awscli
 
       # AWS SSM으로 현재 redis의 포트 확인 커멘드 설정
       - name: Get Redis port from AWS SSM
