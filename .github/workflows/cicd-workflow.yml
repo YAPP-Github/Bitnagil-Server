@@ -97,7 +97,7 @@ jobs:
           next_port="6379"
           else
           next_port="6379"
-          echo "Redis를 신규로 띄웁니다
+          echo "Redis를 신규로 띄웁니다"
           fi
           echo "next_redis_port=$next_port" >> $GITHUB_OUTPUT
 
