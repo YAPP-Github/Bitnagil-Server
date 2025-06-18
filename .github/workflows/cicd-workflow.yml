@@ -96,8 +96,8 @@ jobs:
           elif [ "$redis_port" = "6380" ]; then
           next_port="6379"
           else
-          echo "⚠️ Redis 포트를 확인할 수 없습니다: $redis_port"
-          exit 1
+          next_port="6379"
+          echo "Redis를 신규로 띄웁니다
           fi
           echo "next_redis_port=$next_port" >> $GITHUB_OUTPUT
 
