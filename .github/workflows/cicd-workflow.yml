@@ -104,10 +104,7 @@ jobs:
       # 호스트 포트 수정
       - name: Update Redis hostPort in task-definition-dev.json
         if: github.ref == 'refs/heads/develop'
-        run: |
-          echo "기존 task-definition.json의 Redis portMappings:"
-          jq '.containerDefinitions[] | select(.name == "redis-dev") | .portMappings[].hostPort' task-definition-dev.json    
-          
+        run: | 
           jq --arg port "${{ steps.get_cmd_result.outputs.next_redis_port }}" \
             '(.containerDefinitions[] | select(.name == "redis-dev").portMappings[] | select(.containerPort == 6379)).hostPort = ($port | tonumber)' \
             task-definition-dev.json > tmp.json && mv tmp.json task-definition-dev.json
