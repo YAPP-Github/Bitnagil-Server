@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
@@ -25,6 +26,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +41,8 @@ public class JwtProvider {
 
     private static final Long ACCESS_TOKEN_EXPIRE_TIME = (long)(1000 * 60 * 30);            // 30분
     private static final Long REFRESH_TOKEN_EXPIRE_TIME = (long)(1000 * 60 * 60 * 24 * 7);
+    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";// 7일
 
@@ -84,6 +88,16 @@ public class JwtProvider {
             .build();
     }
 
+    // Request Header 에서 토큰 정보를 꺼내오기
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(BEARER_PREFIX.length());
+        }
+        return null;
+    }
+
     public Authentication getAuthentication(String accessToken) {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
@@ -117,6 +131,11 @@ public class JwtProvider {
         } catch (ExpiredJwtException e) {
             throw new CustomException(ErrorCode.EXPIRED_JWT_TOKEN);
         }
+    }
+
+    // accessToken의 만료 시간 조회
+    public Long getExpirationTime(String accessToken) {
+        return parseClaims(accessToken).getExpiration().getTime();
     }
 
     private Collection<GrantedAuthority> getAuthorities(User user) {
