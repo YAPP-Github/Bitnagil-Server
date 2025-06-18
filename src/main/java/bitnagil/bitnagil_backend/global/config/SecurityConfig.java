@@ -24,6 +24,14 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    public static final String[] PUBLIC_URLS = {
+        "/api/v1/auth/login",
+        "/api/v1/auth/token/reissue",
+        "/swagger-ui.html",
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "/api/v1/health-check"
+    };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -43,18 +51,8 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/health-check").permitAll()
+                .requestMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2 -> oauth2
-                .authorizationEndpoint(config -> config
-                    .baseUri("/oauth2/authorization")
-                )
-                .userInfoEndpoint(user -> user
-                    .userService(customOAuth2UserService) // 카카오에서 사용자 정보 가져오기
-                )
-                // .successHandler(oAuth2LoginSuccessHandler) // TODO 추후 반영
-                // .failureHandler(oAuth2LoginFailureHandler) // TODO 추후 반영
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
