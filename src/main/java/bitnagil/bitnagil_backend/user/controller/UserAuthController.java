@@ -21,9 +21,10 @@ public class UserAuthController {
     @PostMapping("/login")
     public CustomResponseDto<TokenResponse> login(
         @RequestParam("socialType") SocialType socialType,
+        @RequestParam(value = "nickname", required = false) String nickname, // 애플로그인 시 nickname은 클라이언트에서 보내준다.
         @RequestHeader("Authorization") String socialAccessToken) {
 
-        TokenResponse tokenResponse = userAuthService.socialLogin(socialType, socialAccessToken);
+        TokenResponse tokenResponse = userAuthService.socialLogin(socialType, nickname, socialAccessToken);
 
         return CustomResponseDto.from(tokenResponse);
     }
