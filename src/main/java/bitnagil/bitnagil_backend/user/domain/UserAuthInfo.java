@@ -1,10 +1,10 @@
 package bitnagil.bitnagil_backend.user.domain;
 
+import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * 소셜 로그인 인증 후 사용자 정보를 통합 관리하기 위한 DTO 클래스입니다.
@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
  * 서비스 내부에서 일관된 형태로 사용하기 위해 표준화된 구조로 변환합니다.
  */
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class UserAuthInfo {
@@ -30,5 +29,12 @@ public class UserAuthInfo {
             .build();
     }
 
-    // TODO 애플 응답 객체로부터 UserAuthInfo로 변환하는 정적 팩토리 메서드
+    // 애플 응답 객체로부터 UserAuthInfo로 변환하는 정적 팩토리 메서드
+    public static UserAuthInfo from(AppleIdTokenPayload appleIdTokenPayload) {
+        return UserAuthInfo.builder()
+                .socialId(appleIdTokenPayload.getSub())
+                .nickname(appleIdTokenPayload.getName())
+                .email(appleIdTokenPayload.getEmail())
+                .build();
+    }
 }
