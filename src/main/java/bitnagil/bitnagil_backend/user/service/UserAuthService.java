@@ -2,6 +2,8 @@ package bitnagil.bitnagil_backend.user.service;
 
 import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
 import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +12,7 @@ import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoClient;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
+import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserUnlinkClient;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.Repository.UserRepository;
@@ -32,10 +35,15 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class UserAuthService {
     private static final String AUTHORIZATION_TYPE = "Bearer ";
+    private static final String KAKAO_AUTH_PREFIX = "KakaoAK ";
+
+    @Value("${spring.security.oauth2.client.registration.kakao.admin-key}")
+    private String kakaoAdminKey;
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final KakaoUserInfoClient kakaoUserInfoClient;
+    private final KakaoUserUnlinkClient kakaoUserUnlinkClient;
     private final AuthRedisService authRedisService;
     private final AppleUserInfoService appleUserInfoService;
 
@@ -84,6 +92,34 @@ public class UserAuthService {
         Long expirationTime = jwtProvider.getExpirationTime(accessToken);
 
         authRedisService.addAccessTokenToBlacklist(accessToken, expirationTime);
+    }
+
+    // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
+    @Transactional
+    public void withdrawal(User user, HttpServletRequest request) {
+        // 토큰 블랙리스트 등록
+        logout(user, request);
+
+        userRepository.deleteById(user.getUserId());
+
+        unlinkFromSocial(user);
+    }
+
+    private void unlinkFromSocial(User user) {
+        switch (user.getSocialType()) {
+            case KAKAO -> {
+                String socialId = kakaoUserUnlinkClient.kakaoUnlink(
+                    KAKAO_AUTH_PREFIX + kakaoAdminKey,
+                    "application/x-www-form-urlencoded;charset=utf-8",
+                    "user_id",
+                    Long.valueOf(user.getSocialId())
+                );
+            }
+            case APPLE -> {
+                //TODO 애플과 연결끊기 로직 추가 예정
+            }
+        };
+
     }
 
     // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
