@@ -50,4 +50,11 @@ public interface UserAuthSpec {
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
     })
     CustomResponseDto<TokenResponse> refreshToken(@RequestHeader("Refresh-Token") String refreshToken);
+
+    @Operation(summary = "소셜로그인으로 연결된 유저가 회원탈퇴합니다. 반환 정보는 없습니다.")
+    @Parameters({
+        @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
+            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
+    })
+    CustomResponseDto<Object> withdrawal(@CurrentUser User user, HttpServletRequest request);
 }

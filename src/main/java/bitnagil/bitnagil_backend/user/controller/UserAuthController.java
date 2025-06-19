@@ -48,4 +48,10 @@ public class UserAuthController implements UserAuthSpec {
         return CustomResponseDto.from(tokenResponse);
     }
 
+    @PostMapping("/withdrawal")
+    public CustomResponseDto<Object> withdrawal(@CurrentUser User user, HttpServletRequest request) {
+        userAuthService.withdrawal(user, request);
+
+        return CustomResponseDto.from(null);
+    }
 }
