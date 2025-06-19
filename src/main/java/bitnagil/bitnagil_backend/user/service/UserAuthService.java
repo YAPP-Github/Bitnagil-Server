@@ -1,5 +1,7 @@
 package bitnagil.bitnagil_backend.user.service;
 
+import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
+import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +37,15 @@ public class UserAuthService {
     private final UserRepository userRepository;
     private final KakaoUserInfoClient kakaoUserInfoClient;
     private final AuthRedisService authRedisService;
+    private final AppleUserInfoService appleUserInfoService;
 
     // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
-    public TokenResponse socialLogin(SocialType socialType, String socialAccessToken) {
+    public TokenResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
 
         UserAuthInfo userAuthInfo = getUserAuthInfo(socialType, socialAccessToken);
 
-        User user = signUpOrLogin(socialType, userAuthInfo);
+        User user = signUpOrLogin(socialType, nickname, userAuthInfo);
 
         Token token = jwtProvider.generateToken(user.getUserId());
 
@@ -91,25 +94,28 @@ public class UserAuthService {
                     AUTHORIZATION_TYPE + socialAccessToken);
                 yield UserAuthInfo.from(kakaoUserInfoResponse);
             }
-            case APPLE ->
-                // TODO 애플 회원 정보 요청 API
-                // TODO 애플 회원 정보를 UserAuthInfo에 매핑
-                null;
+            case APPLE -> {
+                AppleIdTokenPayload appleIdTokenPayload = appleUserInfoService.get(socialAccessToken);
+                yield UserAuthInfo.from(appleIdTokenPayload);
+            }
         };
     }
 
-    private User signUpOrLogin(SocialType socialType, UserAuthInfo userAuthInfo) {
+    private User signUpOrLogin(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
         return userRepository.findBySocialTypeAndSocialId(socialType, userAuthInfo.getSocialId())
-            .orElseGet(() -> saveMember(socialType, userAuthInfo));
+            .orElseGet(() -> saveMember(socialType, nickname, userAuthInfo));
     }
 
-    private User saveMember(SocialType socialType, UserAuthInfo userAuthInfo) {
+    private User saveMember(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
+        // 애플 로그인 시 닉네임은 클라이언트에서 보내준 값을 사용한다.
+        nickname = (socialType == SocialType.APPLE) ? nickname : userAuthInfo.getNickname();
+
         User user = User.builder()
             .socialType(socialType)
             .socialId(userAuthInfo.getSocialId())
             .role(Role.USER)
             .email(userAuthInfo.getEmail())
-            .nickname(userAuthInfo.getNickname())
+            .nickname(nickname)
             .build();
 
         return userRepository.save(user);
