@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
+import bitnagil.bitnagil_backend.user.controller.spec.UserAuthSpec;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.service.UserAuthService;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
@@ -18,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/auth")
-public class UserAuthController {
+public class UserAuthController implements UserAuthSpec {
     private final UserAuthService userAuthService;
 
     @PostMapping("/login")
