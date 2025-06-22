@@ -1,18 +1,12 @@
 package bitnagil.bitnagil_backend.user.service;
 
-import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
-import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
 import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
-import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoClient;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
-import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserUnlinkClient;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.Repository.UserRepository;
@@ -21,7 +15,6 @@ import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
-import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -34,15 +27,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserAuthService {
-    private static final String AUTHORIZATION_TYPE = "Bearer ";
-    private static final String KAKAO_AUTH_PREFIX = "KakaoAK ";
-
-    @Value("${spring.security.oauth2.client.registration.kakao.admin-key}")
-    private String kakaoAdminKey;
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
-    private final KakaoUserUnlinkClient kakaoUserUnlinkClient;
     private final AuthRedisService authRedisService;
     private final UserAuthHandler userAuthHandler;
 
@@ -59,6 +46,7 @@ public class UserAuthService {
         return TokenResponse.of(token);
     }
 
+    // refreshToken으로 accessToken 재발행
     @Transactional
     public TokenResponse reissueToken(String refreshToken) {
 
@@ -100,33 +88,18 @@ public class UserAuthService {
         logout(user, request);
 
         userRepository.deleteById(user.getUserId());
+        // TODO soft delete 범위에 대해 추후 논의 후 적용
 
-        unlinkFromSocial(user);
+        userAuthHandler.unlinkFromSocial(user);
     }
 
-    private void unlinkFromSocial(User user) {
-        switch (user.getSocialType()) {
-            case KAKAO -> {
-                String socialId = kakaoUserUnlinkClient.kakaoUnlink(
-                    KAKAO_AUTH_PREFIX + kakaoAdminKey,
-                    "application/x-www-form-urlencoded;charset=utf-8",
-                    "user_id",
-                    Long.valueOf(user.getSocialId())
-                );
-            }
-            case APPLE -> {
-                //TODO 애플과 연결끊기 로직 추가 예정
-            }
-        };
-
-    }
-
+    // 소셜 로그인 - 신규 유저는 DB 등록
     private User signUpOrLogin(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
         return userRepository.findBySocialTypeAndSocialId(socialType, userAuthInfo.getSocialId())
-            .orElseGet(() -> saveMember(socialType, nickname, userAuthInfo));
+            .orElseGet(() -> saveUser(socialType, nickname, userAuthInfo));
     }
 
-    private User saveMember(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
+    private User saveUser(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
         // 애플 로그인 시 닉네임은 클라이언트에서 보내준 값을 사용한다.
         nickname = (socialType == SocialType.APPLE) ? nickname : userAuthInfo.getNickname();
 

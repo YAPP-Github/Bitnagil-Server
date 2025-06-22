@@ -1,14 +1,17 @@
 package bitnagil.bitnagil_backend.user.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
 import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoClient;
+import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserUnlinkClient;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserAuthHandler {
+    private static final String KAKAO_AUTH_PREFIX = "KakaoAK ";
     private static final Integer KAKAO_UNAUTHORIZED_STATUS = 401;
     private static final Integer KAKAO_INTERNAL_SERVER_ERROR_STATUS = 500;
     private static final int MAX_RETRY_COUNT = 3;
@@ -23,8 +27,13 @@ public class UserAuthHandler {
 
     private static final String AUTHORIZATION_TYPE = "Bearer ";
 
+    @Value("${spring.security.oauth2.client.registration.kakao.admin-key}")
+    private String kakaoAdminKey;
+
     private final AppleUserInfoService appleUserInfoService;
     private final KakaoUserInfoClient kakaoUserInfoClient;
+    private final KakaoUserUnlinkClient kakaoUserUnlinkClient;
+
 
     // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
     public UserAuthInfo getUserAuthInfo(SocialType socialType, String socialAccessToken) {
@@ -36,6 +45,23 @@ public class UserAuthHandler {
             case APPLE -> {
                 AppleIdTokenPayload appleIdTokenPayload = appleUserInfoService.get(socialAccessToken);
                 yield UserAuthInfo.from(appleIdTokenPayload);
+            }
+        };
+    }
+
+    // 회원탈퇴를 위해 소셜과 연결을 끊는 외부 API
+    public void unlinkFromSocial(User user) {
+        switch (user.getSocialType()) {
+            case KAKAO -> {
+                String socialId = kakaoUserUnlinkClient.kakaoUnlink(
+                    KAKAO_AUTH_PREFIX + kakaoAdminKey,
+                    "application/x-www-form-urlencoded;charset=utf-8",
+                    "user_id",
+                    Long.valueOf(user.getSocialId())
+                );
+            }
+            case APPLE -> {
+                //TODO 애플과 연결끊기 로직 추가 예정
             }
         };
     }
