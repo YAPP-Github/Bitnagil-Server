@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "KakaoUserUnlinkClient",
-    url = "${spring.security.oauth2.client.provider.kakao-provider.user-unlink-uri}"
+    url = "${spring.security.oauth2.client.provider.kakao-provider.base-uri}"
 )
 public interface KakaoUserUnlinkClient {
-    @PostMapping
+    @PostMapping("/v1/user/unlink")
     String kakaoUnlink(
         @RequestHeader(value = "Authorization") String adminKey,
         @RequestHeader(value = "Content-Type") String contentType,

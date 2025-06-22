@@ -8,9 +8,9 @@ import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 
 @FeignClient(
     name = "kakaoUserInfoClient",
-    url = "${spring.security.oauth2.client.provider.kakao-provider.user-info-uri}"
+    url = "${spring.security.oauth2.client.provider.kakao-provider.base-uri}"
 )
 public interface KakaoUserInfoClient {
-    @GetMapping
+    @GetMapping("/v2/user/me")
     KakaoUserInfoResponse getUserInfo(@RequestHeader("Authorization") String authorizationHeader);
 }
