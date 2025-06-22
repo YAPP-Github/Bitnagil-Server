@@ -20,8 +20,8 @@ import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
-import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -42,16 +42,15 @@ public class UserAuthService {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
-    private final KakaoUserInfoClient kakaoUserInfoClient;
     private final KakaoUserUnlinkClient kakaoUserUnlinkClient;
     private final AuthRedisService authRedisService;
-    private final AppleUserInfoService appleUserInfoService;
+    private final UserAuthHandler userAuthHandler;
 
     // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
     public TokenResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
 
-        UserAuthInfo userAuthInfo = getUserAuthInfo(socialType, socialAccessToken);
+        UserAuthInfo userAuthInfo = userAuthHandler.getUserAuthInfo(socialType, socialAccessToken);
 
         User user = signUpOrLogin(socialType, nickname, userAuthInfo);
 
@@ -120,21 +119,6 @@ public class UserAuthService {
             }
         };
 
-    }
-
-    // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
-    private UserAuthInfo getUserAuthInfo(SocialType socialType, String socialAccessToken) {
-        return switch (socialType) {
-            case KAKAO -> {
-                KakaoUserInfoResponse kakaoUserInfoResponse = kakaoUserInfoClient.getUserInfo(
-                    AUTHORIZATION_TYPE + socialAccessToken);
-                yield UserAuthInfo.from(kakaoUserInfoResponse);
-            }
-            case APPLE -> {
-                AppleIdTokenPayload appleIdTokenPayload = appleUserInfoService.get(socialAccessToken);
-                yield UserAuthInfo.from(appleIdTokenPayload);
-            }
-        };
     }
 
     private User signUpOrLogin(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {

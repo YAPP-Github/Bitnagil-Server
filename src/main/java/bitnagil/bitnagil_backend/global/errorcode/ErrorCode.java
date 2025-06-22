@@ -36,11 +36,16 @@ public enum ErrorCode {
     INACTIVE_USER("US000", HttpStatus.FORBIDDEN, "사용할 수 없는 사용자입니다."),
     NOT_FOUND_USER("US001", HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
 
-    // 소셜 로그인 관련 에러 코드
+    // 애플 로그인 관련 에러 코드
     UNSUPPORTED_SOCIAL_TYPE("SO000", HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 타입입니다."),
     APPLE_FEIGN_CALL_FAILED("SO001", HttpStatus.BAD_GATEWAY, "애플 소셜 로그인 Feign API 호출에 실패했습니다."),
     TOKEN_DECODE_ERROR("SO002", HttpStatus.BAD_REQUEST, "토큰 디코드 중 오류가 발생했습니다."),
     PRIVATE_KEY_CONVERT_ERROR("SO003", HttpStatus.INTERNAL_SERVER_ERROR, "개인 키 변환 중 오류가 발생했습니다."),
+
+    // 카카오 로그인 관련 에러 코드
+    KAKAO_UNAUTHORIZED("KA001", HttpStatus.UNAUTHORIZED, "카카오 인증 정보가 유효하지 않습니다."),
+    KAKAO_INTERNAL_SERVER_ERROR("KA002", HttpStatus.INTERNAL_SERVER_ERROR, "카카오 서버 내부 오류가 발생했습니다."),
+    KAKAO_UNKNOWN_ERROR("KA003", HttpStatus.INTERNAL_SERVER_ERROR, "카카오 API 호출 중 알 수 없는 오류가 발생했습니다.");
     ;
 
 
