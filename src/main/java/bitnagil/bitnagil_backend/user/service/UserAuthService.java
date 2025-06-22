@@ -72,20 +72,21 @@ public class UserAuthService {
 
     // 로그아웃 - refreshToken 삭제 및 accessToken 블랙리스트 등록
     @Transactional
-    public void logout(User user, HttpServletRequest request) {
+    public void logout(User user, HttpServletRequest request, String socialAccessToken) {
         authRedisService.deleteRefreshToken(user.getUserId());
 
         String accessToken = jwtProvider.resolveToken(request);
         Long expirationTime = jwtProvider.getExpirationTime(accessToken);
 
         authRedisService.addAccessTokenToBlacklist(accessToken, expirationTime);
+        userAuthHandler.invalidateAccessToken(user, socialAccessToken);
     }
 
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
-    public void withdrawal(User user, HttpServletRequest request) {
+    public void withdrawal(User user, HttpServletRequest request, String socialAccessToken) {
         // 토큰 블랙리스트 등록
-        logout(user, request);
+        logout(user, request, socialAccessToken);
 
         userRepository.deleteById(user.getUserId());
         // TODO soft delete 범위에 대해 추후 논의 후 적용
