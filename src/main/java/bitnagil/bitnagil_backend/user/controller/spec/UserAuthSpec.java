@@ -39,9 +39,12 @@ public interface UserAuthSpec {
     @Operation(summary = "유저가 로그아웃합니다. 반환 정보는 없습니다.")
     @Parameters({
         @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
-            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
+            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER),
+        @Parameter(name = "SocialAccessToken", description = "social access token", required = true,
+            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
     })
-    CustomResponseDto<Object> logout(@CurrentUser User user, HttpServletRequest request);
+    CustomResponseDto<Object> logout(@CurrentUser User user, HttpServletRequest request,
+        @RequestHeader("SocialAccessToken") String socialAccessToken);
 
     @Operation(summary = "토큰 재발급 요청으로 토큰 관련 정보를 반환합니다.")
     @ApiErrorCodeExample(ErrorCode.INVALID_JWT_TOKEN)
@@ -54,7 +57,10 @@ public interface UserAuthSpec {
     @Operation(summary = "소셜로그인으로 연결된 유저가 회원탈퇴합니다. 반환 정보는 없습니다.")
     @Parameters({
         @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
-            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
+            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER),
+        @Parameter(name = "SocialAccessToken", description = "social access token", required = true,
+            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
     })
-    CustomResponseDto<Object> withdrawal(@CurrentUser User user, HttpServletRequest request);
+    CustomResponseDto<Object> withdrawal(@CurrentUser User user, HttpServletRequest request,
+        @RequestHeader("SocialAccessToken") String socialAccessToken);
 }

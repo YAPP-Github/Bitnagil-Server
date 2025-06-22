@@ -34,8 +34,10 @@ public class UserAuthController implements UserAuthSpec {
     }
 
     @PostMapping("/logout")
-    public CustomResponseDto<Object> logout(@CurrentUser User user, HttpServletRequest request) {
-        userAuthService.logout(user, request);
+    public CustomResponseDto<Object> logout(
+        @CurrentUser User user, HttpServletRequest request,
+        @RequestHeader("SocialAccessToken") String socialAccessToken) {
+        userAuthService.logout(user, request, socialAccessToken);
 
         return CustomResponseDto.from(null);
     }
@@ -49,8 +51,10 @@ public class UserAuthController implements UserAuthSpec {
     }
 
     @PostMapping("/withdrawal")
-    public CustomResponseDto<Object> withdrawal(@CurrentUser User user, HttpServletRequest request) {
-        userAuthService.withdrawal(user, request);
+    public CustomResponseDto<Object> withdrawal(
+        @CurrentUser User user, HttpServletRequest request,
+        @RequestHeader("SocialAccessToken") String socialAccessToken) {
+        userAuthService.withdrawal(user, request, socialAccessToken);
 
         return CustomResponseDto.from(null);
     }
