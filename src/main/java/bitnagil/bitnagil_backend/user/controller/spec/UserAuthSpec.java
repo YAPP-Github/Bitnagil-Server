@@ -25,6 +25,10 @@ import jakarta.servlet.http.HttpServletRequest;
 @Tag(name = ApiTags.USER_AUTH)
 public interface UserAuthSpec {
     @Operation(summary = "소셜로그인 요청으로 토큰 관련 정보를 반환합니다.")
+    @ApiErrorCodeExamples({
+        ErrorCode.KAKAO_UNAUTHORIZED, ErrorCode.KAKAO_UNKNOWN_ERROR, ErrorCode.KAKAO_RETRY_INTERRUPTED,
+        ErrorCode.TOKEN_DECODE_ERROR, ErrorCode.INTERNAL_SERVER_ERROR
+    })
     @Parameters({
         @Parameter(name = "socialType", description = "social login type", required = true, example = "KAKAO"),
         @Parameter(name = "nickname", description = "user's social nickname", required = false, example = "yuseok"),
@@ -37,6 +41,9 @@ public interface UserAuthSpec {
         @RequestHeader("Authorization") String socialAccessToken);
 
     @Operation(summary = "유저가 로그아웃합니다. 반환 정보는 없습니다.")
+    @ApiErrorCodeExamples({
+        ErrorCode.KAKAO_UNAUTHORIZED, ErrorCode.KAKAO_UNKNOWN_ERROR, ErrorCode.KAKAO_RETRY_INTERRUPTED
+    })
     @Parameters({
         @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
             example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER),
@@ -47,7 +54,9 @@ public interface UserAuthSpec {
         @RequestHeader("SocialAccessToken") String socialAccessToken);
 
     @Operation(summary = "토큰 재발급 요청으로 토큰 관련 정보를 반환합니다.")
-    @ApiErrorCodeExample(ErrorCode.INVALID_JWT_TOKEN)
+    @ApiErrorCodeExamples({
+        ErrorCode.INVALID_JWT_TOKEN, ErrorCode.NOT_FOUND_USER
+    })
     @Parameters({
         @Parameter(name = "Refresh-Token", description = "리프레시 토큰", required = true,
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
@@ -55,6 +64,9 @@ public interface UserAuthSpec {
     CustomResponseDto<TokenResponse> refreshToken(@RequestHeader("Refresh-Token") String refreshToken);
 
     @Operation(summary = "소셜로그인으로 연결된 유저가 회원탈퇴합니다. 반환 정보는 없습니다.")
+    @ApiErrorCodeExamples({
+        ErrorCode.KAKAO_UNAUTHORIZED, ErrorCode.KAKAO_UNKNOWN_ERROR, ErrorCode.KAKAO_RETRY_INTERRUPTED
+    })
     @Parameters({
         @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
             example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER),
