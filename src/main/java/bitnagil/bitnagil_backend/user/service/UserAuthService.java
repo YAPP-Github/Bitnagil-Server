@@ -7,6 +7,7 @@ import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
 import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
+import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.Repository.UserRepository;
@@ -31,13 +32,13 @@ public class UserAuthService {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final AuthRedisService authRedisService;
-    private final UserAuthHandler userAuthHandler;
+    private final KakaoUserInfoService kakaoUserInfoService;
 
     // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
     public TokenResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
 
-        UserAuthInfo userAuthInfo = userAuthHandler.getUserAuthInfo(socialType, socialAccessToken);
+        UserAuthInfo userAuthInfo = kakaoUserInfoService.getUserAuthInfo(socialType, socialAccessToken);
 
         User user = signUpOrLogin(socialType, nickname, userAuthInfo);
 
@@ -74,7 +75,7 @@ public class UserAuthService {
     @Transactional
     public void logout(User user, HttpServletRequest request, String socialAccessToken) {
         invalidateToken(user, request);
-        userAuthHandler.invalidateAccessToken(user, socialAccessToken);
+        kakaoUserInfoService.invalidateAccessToken(user, socialAccessToken);
     }
 
 
@@ -87,7 +88,7 @@ public class UserAuthService {
         userRepository.deleteById(user.getUserId());
         // TODO soft delete 범위에 대해 추후 논의 후 적용
 
-        userAuthHandler.unlinkFromSocial(user);
+        kakaoUserInfoService.unlinkFromSocial(user);
     }
 
     // 서비스 accessToken, refreshToken 무효화

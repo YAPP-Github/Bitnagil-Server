@@ -1,16 +1,11 @@
-package bitnagil.bitnagil_backend.user.service;
+package bitnagil.bitnagil_backend.auth.kakao.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
 import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
-import bitnagil.bitnagil_backend.auth.kakao.service.KakaoLogoutClient;
-import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoClient;
-import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserUnlinkClient;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
@@ -26,7 +21,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Service
 @RequiredArgsConstructor
-public class UserAuthHandler {
+public class KakaoUserInfoService {
     private static final String KAKAO_AUTH_PREFIX = "KakaoAK ";
     private static final Integer KAKAO_UNAUTHORIZED_STATUS = 401;
     private static final Integer KAKAO_INTERNAL_SERVER_ERROR_STATUS = 500;
@@ -133,6 +128,7 @@ public class UserAuthHandler {
         throw new CustomException(ErrorCode.KAKAO_UNKNOWN_ERROR); // 최대 재시도 초과 시 예외
     }
 
+    // 카카오 서버 통신에서 발생 가능한 에러 핸들링
     private int handleFeignException(FeignException e, int retryCount) {
         int status = e.status();
 
