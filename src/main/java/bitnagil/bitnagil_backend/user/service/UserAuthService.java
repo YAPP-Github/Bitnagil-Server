@@ -75,7 +75,7 @@ public class UserAuthService {
     @Transactional
     public void logout(User user, HttpServletRequest request, String socialAccessToken) {
         invalidateToken(user, request);
-        kakaoUserInfoService.invalidateAccessToken(user, socialAccessToken);
+        kakaoUserInfoService.invalidateKakaoToken(user, socialAccessToken);
     }
 
 

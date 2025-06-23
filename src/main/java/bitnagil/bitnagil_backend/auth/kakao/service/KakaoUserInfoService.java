@@ -89,8 +89,8 @@ public class KakaoUserInfoService {
         };
     }
 
-    // 카카오 accessToken 무효화
-    public void invalidateAccessToken(User user, String accessToken) {
+    // 카카오 accessToken, refreshToken 무효화
+    public void invalidateKakaoToken(User user, String accessToken) {
         switch (user.getSocialType()) {
             case KAKAO -> {
                 int retryCount = 0;
