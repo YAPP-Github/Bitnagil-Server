@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(
     name = "KakaoLogoutClient",
-    url = "${spring.security.oauth2.client.provider.kakao-provider.base-uri}"
+    url = "${spring.security.oauth2.client.provider.kakao-provider.base-uri}",
+    configuration = KakaoFeignClientConfiguration.class
 )
 public interface KakaoLogoutClient {
     @PostMapping("/v1/user/logout")

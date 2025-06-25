@@ -26,8 +26,8 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface UserAuthSpec {
     @Operation(summary = "소셜로그인 요청으로 토큰 관련 정보를 반환합니다.")
     @ApiErrorCodeExamples({
-        ErrorCode.KAKAO_UNAUTHORIZED, ErrorCode.KAKAO_UNKNOWN_ERROR, ErrorCode.KAKAO_RETRY_INTERRUPTED,
-        ErrorCode.TOKEN_DECODE_ERROR, ErrorCode.INTERNAL_SERVER_ERROR
+        ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_USER_INFO_FAILED, ErrorCode.TOKEN_DECODE_ERROR,
+        ErrorCode.INTERNAL_SERVER_ERROR
     })
     @Parameters({
         @Parameter(name = "socialType", description = "social login type", required = true, example = "KAKAO"),
@@ -42,7 +42,7 @@ public interface UserAuthSpec {
 
     @Operation(summary = "유저가 로그아웃합니다. 반환 정보는 없습니다.")
     @ApiErrorCodeExamples({
-        ErrorCode.KAKAO_UNAUTHORIZED, ErrorCode.KAKAO_UNKNOWN_ERROR, ErrorCode.KAKAO_RETRY_INTERRUPTED
+        ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_LOGOUT_FAILED
     })
     @Parameters({
         @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
@@ -65,7 +65,7 @@ public interface UserAuthSpec {
 
     @Operation(summary = "소셜로그인으로 연결된 유저가 회원탈퇴합니다. 반환 정보는 없습니다.")
     @ApiErrorCodeExamples({
-        ErrorCode.KAKAO_UNAUTHORIZED, ErrorCode.KAKAO_UNKNOWN_ERROR, ErrorCode.KAKAO_RETRY_INTERRUPTED
+        ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_UNLINK_FAILED
     })
     @Parameters({
         @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
