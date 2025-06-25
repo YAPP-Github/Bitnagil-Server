@@ -17,14 +17,18 @@ import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
     configuration = KakaoFeignClientConfiguration.class
 )
 public interface KakaoAuthClient {
+
+    // 카카오 회원 정보 조회 API
     @GetMapping("/v2/user/me")
     KakaoUserInfoResponse getUserInfo(@RequestHeader("Authorization") String authorizationHeader);
 
+    // 카카오 액세스 토큰 무효화 API
     @PostMapping("/v1/user/logout")
     String logout(
         @RequestHeader("Authorization") String accessToken,
         @RequestHeader("Content-Type") String contentType);
 
+    // 카카오 연동 해제 API (연결 끊기)
     @PostMapping("/v1/user/unlink")
     String unlink(
         @RequestHeader(value = "Authorization") String adminKey,
