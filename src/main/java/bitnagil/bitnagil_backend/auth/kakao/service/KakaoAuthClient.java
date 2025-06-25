@@ -1,17 +1,30 @@
 package bitnagil.bitnagil_backend.auth.kakao.service;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 
+/**
+ * 카카오 서버와 통신하는 클래스입니다.
+ */
 @FeignClient(
-    name = "KakaoUserUnlinkClient",
+    name = "KakaoLogoutClient",
     url = "${spring.security.oauth2.client.provider.kakao-provider.base-uri}",
     configuration = KakaoFeignClientConfiguration.class
 )
-public interface KakaoUserUnlinkClient {
+public interface KakaoAuthClient {
+    @GetMapping("/v2/user/me")
+    KakaoUserInfoResponse getUserInfo(@RequestHeader("Authorization") String authorizationHeader);
+
+    @PostMapping("/v1/user/logout")
+    String logout(
+        @RequestHeader("Authorization") String accessToken,
+        @RequestHeader("Content-Type") String contentType);
+
     @PostMapping("/v1/user/unlink")
     String unlink(
         @RequestHeader(value = "Authorization") String adminKey,
