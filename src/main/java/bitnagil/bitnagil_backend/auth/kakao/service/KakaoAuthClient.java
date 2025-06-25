@@ -12,7 +12,7 @@ import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
  * 카카오 서버와 통신하는 클래스입니다.
  */
 @FeignClient(
-    name = "KakaoLogoutClient",
+    name = "KakaoAuthFeignClient",
     url = "${spring.security.oauth2.client.provider.kakao-provider.base-uri}",
     configuration = KakaoFeignClientConfiguration.class
 )
