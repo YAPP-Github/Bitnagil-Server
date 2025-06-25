@@ -15,136 +15,41 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 소셜 인증 API를 핸들링하는 클래스입니다.
- *
- * 카카오, 애플 서버에 API를 요청하는 로직들을 관리합니다.
+ * 카카오 서버에 API를 요청을 관리하는 클래스입니다.
  */
 @Service
 @RequiredArgsConstructor
 public class KakaoUserInfoService {
     private static final String KAKAO_AUTH_PREFIX = "KakaoAK ";
-    private static final Integer KAKAO_UNAUTHORIZED_STATUS = 401;
-    private static final Integer KAKAO_INTERNAL_SERVER_ERROR_STATUS = 500;
-    private static final int MAX_RETRY_COUNT = 3;
-    private static final long BASE_SLEEP_TIME_MS = 1000;
-
     private static final String AUTHORIZATION_TYPE = "Bearer ";
-    private final KakaoLogoutClient kakaoLogoutClient;
 
     @Value("${spring.security.oauth2.client.registration.kakao.admin-key}")
     private String kakaoAdminKey;
 
-    private final AppleUserInfoService appleUserInfoService;
     private final KakaoUserInfoClient kakaoUserInfoClient;
     private final KakaoUserUnlinkClient kakaoUserUnlinkClient;
+    private final KakaoLogoutClient kakaoLogoutClient;
 
-
-    // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
-    public UserAuthInfo getUserAuthInfo(SocialType socialType, String socialAccessToken) {
-        switch (socialType) {
-            case KAKAO -> {
-                int retryCount = 0;
-
-                while (retryCount < MAX_RETRY_COUNT) {
-                    try {
-                        KakaoUserInfoResponse kakaoUserInfoResponse = getKakaoUserInfo(socialAccessToken);
-                        return UserAuthInfo.from(kakaoUserInfoResponse);
-                    } catch (FeignException e) {
-                        retryCount = handleFeignException(e, retryCount);
-                    }
-                }
-            }
-            case APPLE -> {
-                AppleIdTokenPayload appleIdTokenPayload = appleUserInfoService.get(socialAccessToken);
-                return UserAuthInfo.from(appleIdTokenPayload);
-            }
-        };
-
-        throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+    // 클라이언트에서 받은 카카오 액세스 토큰으로 카카오 회원 정보를 조회
+    public KakaoUserInfoResponse get(String accessToken) {
+        return kakaoUserInfoClient.getUserInfo(AUTHORIZATION_TYPE + accessToken);
     }
 
-    // 회원탈퇴를 위해 소셜과 연결을 끊는 외부 API
-    public void unlinkFromSocial(User user) {
-        switch (user.getSocialType()) {
-            case KAKAO -> {
-                int retryCount = 0;
-
-                while (retryCount < MAX_RETRY_COUNT) {
-                    try {
-                        String socialId = kakaoUserUnlinkClient.kakaoUnlink(
-                            KAKAO_AUTH_PREFIX + kakaoAdminKey,
-                            "application/x-www-form-urlencoded;charset=utf-8",
-                            "user_id",
-                            Long.valueOf(user.getSocialId())
-                        );
-                        break;
-                    } catch (FeignException e) {
-                        retryCount = handleFeignException(e, retryCount);
-                    }
-                }
-            }
-            case APPLE -> {
-                // TODO 애플과 연결끊기 로직 추가 예정
-            }
-        };
+    // 유저의 소셜 아이디로 카카오와 연동을 해제
+    public void unlink(User user) {
+        String socialId = kakaoUserUnlinkClient.unlink(
+            KAKAO_AUTH_PREFIX + kakaoAdminKey,
+            "application/x-www-form-urlencoded;charset=utf-8",
+            "user_id",
+            Long.valueOf(user.getSocialId())
+        );
     }
 
-    // 카카오 accessToken, refreshToken 무효화
-    public void invalidateKakaoToken(User user, String accessToken) {
-        switch (user.getSocialType()) {
-            case KAKAO -> {
-                int retryCount = 0;
-
-                while (retryCount < MAX_RETRY_COUNT) {
-                    try {
-                        String socialId = kakaoLogoutClient.logout(
-                            AUTHORIZATION_TYPE + accessToken,
-                            "application/x-www-form-urlencoded;charset=utf-8"
-                        );
-                        break;
-                    } catch (FeignException e) {
-                        retryCount = handleFeignException(e, retryCount);
-                    }
-                }
-            }
-
-            case APPLE -> {
-                // TODO 애플 액세스 토큰 무효화
-            }
-        }
-    }
-
-    // 발생 가능한 에러에 대해 retry 처리한 카카오 회원 정보 API 조회
-    private KakaoUserInfoResponse getKakaoUserInfo(String accessToken) {
-        int retryCount = 0;
-
-        while (retryCount < MAX_RETRY_COUNT) {
-            try {
-                return kakaoUserInfoClient.getUserInfo(AUTHORIZATION_TYPE + accessToken);
-            } catch (FeignException e) {
-                retryCount = handleFeignException(e, retryCount);
-            }
-        }
-        throw new CustomException(ErrorCode.KAKAO_UNKNOWN_ERROR); // 최대 재시도 초과 시 예외
-    }
-
-    // 카카오 서버 통신에서 발생 가능한 에러 핸들링
-    private int handleFeignException(FeignException e, int retryCount) {
-        int status = e.status();
-
-        if (status == KAKAO_INTERNAL_SERVER_ERROR_STATUS) { // 서버 오류: 재시도
-            retryCount++;
-            try {
-                Thread.sleep(BASE_SLEEP_TIME_MS * retryCount);
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-                throw new CustomException(ErrorCode.KAKAO_RETRY_INTERRUPTED);
-            }
-            return retryCount;
-        } else if (status == KAKAO_UNAUTHORIZED_STATUS) {
-            throw new CustomException(ErrorCode.KAKAO_UNAUTHORIZED);
-        } else {
-            throw new CustomException(ErrorCode.KAKAO_UNKNOWN_ERROR);
-        }
+    // 클라이언트에서 받은 카카오 액세스 토큰으로 카카오 액세스 토큰 무효화
+    public void logout(String accessToken) {
+        String socialId = kakaoLogoutClient.logout(
+            AUTHORIZATION_TYPE + accessToken,
+            "application/x-www-form-urlencoded;charset=utf-8"
+        );
     }
 }

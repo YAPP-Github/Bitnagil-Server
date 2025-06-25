@@ -3,10 +3,13 @@ package bitnagil.bitnagil_backend.user.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
+import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
 import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
+import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
@@ -16,6 +19,7 @@ import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -32,13 +36,14 @@ public class UserAuthService {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final AuthRedisService authRedisService;
+    private final AppleUserInfoService appleUserInfoService;
     private final KakaoUserInfoService kakaoUserInfoService;
 
     // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
     public TokenResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
 
-        UserAuthInfo userAuthInfo = kakaoUserInfoService.getUserAuthInfo(socialType, socialAccessToken);
+        UserAuthInfo userAuthInfo = getUserAuthInfo(socialType, socialAccessToken);
 
         User user = signUpOrLogin(socialType, nickname, userAuthInfo);
 
@@ -75,10 +80,8 @@ public class UserAuthService {
     @Transactional
     public void logout(User user, HttpServletRequest request, String socialAccessToken) {
         invalidateToken(user, request);
-        kakaoUserInfoService.invalidateKakaoToken(user, socialAccessToken);
+        invalidateSocialToken(user, socialAccessToken);
     }
-
-
 
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
@@ -88,7 +91,48 @@ public class UserAuthService {
         userRepository.deleteById(user.getUserId());
         // TODO soft delete 범위에 대해 추후 논의 후 적용
 
-        kakaoUserInfoService.unlinkFromSocial(user);
+        unlinkFromSocial(user);
+    }
+
+    // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
+    private UserAuthInfo getUserAuthInfo(SocialType socialType, String socialAccessToken) {
+        switch (socialType) {
+            case KAKAO -> {
+                KakaoUserInfoResponse kakaoUserInfoResponse = kakaoUserInfoService.get(socialAccessToken);
+                return UserAuthInfo.from(kakaoUserInfoResponse);
+            }
+            case APPLE -> {
+                AppleIdTokenPayload appleIdTokenPayload = appleUserInfoService.get(socialAccessToken);
+                return UserAuthInfo.from(appleIdTokenPayload);
+            }
+        };
+
+        throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    // 회원탈퇴를 위해 소셜과 연결을 끊는 외부 API
+    private void unlinkFromSocial(User user) {
+        switch (user.getSocialType()) {
+            case KAKAO -> {
+                kakaoUserInfoService.unlink(user);
+            }
+            case APPLE -> {
+                // TODO 애플과 연결끊기 로직 추가 예정
+            }
+        };
+    }
+
+    // 카카오 accessToken, refreshToken 무효화
+    private void invalidateSocialToken(User user, String accessToken) {
+        switch (user.getSocialType()) {
+            case KAKAO -> {
+                kakaoUserInfoService.logout(accessToken);
+            }
+
+            case APPLE -> {
+                // TODO 애플 액세스 토큰 무효화
+            }
+        }
     }
 
     // 서비스 accessToken, refreshToken 무효화

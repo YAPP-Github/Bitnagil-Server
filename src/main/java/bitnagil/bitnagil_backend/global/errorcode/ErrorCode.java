@@ -45,10 +45,10 @@ public enum ErrorCode {
     PRIVATE_KEY_CONVERT_ERROR("SO003", HttpStatus.INTERNAL_SERVER_ERROR, "개인 키 변환 중 오류가 발생했습니다."),
 
     // 카카오 로그인 관련 에러 코드
-    KAKAO_UNAUTHORIZED("KA001", HttpStatus.UNAUTHORIZED, "카카오 인증 정보가 유효하지 않습니다."),
-    KAKAO_INTERNAL_SERVER_ERROR("KA002", HttpStatus.INTERNAL_SERVER_ERROR, "카카오 서버 내부 오류가 발생했습니다."),
-    KAKAO_UNKNOWN_ERROR("KA003", HttpStatus.INTERNAL_SERVER_ERROR, "카카오 API 호출 중 알 수 없는 오류가 발생했습니다."),
-    KAKAO_RETRY_INTERRUPTED("KA004", HttpStatus.INTERNAL_SERVER_ERROR, "카카오 API 호출 재시도 대기 중 인터럽트가 발생했습니다."),;
+    KAKAO_USER_INFO_FAILED("KA001", HttpStatus.BAD_REQUEST, "카카오 회원정보 조회 API 호출에 실패했습니다."),
+    KAKAO_LOGOUT_FAILED("KA002", HttpStatus.UNAUTHORIZED, "카카오 로그아웃 API 호출에 실패했습니다."),
+    KAKAO_UNLINK_FAILED("KA003", HttpStatus.FORBIDDEN, "카카오 회원탈퇴 API 호출에 실패했습니다."),
+    KAKAO_FEIGN_CALL_FAILED("KA004", HttpStatus.BAD_GATEWAY, "카카오 서버 Feign Client 호출에 실패했습니다.")
     ;
 
 
