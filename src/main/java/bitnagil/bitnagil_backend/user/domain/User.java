@@ -2,6 +2,8 @@ package bitnagil.bitnagil_backend.user.domain;
 
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.global.BaseTimeEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,17 +35,17 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private SocialType socialType;
 
-    @NotBlank
+    @Column(nullable = false)
     private String socialId;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false)
     private Role role;
 
-    @NotBlank
+    @Column(nullable = false)
     private String email;
 
-    @NotBlank
+    @Column(nullable = false)
     private String nickname;
 
     @Builder
