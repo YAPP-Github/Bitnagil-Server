@@ -135,14 +135,14 @@ public class UserAuthService {
         }
     }
 
-    // 서비스 accessToken, refreshToken 무효화
+    // 서비스 refreshToken 무효화
     private void invalidateToken(User user, HttpServletRequest request) {
         authRedisService.deleteRefreshToken(user.getUserId());
 
-        String accessToken = jwtProvider.resolveToken(request);
-        Long expirationTime = jwtProvider.getExpirationTime(accessToken);
-
-        authRedisService.addAccessTokenToBlacklist(accessToken, expirationTime);
+        // 서비스 액세스 토큰 블랙리스트 처리
+        // String accessToken = jwtProvider.resolveToken(request);
+        // Long expirationTime = jwtProvider.getExpirationTime(accessToken);
+        // authRedisService.addAccessTokenToBlacklist(accessToken, expirationTime);
     }
 
     // 소셜 로그인 - 신규 유저는 DB 등록
