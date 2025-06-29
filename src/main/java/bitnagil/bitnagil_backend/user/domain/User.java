@@ -48,12 +48,15 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String nickname;
 
+    private String refreshToken; // 애플의 경우 탈퇴를 위한 필수값
+
     @Builder
-    public User(SocialType socialType, String socialId, Role role, String email, String nickname) {
+    public User(SocialType socialType, String socialId, Role role, String email, String nickname, String refreshToken) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.role = role;
         this.email = email;
         this.nickname = nickname;
+        this.refreshToken = refreshToken;
     }
 }

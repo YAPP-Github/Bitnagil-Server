@@ -14,4 +14,10 @@ public class AppleIdTokenPayload {
     private String email;
 
     private String name;
+
+    private String refreshToken;
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

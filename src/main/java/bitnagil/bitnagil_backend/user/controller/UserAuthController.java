@@ -36,7 +36,7 @@ public class UserAuthController implements UserAuthSpec {
     @PostMapping("/logout")
     public CustomResponseDto<Object> logout(
         @CurrentUser User user, HttpServletRequest request,
-        @RequestHeader("SocialAccessToken") String socialAccessToken) {
+        @RequestHeader(value = "SocialAccessToken", required = false) String socialAccessToken) {
         userAuthService.logout(user, request, socialAccessToken);
 
         return CustomResponseDto.from(null);

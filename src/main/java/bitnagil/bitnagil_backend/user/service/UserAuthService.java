@@ -117,20 +117,20 @@ public class UserAuthService {
                 kakaoUserInfoService.unlink(user);
             }
             case APPLE -> {
-                // TODO 애플과 연결끊기 로직 추가 예정
+                appleUserInfoService.unlink(user);
             }
         };
     }
 
     // 카카오 accessToken, refreshToken 무효화
-    private void invalidateSocialToken(User user, String accessToken) {
+    private void invalidateSocialToken(User user, String socialAccessToken) {
         switch (user.getSocialType()) {
             case KAKAO -> {
-                kakaoUserInfoService.logout(accessToken);
+                kakaoUserInfoService.logout(socialAccessToken);
             }
 
             case APPLE -> {
-                // TODO 애플 액세스 토큰 무효화
+                // 애플은 토큰 무효화 API가 없으므로 별도의 처리가 필요 없음
             }
         }
     }
@@ -161,6 +161,7 @@ public class UserAuthService {
             .role(Role.USER)
             .email(userAuthInfo.getEmail())
             .nickname(nickname)
+            .refreshToken(userAuthInfo.getRefreshToken()) // 애플 로그인의 경우만 세팅
             .build();
 
         return userRepository.save(user);
