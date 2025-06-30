@@ -25,11 +25,21 @@ public class ErrorResponseDto extends ResponseDto{
         super(errorCode.getCode(), errorCode.getMessage(e));
     }
 
+    // 에러 코드와 예외 그리고 메세지를 포함하는 생성자
+    private ErrorResponseDto(ErrorCode errorCode, Exception e, String message) {
+        super(errorCode.getCode(), "errorMessage: " + errorCode.getMessage(e)
+                + "\n" + "additional message: " + message);
+    }
+
     public static ErrorResponseDto from(ErrorCode errorCode) {
         return new ErrorResponseDto(errorCode);
     }
 
     public static ErrorResponseDto of(ErrorCode errorCode, Exception e) {
         return new ErrorResponseDto(errorCode, e);
+    }
+
+    public static ErrorResponseDto of(ErrorCode errorCode, Exception e, String message) {
+        return new ErrorResponseDto(errorCode, e, message);
     }
 }
