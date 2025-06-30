@@ -46,7 +46,7 @@ public class AppleUserInfoService {
         // 회원 저장 시 refreshToken도 저장하기 위해 AppleSocialTokenInfoResponse에서 가져온 refreshToken을 payload에 설정
         payload.setRefreshToken(appleSocialResponse.getRefreshToken());
 
-        return TokenDecoder.decodePayload(idToken, AppleIdTokenPayload.class);
+        return payload;
     }
 
     // Apple 인증을 위한 ClientSecret 생성

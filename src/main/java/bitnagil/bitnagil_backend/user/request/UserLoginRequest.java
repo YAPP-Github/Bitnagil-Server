@@ -15,8 +15,8 @@ public class UserLoginRequest {
     @Schema(description = "사용자 닉네임(애플 로그인 시에만 값을 설정한다.)", example = "홍길동")
     private String nickname;
 
-    @Schema(description = "소셜 로그인 플랫폼에서 발급해준 access token 입니다.(Bearer를 붙히지 않습니다.)",
-            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    @Schema(description = "소셜 로그인 플랫폼입니다.",
+            example = "KAKAO, APPLE",
             required = true)
     @NotNull
     private SocialType socialType;
