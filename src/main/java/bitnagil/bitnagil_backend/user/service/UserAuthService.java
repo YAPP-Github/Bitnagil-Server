@@ -13,14 +13,12 @@ import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
-import bitnagil.bitnagil_backend.user.Repository.UserRepository;
+import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
-import feign.FeignException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -78,15 +76,15 @@ public class UserAuthService {
 
     // 로그아웃 - refreshToken 삭제 및 accessToken 블랙리스트 등록
     @Transactional
-    public void logout(User user, HttpServletRequest request, String socialAccessToken) {
-        invalidateToken(user, request);
+    public void logout(User user, String socialAccessToken) {
+        invalidateToken(user);
         invalidateSocialToken(user, socialAccessToken);
     }
 
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
-    public void withdrawal(User user, HttpServletRequest request, String socialAccessToken) {
-        invalidateToken(user, request);
+    public void withdrawal(User user) {
+        invalidateToken(user);
 
         userRepository.deleteById(user.getUserId());
         // TODO soft delete 범위에 대해 추후 논의 후 적용
@@ -128,15 +126,11 @@ public class UserAuthService {
             case KAKAO -> {
                 kakaoUserInfoService.logout(socialAccessToken);
             }
-
-            case APPLE -> {
-                // 애플은 토큰 무효화 API가 없으므로 별도의 처리가 필요 없음
-            }
         }
     }
 
     // 서비스 refreshToken 무효화
-    private void invalidateToken(User user, HttpServletRequest request) {
+    private void invalidateToken(User user) {
         authRedisService.deleteRefreshToken(user.getUserId());
 
         // 서비스 액세스 토큰 블랙리스트 처리

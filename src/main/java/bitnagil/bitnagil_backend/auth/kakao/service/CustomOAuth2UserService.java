@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.auth.kakao.domain.CustomOAuth2User;
 import bitnagil.bitnagil_backend.auth.kakao.domain.OAuth2Attribute;
-import bitnagil.bitnagil_backend.user.Repository.UserRepository;
+import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
