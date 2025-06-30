@@ -37,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Object> handleCustomException(final CustomException e) {
-        log.error("handleCustomException",e.toString(), e);
+        log.error("CustomException 발생 - code: {}, message: {}", e.getErrorCode(), e.getMessage(), e);
         final ErrorCode errorCode = e.getErrorCode();
         sendSlackMessage(e, errorCode);
         return handleExceptionInternal(errorCode);

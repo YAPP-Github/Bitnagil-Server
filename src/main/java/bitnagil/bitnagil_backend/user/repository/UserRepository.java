@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.user.Repository;
+package bitnagil.bitnagil_backend.user.repository;
 
 import java.util.Optional;
 

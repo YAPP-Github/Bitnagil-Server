@@ -1,5 +1,7 @@
 package bitnagil.bitnagil_backend.user.controller.spec;
 
+import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -24,55 +26,44 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @Tag(name = ApiTags.USER_AUTH)
 public interface UserAuthSpec {
-    @Operation(summary = "소셜로그인 요청으로 토큰 관련 정보를 반환합니다.")
+    @Operation(summary = "소셜회원가입 및 로그인을 수행하고 토큰을 발행합니다.")
     @ApiErrorCodeExamples({
-        ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_USER_INFO_FAILED, ErrorCode.TOKEN_DECODE_ERROR,
-        ErrorCode.INTERNAL_SERVER_ERROR
+            ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_USER_INFO_FAILED, ErrorCode.TOKEN_DECODE_ERROR,
+            ErrorCode.APPLE_FEIGN_CALL_FAILED, ErrorCode.INTERNAL_SERVER_ERROR
     })
     @Parameters({
-        @Parameter(name = "socialType", description = "social login type", required = true, example = "KAKAO"),
-        @Parameter(name = "nickname", description = "user's social nickname", required = false, example = "yuseok"),
-        @Parameter(name = "Authorization", description = "access tokens issued by social platforms", required = true,
-            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
+            @Parameter(name = "SocialAccessToken", description = "소셜로그인 플랫폼에서 발급해준 access token 입니다.(Bearer를 붙히지 않습니다.)", required = true,
+            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER),
     })
     CustomResponseDto<TokenResponse> login(
-        @RequestParam("socialType") SocialType socialType,
-        @RequestParam(value = "nickname", required = false) String nickname,
-        @RequestHeader("Authorization") String socialAccessToken);
+            @RequestBody UserLoginRequest userLoginRequest,
+            @RequestParam("SocialAccessToken") String socialAccessToken);
 
     @Operation(summary = "유저가 로그아웃합니다. 반환 정보는 없습니다.")
     @ApiErrorCodeExamples({
-        ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_LOGOUT_FAILED
+            ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_LOGOUT_FAILED
     })
     @Parameters({
-        @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
-            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER),
-        @Parameter(name = "SocialAccessToken", description = "social access token", required = true,
+            @Parameter(name = "SocialAccessToken", description = "소셜로그인 플랫폼에서 발급해준 access token 입니다.(Bearer를 붙히지 않습니다.)(애플 로그아웃 시 해당 값을 설정하지 않습니다.)", required = false,
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
     })
-    CustomResponseDto<Object> logout(@CurrentUser User user, HttpServletRequest request,
-        @RequestHeader("SocialAccessToken") String socialAccessToken);
+    CustomResponseDto<Object> logout(
+            @CurrentUser User user,
+            @RequestHeader("SocialAccessToken") String socialAccessToken);
 
     @Operation(summary = "토큰 재발급 요청으로 토큰 관련 정보를 반환합니다.")
     @ApiErrorCodeExamples({
-        ErrorCode.INVALID_JWT_TOKEN, ErrorCode.NOT_FOUND_USER
+            ErrorCode.INVALID_JWT_TOKEN, ErrorCode.NOT_FOUND_USER
     })
     @Parameters({
-        @Parameter(name = "Refresh-Token", description = "리프레시 토큰", required = true,
+            @Parameter(name = "Refresh-Token", description = "서버에서 발급해준 refresh token 입니다.(Bearer를 붙히지 않습니다.)", required = true,
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
     })
     CustomResponseDto<TokenResponse> refreshToken(@RequestHeader("Refresh-Token") String refreshToken);
 
     @Operation(summary = "소셜로그인으로 연결된 유저가 회원탈퇴합니다. 반환 정보는 없습니다.")
     @ApiErrorCodeExamples({
-        ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_UNLINK_FAILED
+            ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_UNLINK_FAILED, ErrorCode.APPLE_FEIGN_CALL_FAILED
     })
-    @Parameters({
-        @Parameter(name = "Authorization", description = "JWT access token (Bearer {token})", required = true,
-            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER),
-        @Parameter(name = "SocialAccessToken", description = "social access token", required = true,
-            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", in = ParameterIn.HEADER)
-    })
-    CustomResponseDto<Object> withdrawal(@CurrentUser User user, HttpServletRequest request,
-        @RequestHeader("SocialAccessToken") String socialAccessToken);
+    CustomResponseDto<Object> withdrawal(@CurrentUser User user);
 }

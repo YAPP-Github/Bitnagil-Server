@@ -1,10 +1,7 @@
 package bitnagil.bitnagil_backend.user.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
+import org.springframework.web.bind.annotation.*;
 
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.enums.SocialType;
@@ -24,37 +21,33 @@ public class UserAuthController implements UserAuthSpec {
 
     @PostMapping("/login")
     public CustomResponseDto<TokenResponse> login(
-        @RequestParam("socialType") SocialType socialType,
-        @RequestParam(value = "nickname", required = false) String nickname, // 애플로그인 시 nickname은 클라이언트에서 보내준다.
-        @RequestHeader("Authorization") String socialAccessToken) {
+            @RequestBody UserLoginRequest userLoginRequest,
+            @RequestHeader("SocialAccessToken") String socialAccessToken) {
 
-        TokenResponse tokenResponse = userAuthService.socialLogin(socialType, nickname, socialAccessToken);
+        TokenResponse tokenResponse = userAuthService.socialLogin(userLoginRequest.getSocialType(), userLoginRequest.getNickname(), socialAccessToken);
 
         return CustomResponseDto.from(tokenResponse);
     }
 
     @PostMapping("/logout")
     public CustomResponseDto<Object> logout(
-        @CurrentUser User user, HttpServletRequest request,
-        @RequestHeader("SocialAccessToken") String socialAccessToken) {
-        userAuthService.logout(user, request, socialAccessToken);
+            @CurrentUser User user,
+            @RequestHeader(value = "SocialAccessToken", required = false) String socialAccessToken) {
+        userAuthService.logout(user, socialAccessToken);
 
         return CustomResponseDto.from(null);
     }
 
     @PostMapping("/token/reissue")
     public CustomResponseDto<TokenResponse> refreshToken(@RequestHeader("Refresh-Token") String refreshToken) {
-
         TokenResponse tokenResponse = userAuthService.reissueToken(refreshToken);
 
         return CustomResponseDto.from(tokenResponse);
     }
 
     @PostMapping("/withdrawal")
-    public CustomResponseDto<Object> withdrawal(
-        @CurrentUser User user, HttpServletRequest request,
-        @RequestHeader("SocialAccessToken") String socialAccessToken) {
-        userAuthService.withdrawal(user, request, socialAccessToken);
+    public CustomResponseDto<Object> withdrawal(@CurrentUser User user) {
+        userAuthService.withdrawal(user);
 
         return CustomResponseDto.from(null);
     }

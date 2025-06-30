@@ -25,4 +25,12 @@ public interface AppleAuthClient {
             @RequestParam("grant_type") String grantType,
             @RequestParam("code") String code
     );
+
+    // 애플 탈퇴 API
+    @PostMapping("/auth/revoke")
+    String revoke(
+            @RequestParam("client_id") String clientId,
+            @RequestParam("client_secret") String clientSecret,
+            @RequestParam("token") String refreshToken
+    );
 }

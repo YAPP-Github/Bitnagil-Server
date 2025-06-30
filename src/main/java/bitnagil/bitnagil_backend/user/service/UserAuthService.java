@@ -13,14 +13,12 @@ import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
-import bitnagil.bitnagil_backend.user.Repository.UserRepository;
+import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
-import feign.FeignException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -78,15 +76,15 @@ public class UserAuthService {
 
     // 로그아웃 - refreshToken 삭제 및 accessToken 블랙리스트 등록
     @Transactional
-    public void logout(User user, HttpServletRequest request, String socialAccessToken) {
-        invalidateToken(user, request);
+    public void logout(User user, String socialAccessToken) {
+        invalidateToken(user);
         invalidateSocialToken(user, socialAccessToken);
     }
 
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
-    public void withdrawal(User user, HttpServletRequest request, String socialAccessToken) {
-        invalidateToken(user, request);
+    public void withdrawal(User user) {
+        invalidateToken(user);
 
         userRepository.deleteById(user.getUserId());
         // TODO soft delete 범위에 대해 추후 논의 후 적용
@@ -117,26 +115,22 @@ public class UserAuthService {
                 kakaoUserInfoService.unlink(user);
             }
             case APPLE -> {
-                // TODO 애플과 연결끊기 로직 추가 예정
+                appleUserInfoService.unlink(user);
             }
         };
     }
 
     // 카카오 accessToken, refreshToken 무효화
-    private void invalidateSocialToken(User user, String accessToken) {
+    private void invalidateSocialToken(User user, String socialAccessToken) {
         switch (user.getSocialType()) {
             case KAKAO -> {
-                kakaoUserInfoService.logout(accessToken);
-            }
-
-            case APPLE -> {
-                // TODO 애플 액세스 토큰 무효화
+                kakaoUserInfoService.logout(socialAccessToken);
             }
         }
     }
 
     // 서비스 refreshToken 무효화
-    private void invalidateToken(User user, HttpServletRequest request) {
+    private void invalidateToken(User user) {
         authRedisService.deleteRefreshToken(user.getUserId());
 
         // 서비스 액세스 토큰 블랙리스트 처리
@@ -161,6 +155,7 @@ public class UserAuthService {
             .role(Role.USER)
             .email(userAuthInfo.getEmail())
             .nickname(nickname)
+            .refreshToken(userAuthInfo.getRefreshToken()) // 애플 로그인의 경우만 세팅
             .build();
 
         return userRepository.save(user);

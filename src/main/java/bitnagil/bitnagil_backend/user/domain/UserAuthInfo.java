@@ -19,6 +19,7 @@ public class UserAuthInfo {
     private String socialId;  // 카카오, apple 사용자 고유 ID
     private String nickname;  // 카카오, apple 닉네임
     private String email;     // 카카오, apple 이메일
+    private String refreshToken; // 애플 탈퇴 시 사용되는 리프레시 토큰
 
     // 카카오 응답 객체로부터 UserAuthInfo로 변환하는 정적 팩토리 메서드
     public static UserAuthInfo from(KakaoUserInfoResponse kakaoUserInfoResponse) {
@@ -35,6 +36,7 @@ public class UserAuthInfo {
                 .socialId(appleIdTokenPayload.getSub())
                 .nickname(appleIdTokenPayload.getName())
                 .email(appleIdTokenPayload.getEmail())
+                .refreshToken(appleIdTokenPayload.getRefreshToken())
                 .build();
     }
 }
