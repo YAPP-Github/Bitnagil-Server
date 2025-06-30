@@ -23,6 +23,7 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND("CO002", HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
     INTERNAL_SERVER_ERROR("CO003", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
     NOT_FOUND_HANDLER("CO004", HttpStatus.NOT_FOUND, "요청한 핸들러를 찾을 수 없습니다."),
+    REQUIRED_PARAMETER_NOT_FOUND("CO005", HttpStatus.BAD_REQUEST, "필수 파라미터가 누락되었습니다.."),
 
     // JWT 관련 에러 코드
     FORBIDDEN_USER("JW000", HttpStatus.FORBIDDEN, "필요한 권한이 없는 사용자입니다."),
