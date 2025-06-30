@@ -37,7 +37,7 @@ public interface UserAuthSpec {
     })
     CustomResponseDto<TokenResponse> login(
             @RequestBody UserLoginRequest userLoginRequest,
-            @RequestParam("SocialAccessToken") String socialAccessToken);
+            @RequestHeader("SocialAccessToken") String socialAccessToken);
 
     @Operation(summary = "유저가 로그아웃합니다. 반환 정보는 없습니다.")
     @ApiErrorCodeExamples({
