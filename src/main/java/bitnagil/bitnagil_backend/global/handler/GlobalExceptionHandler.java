@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 @Slf4j
 @RequiredArgsConstructor
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     private final SlackService slackService;
 
