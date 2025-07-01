@@ -18,13 +18,10 @@ public class TokenResponse {
     @NotEmpty
     private String refreshToken;
 
-    private Long accessTokenExpiresIn;
-
     public static TokenResponse of(Token token) {
         return TokenResponse.builder()
             .accessToken(token.getAccessToken())
             .refreshToken(token.getRefreshToken())
-            .accessTokenExpiresIn(token.getAccessTokenExpiresIn())
             .build();
     }
 }
