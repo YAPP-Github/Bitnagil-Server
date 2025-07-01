@@ -65,7 +65,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://dev.bitnagil.com")); // 실제 배포 시 Origin 제한 권장
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // 실제 배포 시 Origin 제한 권장
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", "Authorization-refresh"));
