@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.global.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,21 +19,23 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAccessDeniedHandler;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAuthenticationEntryPoint;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAuthenticationFilter;
-import bitnagil.bitnagil_backend.auth.kakao.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    @Value("${server-url}")
+    private String serverUrl;
+
     public static final String[] PUBLIC_URLS = {
         "/api/v1/auth/login",
         "/api/v1/auth/token/reissue",
         "/swagger-ui.html",
         "/swagger-ui/**",
         "/v3/api-docs/**",
-        "/api/v1/health-check",
-        "swagger-ui/**"
+        "/api/v1/health-check"
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -53,6 +56,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(PUBLIC_URLS).permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -63,11 +67,13 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // 실제 배포 시 Origin 제한 권장
+        config.setAllowedOrigins(List.of("http://localhost:3000", serverUrl)); // 실제 배포 시 Origin 제한 권장
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", "Authorization-refresh"));
+        config.setMaxAge(3600L); // Prelight 결과를 캐싱해서 OPTIONS 요청을 줄이기 위함
         config.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
