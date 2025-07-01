@@ -25,8 +25,10 @@ public interface KakaoAuthClient {
     // 카카오 액세스 토큰 무효화 API
     @PostMapping("/v1/user/logout")
     String logout(
-        @RequestHeader("Authorization") String accessToken,
-        @RequestHeader("Content-Type") String contentType);
+        @RequestHeader(value = "Authorization") String adminKey,
+        @RequestHeader(value = "Content-Type") String contentType,
+        @RequestParam("target_id_type") String targetIdType,
+        @RequestParam("target_id") Long socialId);
 
     // 카카오 연동 해제 API (연결 끊기)
     @PostMapping("/v1/user/unlink")

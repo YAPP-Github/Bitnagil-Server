@@ -44,12 +44,7 @@ public interface UserAuthSpec {
     @ApiErrorCodeExamples({
             ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_LOGOUT_FAILED
     })
-    @Parameters({
-            @Parameter(name = "SocialAccessToken", description = "소셜로그인 플랫폼에서 발급해준 access token 입니다.(Bearer를 붙히지 않습니다.)(애플 로그아웃 시 해당 값을 설정하지 않습니다.)", required = false,
-            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", in = ParameterIn.HEADER)
-    })
-    CustomResponseDto<Object> logout(User user,
-                                     String socialAccessToken);
+    CustomResponseDto<Object> logout(User user);
 
 
     @Operation(summary = "토큰 재발급 요청으로 토큰 관련 정보를 반환합니다.")
