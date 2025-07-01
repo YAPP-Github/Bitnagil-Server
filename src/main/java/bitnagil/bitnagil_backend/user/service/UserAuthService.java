@@ -74,11 +74,11 @@ public class UserAuthService {
         return TokenResponse.of(token);
     }
 
-    // 로그아웃 - refreshToken 삭제 및 accessToken 블랙리스트 등록
+    // refreshToken 삭제 및 카카오 토큰 무효화
     @Transactional
-    public void logout(User user, String socialAccessToken) {
+    public void logout(User user) {
         invalidateToken(user);
-        invalidateSocialToken(user, socialAccessToken);
+        kakaoUserInfoService.logout(user);
     }
 
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
@@ -118,15 +118,6 @@ public class UserAuthService {
                 appleUserInfoService.unlink(user);
             }
         };
-    }
-
-    // 카카오 accessToken, refreshToken 무효화
-    private void invalidateSocialToken(User user, String socialAccessToken) {
-        switch (user.getSocialType()) {
-            case KAKAO -> {
-                kakaoUserInfoService.logout(socialAccessToken);
-            }
-        }
     }
 
     // 서비스 refreshToken 무효화

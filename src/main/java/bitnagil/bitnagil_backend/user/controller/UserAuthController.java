@@ -24,16 +24,17 @@ public class UserAuthController implements UserAuthSpec {
             @RequestBody UserLoginRequest userLoginRequest,
             @RequestHeader("SocialAccessToken") String socialAccessToken) {
 
-        TokenResponse tokenResponse = userAuthService.socialLogin(userLoginRequest.getSocialType(), userLoginRequest.getNickname(), socialAccessToken);
+        TokenResponse tokenResponse = userAuthService.socialLogin(
+            userLoginRequest.getSocialType(),
+            userLoginRequest.getNickname(),
+            socialAccessToken);
 
         return CustomResponseDto.from(tokenResponse);
     }
 
     @PostMapping("/logout")
-    public CustomResponseDto<Object> logout(
-            @CurrentUser User user,
-            @RequestHeader(value = "SocialAccessToken", required = false) String socialAccessToken) {
-        userAuthService.logout(user, socialAccessToken);
+    public CustomResponseDto<Object> logout(@CurrentUser User user) {
+        userAuthService.logout(user);
 
         return CustomResponseDto.from(null);
     }

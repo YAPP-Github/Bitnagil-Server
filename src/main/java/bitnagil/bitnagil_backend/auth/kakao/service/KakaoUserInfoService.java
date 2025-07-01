@@ -37,10 +37,12 @@ public class KakaoUserInfoService {
     }
 
     // 클라이언트에서 받은 카카오 액세스 토큰으로 카카오 액세스 토큰 무효화
-    public void logout(String accessToken) {
+    public void logout(User user) {
         String socialId = kakaoAuthClient.logout(
-            AUTHORIZATION_TYPE + accessToken,
-            "application/x-www-form-urlencoded;charset=utf-8"
+            KAKAO_AUTH_PREFIX + kakaoAdminKey,
+            "application/x-www-form-urlencoded;charset=utf-8",
+            "user_id",
+            Long.valueOf(user.getSocialId())
         );
     }
 }
