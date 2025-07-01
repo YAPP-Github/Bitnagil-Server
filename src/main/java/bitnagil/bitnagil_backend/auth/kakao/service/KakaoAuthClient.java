@@ -22,7 +22,7 @@ public interface KakaoAuthClient {
     @GetMapping("/v2/user/me")
     KakaoUserInfoResponse getUserInfo(@RequestHeader("Authorization") String authorizationHeader);
 
-    // 카카오 액세스 토큰 무효화 API
+    // 카카오 로그아웃 API
     @PostMapping("/v1/user/logout")
     String logout(
         @RequestHeader(value = "Authorization") String adminKey,
