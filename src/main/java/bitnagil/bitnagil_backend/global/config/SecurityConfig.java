@@ -72,9 +72,9 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of("http://localhost:3000", serverUrl)); // 실제 배포 시 Origin 제한 권장
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization", "Authorization-refresh"));
+        config.setExposedHeaders(List.of("*"));
         config.setMaxAge(3600L); // Prelight 결과를 캐싱해서 OPTIONS 요청을 줄이기 위함
-        config.setAllowCredentials(false);
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
