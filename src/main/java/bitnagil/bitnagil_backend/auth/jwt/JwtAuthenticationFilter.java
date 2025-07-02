@@ -1,10 +1,12 @@
 package bitnagil.bitnagil_backend.auth.jwt;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,6 +21,14 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private static final String[] excludedEndpoints = new String[] {"/swagger-ui/**"};
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+
+        return Arrays.stream(excludedEndpoints)
+            .anyMatch(e -> new AntPathMatcher().match(e, request.getRequestURI()));
+    }
 
     // 실제 필터링 로직은 doFilterInternal 에 들어감
     // JWT 토큰의 인증 정보를 현재 쓰레드의 SecurityContext 에 저장하는 역할 수행
