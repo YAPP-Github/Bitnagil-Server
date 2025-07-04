@@ -78,7 +78,10 @@ public class UserAuthService {
     @Transactional
     public void logout(User user) {
         invalidateToken(user);
-        kakaoUserInfoService.logout(user);
+        // 카카오의 경우에만 카카오 인증 서버로 로그아웃 요청
+        if(user.getSocialType() == SocialType.KAKAO) {
+            kakaoUserInfoService.logout(user);
+        }
     }
 
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
