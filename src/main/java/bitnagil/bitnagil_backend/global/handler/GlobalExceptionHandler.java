@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
         log.error("CustomException 발생 - code: {}, message: {}", e.getErrorCode(), e.getMessage(), e);
         final ErrorCode errorCode = e.getErrorCode();
         sendSlackMessage(e, errorCode);
-        return handleExceptionInternal(errorCode);
+        return handleExceptionInternal(errorCode, e);
     }
 
     /**

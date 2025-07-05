@@ -27,17 +27,30 @@ public class AppleFeignClientErrorDecoder implements ErrorDecoder {
      */
     @Override
     public Exception decode(String methodKey, Response response) {
-        Object body = null;
-        if (response != null && response.body() != null) {
-            try {
-                body = objectMapper.readValue(response.body().toString(), Object.class);
-            } catch (IOException e) {
-                log.error("Error decoding response body", e);
+        String body = null;
+        try{
+            if (response != null && response.body() != null) {
+                body = new String(response.body().asInputStream().readAllBytes());
+
+                // JSON 여부를 간단히 판단
+                if (body.trim().startsWith("{")) {
+                    // JSON 형식이면 파싱
+                    try {
+                        Object parsed = objectMapper.readValue(body, Object.class);
+                        log.error("Feign 오류 응답 (JSON): {}", parsed);
+                    } catch (IOException jsonEx) {
+                        log.warn("JSON 파싱 실패: 원문 출력 -> {}", body, jsonEx);
+                    }
+                } else {
+                    // JSON이 아니면 그냥 텍스트로 출력
+                    log.error("Feign 오류 응답 (TEXT): {}", body);
+                }
             }
+        } catch (IOException e) {
+            log.error("Feign 응답 바디 읽기 실패", e);
         }
 
         log.error("애플 소셜 로그인 Feign API Feign Client 호출 중 오류가 발생되었습니다. body: {}", body);
-
-        throw new CustomException(ErrorCode.APPLE_FEIGN_CALL_FAILED);
+        return new CustomException(ErrorCode.APPLE_FEIGN_CALL_FAILED);
     }
 }
