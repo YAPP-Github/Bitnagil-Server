@@ -79,7 +79,7 @@ public class AppleUserInfoService {
             PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKeyBytes);
             return converter.getPrivateKey(privateKeyInfo);
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.PRIVATE_KEY_CONVERT_ERROR);
+            throw new CustomException(ErrorCode.APPLE_PRIVATE_KEY_CONVERT_ERROR);
         }
     }
 
@@ -88,7 +88,8 @@ public class AppleUserInfoService {
         appleAuthClient.revoke(
                 appleProperties.getClientId(), // yml에 설정한 client id
                 generateClientSecret(), // client secret을 생성
-                user.getRefreshToken() // 애플에서 발급받은 리프레시 토큰
+                user.getRefreshToken(), // 애플에서 발급받은 리프레시 토큰
+                "refresh_token" // 토큰 타입 힌트
         );
     }
 }

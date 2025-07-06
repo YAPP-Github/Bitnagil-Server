@@ -42,8 +42,9 @@ public enum ErrorCode {
 
     // 애플 로그인 관련 에러 코드
     APPLE_FEIGN_CALL_FAILED("SO001", HttpStatus.BAD_GATEWAY, "애플 소셜 로그인 Feign API 호출에 실패했습니다."),
-    TOKEN_DECODE_ERROR("SO002", HttpStatus.BAD_REQUEST, "토큰 디코드 중 오류가 발생했습니다."),
-    PRIVATE_KEY_CONVERT_ERROR("SO003", HttpStatus.INTERNAL_SERVER_ERROR, "개인 키 변환 중 오류가 발생했습니다."),
+    APPLE_TOKEN_DECODE_ERROR("SO002", HttpStatus.BAD_REQUEST, "토큰 디코드 중 오류가 발생했습니다."),
+    APPLE_PRIVATE_KEY_CONVERT_ERROR("SO003", HttpStatus.INTERNAL_SERVER_ERROR, "개인 키 변환 중 오류가 발생했습니다."),
+    APPLE_UNLINK_PENDING("SO004", HttpStatus.BAD_REQUEST, "애플 회원 탈퇴가 진행 중입니다. 잠시 후 다시 시도해주세요."),
 
     // 카카오 로그인 관련 에러 코드
     KAKAO_USER_INFO_FAILED("KA001", HttpStatus.BAD_REQUEST, "카카오 회원정보 조회 API 호출에 실패했습니다."),

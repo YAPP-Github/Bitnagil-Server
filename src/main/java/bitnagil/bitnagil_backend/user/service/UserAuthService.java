@@ -104,6 +104,10 @@ public class UserAuthService {
             }
             case APPLE -> {
                 AppleIdTokenPayload appleIdTokenPayload = appleUserInfoService.get(socialAccessToken);
+                // 탈퇴 후 재가입 시 애플에서 탈퇴 처리가 늦어지는 경우 email 값이 null로 오는 문제를 방지하기 위한 예외 처리
+                if (appleIdTokenPayload.getEmail() == null){
+                    throw new CustomException(ErrorCode.APPLE_UNLINK_PENDING);
+                }
                 return UserAuthInfo.from(appleIdTokenPayload);
             }
         };

@@ -23,7 +23,7 @@ public class TokenDecoder {
         try {
             return objectMapper.readValue(payload, targetClass);
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.TOKEN_DECODE_ERROR);
+            throw new CustomException(ErrorCode.APPLE_TOKEN_DECODE_ERROR);
         }
     }
 }

@@ -29,7 +29,7 @@ public interface UserAuthSpec {
 
     @Operation(summary = "소셜회원가입 및 로그인을 수행하고 토큰을 발행합니다.")
     @ApiErrorCodeExamples({
-            ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_USER_INFO_FAILED, ErrorCode.TOKEN_DECODE_ERROR,
+            ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_USER_INFO_FAILED, ErrorCode.APPLE_TOKEN_DECODE_ERROR,
             ErrorCode.APPLE_FEIGN_CALL_FAILED, ErrorCode.INTERNAL_SERVER_ERROR
     })
     @Parameters({

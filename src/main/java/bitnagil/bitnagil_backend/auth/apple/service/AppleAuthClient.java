@@ -31,6 +31,7 @@ public interface AppleAuthClient {
     String revoke(
             @RequestParam("client_id") String clientId,
             @RequestParam("client_secret") String clientSecret,
-            @RequestParam("token") String refreshToken
+            @RequestParam("token") String refreshToken,
+            @RequestParam("token_type_hint") String tokenTypeHint
     );
 }
