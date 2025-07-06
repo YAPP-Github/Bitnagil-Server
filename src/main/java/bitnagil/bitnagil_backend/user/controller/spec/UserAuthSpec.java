@@ -30,7 +30,7 @@ public interface UserAuthSpec {
     @Operation(summary = "소셜회원가입 및 로그인을 수행하고 토큰을 발행합니다.")
     @ApiErrorCodeExamples({
             ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_USER_INFO_FAILED, ErrorCode.APPLE_TOKEN_DECODE_ERROR,
-            ErrorCode.APPLE_FEIGN_CALL_FAILED, ErrorCode.INTERNAL_SERVER_ERROR
+            ErrorCode.APPLE_FEIGN_CALL_FAILED, ErrorCode.INTERNAL_SERVER_ERROR, ErrorCode.APPLE_UNLINK_PENDING
     })
     @Parameters({
             @Parameter(name = "SocialAccessToken", description = "소셜로그인 플랫폼에서 발급해준 access token 입니다.(Bearer를 붙히지 않습니다.)", required = true,
