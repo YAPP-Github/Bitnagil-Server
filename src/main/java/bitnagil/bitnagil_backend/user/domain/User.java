@@ -11,8 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,13 +48,28 @@ public class User extends BaseTimeEntity {
 
     private String refreshToken; // 애플의 경우 탈퇴를 위한 필수값
 
+    private Boolean agreedToTermsOfService; // 서비스 이용약관 동의
+    private Boolean agreedToPrivacyPolicy; // 개인정보 수집 동의
+    private Boolean isOverFourteen; // 14세 이상 여부
+
     @Builder
-    public User(SocialType socialType, String socialId, Role role, String email, String nickname, String refreshToken) {
+    public User(SocialType socialType, String socialId, Role role, String email, String nickname, String refreshToken,
+                Boolean agreedToTermsOfService, Boolean agreedToPrivacyPolicy, Boolean isOverFourteen) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.role = role;
         this.email = email;
         this.nickname = nickname;
         this.refreshToken = refreshToken;
+        this.agreedToTermsOfService = agreedToTermsOfService;
+        this.agreedToPrivacyPolicy = agreedToPrivacyPolicy;
+        this.isOverFourteen = isOverFourteen;
+    }
+
+    public void updateAgreements(Boolean agreedToTermsOfService, Boolean agreedToPrivacyPolicy, Boolean isOverFourteen) {
+        this.agreedToTermsOfService = agreedToTermsOfService;
+        this.agreedToPrivacyPolicy = agreedToPrivacyPolicy;
+        this.isOverFourteen = isOverFourteen;
+        this.role = Role.USER; // 약관 동의 후 권한을 USER로 변경
     }
 }

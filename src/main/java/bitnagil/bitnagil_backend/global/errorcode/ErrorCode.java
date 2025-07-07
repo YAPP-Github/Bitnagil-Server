@@ -37,6 +37,9 @@ public enum ErrorCode {
     INACTIVE_USER("US000", HttpStatus.FORBIDDEN, "사용할 수 없는 사용자입니다."),
     NOT_FOUND_USER("US001", HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
 
+    // User 인증 관련 에러 코드
+    AGREEMENT_NOT_ACCEPTED("UA000", HttpStatus.BAD_REQUEST, "필수 약관에 모두 동의해야 서비스를 이용할 수 있습니다."),
+
     // 소셜 공통 에러 코드
     UNSUPPORTED_SOCIAL_TYPE("SO000", HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 타입입니다."),
 
