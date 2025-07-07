@@ -63,7 +63,7 @@ public class OAuth2Attribute {
         return User.builder()
             .socialType(socialType)
             .socialId(socialId)
-            .role(Role.USER)
+            .role(Role.GUEST)
             .build();
     }
 }

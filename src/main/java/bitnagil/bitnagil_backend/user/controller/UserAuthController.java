@@ -1,16 +1,15 @@
 package bitnagil.bitnagil_backend.user.controller;
 
+import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
 import org.springframework.web.bind.annotation.*;
 
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
-import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.user.controller.spec.UserAuthSpec;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.service.UserAuthService;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -52,4 +51,13 @@ public class UserAuthController implements UserAuthSpec {
 
         return CustomResponseDto.from(null);
     }
+
+    // 약관 동의 api
+    @PostMapping("/agreements")
+    public CustomResponseDto<Void> agreements(@RequestBody UserAgreementsRequest userAgreementsRequest,
+                                              @CurrentUser User user) {
+        userAuthService.agreements(userAgreementsRequest, user);
+        return CustomResponseDto.from(null);
+    }
+
 }

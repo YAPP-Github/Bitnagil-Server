@@ -1,13 +1,9 @@
 package bitnagil.bitnagil_backend.user.controller.spec;
 
+import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
-import bitnagil.bitnagil_backend.enums.SocialType;
-import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExample;
@@ -19,7 +15,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 유저 인증 API 스펙 정의
@@ -63,4 +58,10 @@ public interface UserAuthSpec {
             ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_UNLINK_FAILED, ErrorCode.APPLE_FEIGN_CALL_FAILED
     })
     CustomResponseDto<Object> withdrawal(User user);
+
+    @Operation(summary = "유저가 최초 회원가입 시 약관 동의를 처리합니다.")
+    @ApiErrorCodeExamples({
+            ErrorCode.NOT_FOUND_USER, ErrorCode.AGREEMENT_NOT_ACCEPTED
+    })
+    CustomResponseDto<Void> agreements(UserAgreementsRequest userAgreementsRequest, User user);
 }

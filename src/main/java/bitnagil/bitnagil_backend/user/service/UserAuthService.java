@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.user.service;
 
+import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +48,7 @@ public class UserAuthService {
 
         Token token = jwtProvider.generateToken(user.getUserId());
 
-        return TokenResponse.of(token);
+        return TokenResponse.of(token, user.getRole());
     }
 
     // refreshToken으로 accessToken 재발행
@@ -93,6 +94,25 @@ public class UserAuthService {
         // TODO soft delete 범위에 대해 추후 논의 후 적용
 
         unlinkFromSocial(user);
+    }
+
+    // 약관 동의 - 회원의 ROLE을 USER로 업데이트
+    @Transactional
+    public void agreements(UserAgreementsRequest userAgreeMentsRequest, User user) {
+        // 약관 동의 시 ROLE을 USER로 변경 및 동의 여부 업데이트
+        User findUser = userRepository.findById(user.getUserId()).orElseGet(() -> {
+            throw new CustomException(ErrorCode.NOT_FOUND_USER);
+        });
+
+        if(userAgreeMentsRequest.getAgreedToTermsOfService() == false ||
+            userAgreeMentsRequest.getAgreedToPrivacyPolicy() == false ||
+            userAgreeMentsRequest.getIsOverFourteen() == false) {
+            throw new CustomException(ErrorCode.AGREEMENT_NOT_ACCEPTED);
+        }
+
+        findUser.updateAgreements(userAgreeMentsRequest.getAgreedToTermsOfService(),
+                                  userAgreeMentsRequest.getAgreedToPrivacyPolicy(),
+                                  userAgreeMentsRequest.getIsOverFourteen());
     }
 
     // kakao, apple 서버에 회원 정보를 요청하고, UserAuthInfo에 매핑
@@ -150,7 +170,7 @@ public class UserAuthService {
         User user = User.builder()
             .socialType(socialType)
             .socialId(userAuthInfo.getSocialId())
-            .role(Role.USER)
+            .role(Role.GUEST) // 최초 가입 시 GUEST로 설정
             .email(userAuthInfo.getEmail())
             .nickname(nickname)
             .refreshToken(userAuthInfo.getRefreshToken()) // 애플 로그인의 경우만 세팅
