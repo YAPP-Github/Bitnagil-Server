@@ -53,7 +53,10 @@ public enum ErrorCode {
     KAKAO_USER_INFO_FAILED("KA001", HttpStatus.BAD_REQUEST, "카카오 회원정보 조회 API 호출에 실패했습니다."),
     KAKAO_LOGOUT_FAILED("KA002", HttpStatus.UNAUTHORIZED, "카카오 로그아웃 API 호출에 실패했습니다."),
     KAKAO_UNLINK_FAILED("KA003", HttpStatus.FORBIDDEN, "카카오 회원탈퇴 API 호출에 실패했습니다."),
-    KAKAO_FEIGN_CALL_FAILED("KA004", HttpStatus.BAD_GATEWAY, "카카오 서버 Feign Client 호출에 실패했습니다.")
+    KAKAO_FEIGN_CALL_FAILED("KA004", HttpStatus.BAD_GATEWAY, "카카오 서버 Feign Client 호출에 실패했습니다."),
+
+    // 루틴 관련 에러 코드
+    ROUTINE_ALREADY_EXISTS("RT001", HttpStatus.CONFLICT, "같은 이름의 루틴이 이미 존재합니다.")
     ;
 
 
