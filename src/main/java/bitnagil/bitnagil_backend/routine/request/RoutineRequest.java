@@ -1,9 +1,9 @@
 package bitnagil.bitnagil_backend.routine.request;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
-import bitnagil.bitnagil_backend.enums.DayOfWeek;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

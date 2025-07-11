@@ -1,10 +1,10 @@
 package bitnagil.bitnagil_backend.routine.domain;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import bitnagil.bitnagil_backend.enums.DayOfWeek;
 import bitnagil.bitnagil_backend.routine.request.RoutineRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.Convert;
