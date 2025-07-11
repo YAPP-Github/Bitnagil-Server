@@ -24,6 +24,7 @@ import jakarta.persistence.Converter;
 @Converter
 public class DayOfWeekConverter implements AttributeConverter<List<DayOfWeek>, String> {
 
+    // DB에 저장하기 위해 List 타입을 String 타입으로 변환
     @Override
     public String convertToDatabaseColumn(List<DayOfWeek> attribute) {
         if (attribute == null || attribute.isEmpty()) return "";
@@ -32,6 +33,7 @@ public class DayOfWeekConverter implements AttributeConverter<List<DayOfWeek>, S
             .collect(Collectors.joining(","));
     }
 
+    // 코드레벨에서 사용하기 위해 String 타입에서 List 타입으로 변환
     @Override
     public List<DayOfWeek> convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isEmpty()) return List.of();

@@ -54,10 +54,4 @@ public class RoutineService {
             subRoutineRepository.save(subRoutine);
         }
     }
-
-    /**
-     * 루틴을 수정할 때 어떻게 수정하게 할 것인가?
-     * 수정 가능한 범위는 루틴, 세부루틴인데 클라이언트에서 어떻게 줄 수 있을까?
-     * 변경할 필드만 해서 보낸다.
-     */
 }
