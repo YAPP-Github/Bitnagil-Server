@@ -27,7 +27,8 @@ public class RoutineRequest {
     private List<DayOfWeek> daysOfWeek;
 
     @Schema(description = "루틴 시작 시간입니다.",
-            example = "08:15:00")
+            example = "08:15:00",
+            required = true)
     @NotNull
     private LocalTime executionTime;
 
