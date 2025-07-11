@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class RoutineRequest {
 
     @Schema(description = "루틴 이름입니다.",
+            example = "아침 준비",
             required = true)
     @NotNull
     private String routineName;
@@ -25,7 +26,8 @@ public class RoutineRequest {
     @NotNull
     private List<DayOfWeek> daysOfWeek;
 
-    @Schema(description = "루틴 시작 시간입니다.")
+    @Schema(description = "루틴 시작 시간입니다.",
+            example = "08:15:00")
     @NotNull
     private LocalTime executionTime;
 
