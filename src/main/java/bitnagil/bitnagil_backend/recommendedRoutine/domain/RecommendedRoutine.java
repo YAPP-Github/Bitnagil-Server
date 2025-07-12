@@ -29,7 +29,11 @@ public class RecommendedRoutine {
     @Column(columnDefinition = "varchar(40)")
     private RecommendedRoutineType recommendedRoutineType; // 추천 루틴 타입 (분류에 해당)
 
-    private LocalTime time; // 시간;
+    private LocalTime time; // 시간
+
+    /**
+     * 추천 루틴의 반복 요일은 코드레벨에서 설정한다.
+     */
 
     private String recommendedRoutineDescription; // 추천 루틴 설명(목적에 해당)
 

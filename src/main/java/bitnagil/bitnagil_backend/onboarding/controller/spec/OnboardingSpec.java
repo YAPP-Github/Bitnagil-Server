@@ -15,7 +15,7 @@ public interface OnboardingSpec {
 
     @Operation(summary = "온보딩을 수행하고, 추천 루틴을 응답받습니다.")
     @ApiErrorCodeExamples({
-            ErrorCode.NOT_FOUND_USER
+            ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE
     })
     public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest onboardingRequest, User user);
 }
