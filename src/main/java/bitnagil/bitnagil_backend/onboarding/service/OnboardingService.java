@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.onboarding.service;
 
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_backend.onboarding.repository.OnboardingRepository;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
@@ -27,7 +28,7 @@ public class OnboardingService {
     private final UserRepository userRepository;
     private final RecommendedRoutineRepository recommendRoutineRepository;
 
-    public OnboardingResponse startOnboarding(OnboardingRequest onboardingRequest, User user) {
+    public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest onboardingRequest, User user) {
         // 요청에 알맞는 Onboarding 객체를 찾는다.
         Onboarding onboarding = onboardingRepository.findByTimeSlotAndEmotionTypeAndRealOutingFrequencyAndTargetOutingFrequency(
                 onboardingRequest.getTimeSlot(),
@@ -75,6 +76,6 @@ public class OnboardingService {
         OnboardingResponse response = OnboardingResponse.builder()
                 .recommendedRoutines(recommendedRoutineDtoList)
                 .build();
-        return response;
+        return CustomResponseDto.from(response);
     }
 }

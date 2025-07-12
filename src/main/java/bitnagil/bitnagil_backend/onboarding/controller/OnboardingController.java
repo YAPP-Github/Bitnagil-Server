@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.onboarding.controller;
 
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
+import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.onboarding.controller.spec.OnboardingSpec;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
 import bitnagil.bitnagil_backend.onboarding.response.OnboardingResponse;
@@ -20,8 +21,8 @@ public class OnboardingController implements OnboardingSpec {
     private final OnboardingService onboardingService;
 
     @PostMapping()
-    public OnboardingResponse startOnboarding(@RequestBody OnboardingRequest onboardingRequest,
-                                              @CurrentUser User user) {
+    public CustomResponseDto<OnboardingResponse> startOnboarding(@RequestBody OnboardingRequest onboardingRequest,
+                                                                @CurrentUser User user) {
         return onboardingService.startOnboarding(onboardingRequest, user);
     }
 

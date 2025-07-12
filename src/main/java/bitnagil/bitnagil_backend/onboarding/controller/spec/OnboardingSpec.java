@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.onboarding.controller.spec;
 
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
@@ -16,5 +17,5 @@ public interface OnboardingSpec {
     @ApiErrorCodeExamples({
             ErrorCode.NOT_FOUND_USER
     })
-    public OnboardingResponse startOnboarding(OnboardingRequest onboardingRequest, User user);
+    public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest onboardingRequest, User user);
 }
