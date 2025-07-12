@@ -1,0 +1,13 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=0e789e62184849b3c0e64b56a0eb4c83&redirect_uri=http://localhost:3000/oauth/kakao/callback
+### 카카오 토큰 요청
+POST https://kauth.kakao.com/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+client_id=0e789e62184849b3c0e64b56a0eb4c83&
+redirect_uri=http://localhost:3000/oauth/kakao/callback&
+code=4DZkeTLpg-_MMf5h_c7ZEQGA-QwRZQsyqcs_ni2cakqRrxv9gIR7LwAAAAQKFzVXAAABl_zkayKoblpFv_zasg
