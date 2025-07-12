@@ -24,12 +24,9 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * 소셜 로그인 인증을 처리하는 서비스 클래스입니다.
- *
- * 추후 Apple 로그인이 추가될 예정
  */
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserAuthService {
 
     private final JwtProvider jwtProvider;
