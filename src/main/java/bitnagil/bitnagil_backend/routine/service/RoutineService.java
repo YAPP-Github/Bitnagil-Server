@@ -38,7 +38,7 @@ public class RoutineService {
     private Routine saveRoutine(User user, RoutineRequest routineRequest) {
         Routine routine = Routine.builder()
             .name(routineRequest.getRoutineName())
-            .repeatDay(routineRequest.getDaysOfWeek())
+            .repeatDay(routineRequest.getRepeatDay())
             .executionTime(routineRequest.getExecutionTime())
             .historyStartDate(LocalDateTime.now())
             .historyEndDate(TimeUtils.END_DATE_TIME)

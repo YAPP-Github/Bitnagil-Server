@@ -24,7 +24,7 @@ public class RoutineRequest {
             example = "[\"MONDAY\", \"FRIDAY\"]",
             required = true)
     @NotNull
-    private List<DayOfWeek> daysOfWeek;
+    private List<DayOfWeek> repeatDay;
 
     @Schema(description = "루틴 시작 시간입니다.",
             example = "08:15:00",
