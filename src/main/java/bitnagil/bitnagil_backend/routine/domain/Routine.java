@@ -2,11 +2,11 @@ package bitnagil.bitnagil_backend.routine.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
-import bitnagil.bitnagil_backend.routine.request.RoutineRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -15,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -47,10 +46,10 @@ public class Routine {
     private LocalTime executionTime;
 
     @NotNull
-    private LocalDate startDate;
+    private LocalDateTime historyStartDate;
 
     @NotNull
-    private LocalDate endDate;
+    private LocalDateTime historyEndDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -58,14 +57,14 @@ public class Routine {
     private User user;
 
     @Builder
-    public Routine(String name, List<DayOfWeek> repeatDay, LocalTime executionTime, LocalDate startDate,
-        LocalDate endDate,
+    public Routine(String name, List<DayOfWeek> repeatDay, LocalTime executionTime, LocalDateTime historyStartDate,
+        LocalDateTime historyEndDate,
         User user) {
         this.name = name;
         this.repeatDay = repeatDay;
         this.executionTime = executionTime;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.historyStartDate = historyStartDate;
+        this.historyEndDate = historyEndDate;
         this.user = user;
     }
 }

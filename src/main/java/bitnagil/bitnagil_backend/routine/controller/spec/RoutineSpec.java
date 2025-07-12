@@ -14,6 +14,5 @@ public interface RoutineSpec {
 
     @Operation(summary = "루틴 및 서브 루틴을 등록합니다.",
         description = "루틴에 대한 이름만 중복 검증을 수행합니다. (서브 루틴X)")
-    @ApiErrorCodeExample(ErrorCode.ROUTINE_ALREADY_EXISTS)
     CustomResponseDto<Object> createRoutine(User user, RoutineRequest routineRequest);
 }

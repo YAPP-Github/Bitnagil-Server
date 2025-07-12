@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.routine.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;
@@ -22,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RoutineService {
-    public static final LocalDate END_DATE = LocalDate.of(2099, 12, 31);
 
     private final RoutineRepository routineRepository;
     private final SubRoutineRepository subRoutineRepository;
@@ -39,8 +40,8 @@ public class RoutineService {
             .name(routineRequest.getRoutineName())
             .repeatDay(routineRequest.getDaysOfWeek())
             .executionTime(routineRequest.getExecutionTime())
-            .startDate(LocalDate.now())
-            .endDate(END_DATE)
+            .historyStartDate(LocalDateTime.now())
+            .historyEndDate(TimeUtils.END_DATE_TIME)
             .user(user)
             .build();
 
@@ -51,8 +52,8 @@ public class RoutineService {
         for (String subRoutineName : routineRequest.getSubRoutineName()) {
             SubRoutine subRoutine = SubRoutine.builder()
                 .name(subRoutineName)
-                .startDate(LocalDate.now())
-                .endDate(END_DATE)
+                .historyStartDate(LocalDateTime.now())
+                .historyEndDate(TimeUtils.END_DATE_TIME)
                 .routine(routine)
                 .build();
 

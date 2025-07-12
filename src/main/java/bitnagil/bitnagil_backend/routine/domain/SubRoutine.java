@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.routine.domain;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,10 +34,10 @@ public class SubRoutine {
     private String name;
 
     @NotNull
-    private LocalDate startDate;
+    private LocalDateTime historyStartDate;
 
     @NotNull
-    private LocalDate endDate;
+    private LocalDateTime historyEndDate;
 
     @ManyToOne
     @JoinColumn(name = "routine_id")
@@ -45,10 +45,10 @@ public class SubRoutine {
     private Routine routine;
 
     @Builder
-    public SubRoutine(String name, LocalDate startDate, LocalDate endDate, Routine routine) {
+    public SubRoutine(String name, LocalDateTime historyStartDate, LocalDateTime historyEndDate, Routine routine) {
         this.name = name;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.historyStartDate = historyStartDate;
+        this.historyEndDate = historyEndDate;
         this.routine = routine;
     }
 }
