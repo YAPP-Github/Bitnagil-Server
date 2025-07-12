@@ -23,5 +23,5 @@ public class RecommendedRoutineDto {
     // 추천 루틴 난이도
 
     // 추천 루틴 상세 정보
-    List<RecommendedSubRoutineDto> recommendedRoutineDetails;
+    List<RecommendedSubRoutineDto> recommendedSubRoutines;
 }

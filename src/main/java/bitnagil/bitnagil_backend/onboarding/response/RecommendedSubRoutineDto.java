@@ -12,7 +12,7 @@ import lombok.Getter;
 @Builder
 public class RecommendedSubRoutineDto {
     // 추천 루틴 상세 ID
-    private Long recommendedRoutineDetailId;
+    private Long recommendedSubRoutineId;
     // 추천 루틴 상세 이름
-    private String recommendedRoutineDetailName;
+    private String recommendedSubRoutineName;
 }
