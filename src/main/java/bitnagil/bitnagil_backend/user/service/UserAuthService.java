@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
  */
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserAuthService {
 
     private final JwtProvider jwtProvider;
