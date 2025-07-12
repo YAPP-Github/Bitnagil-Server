@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.domain;
 
+import bitnagil.bitnagil_backend.global.BaseTimeEntity;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
 import bitnagil.bitnagil_backend.onboarding.domain.enums.EmotionType;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.Emotion;
@@ -17,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RecommendedRoutine {
+public class RecommendedRoutine extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

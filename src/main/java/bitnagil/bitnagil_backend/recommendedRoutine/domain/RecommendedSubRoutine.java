@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.domain;
 
+import bitnagil.bitnagil_backend.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RecommendedSubRoutine {
+public class RecommendedSubRoutine extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recommendedSubRoutineId;
 
-    private String routineDetailName;
+    private String subRoutineName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommended_routine_id")
