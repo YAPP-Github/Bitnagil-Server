@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "subRoutine")
 public class SubRoutine {
 
     @Id

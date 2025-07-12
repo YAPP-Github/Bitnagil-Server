@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.routine.request.RoutineRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.Convert;
@@ -29,7 +30,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "routine")
 public class Routine {
 
     @Id
