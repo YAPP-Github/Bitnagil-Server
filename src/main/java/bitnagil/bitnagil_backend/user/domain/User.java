@@ -3,14 +3,8 @@ package bitnagil.bitnagil_backend.user.domain;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,13 +24,14 @@ public class User extends BaseTimeEntity {
     private Long userId;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(40)")
     private SocialType socialType;
 
     @Column(nullable = false)
     private String socialId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(40)", nullable = false)
     private Role role;
 
     @Column(nullable = false)
@@ -50,6 +45,10 @@ public class User extends BaseTimeEntity {
     private Boolean agreedToTermsOfService; // 서비스 이용약관 동의
     private Boolean agreedToPrivacyPolicy; // 개인정보 수집 동의
     private Boolean isOverFourteen; // 14세 이상 여부
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "onboarding_id")
+    private Onboarding onboarding;
 
     @Builder
     public User(SocialType socialType, String socialId, Role role, String email, String nickname, String refreshToken,
@@ -70,5 +69,9 @@ public class User extends BaseTimeEntity {
         this.agreedToPrivacyPolicy = agreedToPrivacyPolicy;
         this.isOverFourteen = isOverFourteen;
         this.role = Role.USER; // 약관 동의 후 권한을 USER로 변경
+    }
+
+    public void updateOnboarding(Onboarding onboarding) {
+        this.onboarding = onboarding;
     }
 }

@@ -7,9 +7,6 @@ import bitnagil.bitnagil_backend.global.response.ErrorResponseDto;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -18,10 +15,8 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
@@ -43,10 +38,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Object> handleCustomException(final CustomException e) {
-        log.error("CustomException 발생 - code: {}, message: {}", e.getErrorCode(), e.getMessage(), e);
+        log.error("CustomException 발생 - errorName: {}, code: {}, status: {}, message: {}", e.getErrorCode(), e.getErrorCode().getCode(), e.getErrorCode().getHttpStatus(), e.getErrorCode().getMessage());
         final ErrorCode errorCode = e.getErrorCode();
         sendSlackMessage(e, errorCode);
-        return handleExceptionInternal(errorCode, e);
+        return handleExceptionInternal(errorCode);
     }
 
     /**
@@ -198,7 +193,7 @@ public class GlobalExceptionHandler {
      */
     private void sendSlackMessage(Exception e, ErrorCode errorCode) {
         HashMap<String, String> messageMap = new HashMap<>();
-        messageMap.put("에러 로그", e.getMessage());
+        messageMap.put("에러 로그", e.getMessage() != null ? e.getMessage() : errorCode.getMessage());
         String title = "에러 코드: " + errorCode.getCode() + "\n"
                 + "상태 코드: " + errorCode.getHttpStatus().value() + "\n"
                 + "메시지: " + errorCode.getMessage();

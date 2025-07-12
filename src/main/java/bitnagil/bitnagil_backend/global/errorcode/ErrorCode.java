@@ -56,8 +56,12 @@ public enum ErrorCode {
     KAKAO_FEIGN_CALL_FAILED("KA004", HttpStatus.BAD_GATEWAY, "카카오 서버 Feign Client 호출에 실패했습니다."),
 
     // 루틴 관련 에러 코드
-    ROUTINE_ALREADY_EXISTS("RT001", HttpStatus.CONFLICT, "같은 이름의 루틴이 이미 존재합니다.")
+    ROUTINE_ALREADY_EXISTS("RT001", HttpStatus.CONFLICT, "같은 이름의 루틴이 이미 존재합니다."),
+
+    // 온보딩 관련 에러 코드
+    NOT_FOUND_RECOMMENDED_ROUTINE("ON000", HttpStatus.NOT_FOUND, "조건에 맞는 추천 루틴을 찾을 수 없습니다."),
     ;
+
 
 
 
