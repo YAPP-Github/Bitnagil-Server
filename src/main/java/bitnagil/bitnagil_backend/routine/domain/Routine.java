@@ -68,15 +68,4 @@ public class Routine {
         this.endDate = endDate;
         this.user = user;
     }
-
-    public static Routine createRoutine(User user, RoutineRequest request, LocalDate endDate) {
-        return Routine.builder()
-            .name(request.getRoutineName())
-            .repeatDay(request.getDaysOfWeek())
-            .executionTime(request.getExecutionTime())
-            .startDate(LocalDate.now())
-            .endDate(endDate)
-            .user(user)
-            .build();
-    }
 }

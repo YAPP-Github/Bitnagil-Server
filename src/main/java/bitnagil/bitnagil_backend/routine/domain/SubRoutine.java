@@ -51,13 +51,4 @@ public class SubRoutine {
         this.endDate = endDate;
         this.routine = routine;
     }
-
-    public static SubRoutine createSubRoutine(String name, Routine routine, LocalDate endDate) {
-        return SubRoutine.builder()
-            .name(name)
-            .startDate(LocalDate.now())
-            .endDate(endDate)
-            .routine(routine)
-            .build();
-    }
 }

@@ -30,27 +30,32 @@ public class RoutineService {
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
     public void registerRoutine(User user, RoutineRequest routineRequest) {
-        checkDuplicateRoutineName(routineRequest);
-
         Routine routine = saveRoutine(user, routineRequest);
         saveSubRoutine(routineRequest, routine);
     }
 
-    private void checkDuplicateRoutineName(RoutineRequest routineRequest) {
-        if (routineRepository.existsByName(routineRequest.getRoutineName())) {
-            throw new CustomException(ErrorCode.ROUTINE_ALREADY_EXISTS);
-        }
-    }
-
     private Routine saveRoutine(User user, RoutineRequest routineRequest) {
-        Routine routine = Routine.createRoutine(user, routineRequest, END_DATE);
-        routineRepository.save(routine);
-        return routine;
+        Routine routine = Routine.builder()
+            .name(routineRequest.getRoutineName())
+            .repeatDay(routineRequest.getDaysOfWeek())
+            .executionTime(routineRequest.getExecutionTime())
+            .startDate(LocalDate.now())
+            .endDate(END_DATE)
+            .user(user)
+            .build();
+
+        return routineRepository.save(routine);
     }
 
     private void saveSubRoutine(RoutineRequest routineRequest, Routine routine) {
         for (String subRoutineName : routineRequest.getSubRoutineName()) {
-            SubRoutine subRoutine = SubRoutine.createSubRoutine(subRoutineName, routine, END_DATE);
+            SubRoutine subRoutine = SubRoutine.builder()
+                .name(subRoutineName)
+                .startDate(LocalDate.now())
+                .endDate(END_DATE)
+                .routine(routine)
+                .build();
+
             subRoutineRepository.save(subRoutine);
         }
     }
