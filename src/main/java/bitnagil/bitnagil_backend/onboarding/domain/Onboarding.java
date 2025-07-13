@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.onboarding.domain;
 
+import bitnagil.bitnagil_backend.global.BaseTimeEntity;
 import bitnagil.bitnagil_backend.onboarding.domain.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Onboarding {
+public class Onboarding extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

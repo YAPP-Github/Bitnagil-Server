@@ -4,6 +4,7 @@ import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.onboarding.controller.spec.OnboardingSpec;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
+import bitnagil.bitnagil_backend.onboarding.request.RegistrationRoutinesRequest;
 import bitnagil.bitnagil_backend.onboarding.response.OnboardingResponse;
 import bitnagil.bitnagil_backend.onboarding.service.OnboardingService;
 import bitnagil.bitnagil_backend.user.domain.User;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/onboarding")
+@RequestMapping(value = "/api/v1/onboardings")
 public class OnboardingController implements OnboardingSpec {
 
     private final OnboardingService onboardingService;
@@ -26,4 +27,10 @@ public class OnboardingController implements OnboardingSpec {
         return onboardingService.startOnboarding(onboardingRequest, user);
     }
 
+    @PostMapping("/routines")
+    public CustomResponseDto<Object> registrationRoutines(@RequestBody RegistrationRoutinesRequest registrationRoutinesRequest,
+                                                        @CurrentUser User user) {
+        onboardingService.registrationRoutines(registrationRoutinesRequest, user);
+        return CustomResponseDto.from(null);
+    }
 }
