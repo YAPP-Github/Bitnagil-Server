@@ -25,6 +25,6 @@ public interface OnboardingSpec {
     @ApiErrorCodeExamples({
             ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE
     })
-    public CustomResponseDto<Null> registrationRoutines(RegistrationRoutinesRequest registrationRoutinesRequest,
+    public CustomResponseDto<Object> registrationRoutines(RegistrationRoutinesRequest registrationRoutinesRequest,
                                                         User user);
 }

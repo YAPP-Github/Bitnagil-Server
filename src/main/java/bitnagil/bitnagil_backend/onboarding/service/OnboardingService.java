@@ -99,7 +99,7 @@ public class OnboardingService {
      * 온보딩 시 추천 등록을 저장하는 메서드
      */
     @Transactional
-    public CustomResponseDto<Null> registrationRoutines(RegistrationRoutinesRequest request, User user) {
+    public void registrationRoutines(RegistrationRoutinesRequest request, User user) {
         // 요청에 알맞는 User 객체를 찾는다.
         user = userRepository.findById(user.getUserId()).orElseGet(() -> {
             throw new CustomException(ErrorCode.NOT_FOUND_USER);
@@ -143,6 +143,5 @@ public class OnboardingService {
 
         changedRoutineRepository.saveAll(changedRoutineList);
         changedSubRoutineRepository.saveAll(changedSubRoutineList);
-        return CustomResponseDto.from(null);
     }
 }
