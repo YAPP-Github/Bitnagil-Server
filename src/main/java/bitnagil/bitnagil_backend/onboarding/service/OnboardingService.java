@@ -20,7 +20,6 @@ import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,13 +43,13 @@ public class OnboardingService {
      * 유저와 매칭되는 온보딩 결과를 설정하고, 리턴하는 메서드
      */
     @Transactional
-    public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest onboardingRequest, User user) {
+    public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest request, User user) {
         // 요청에 알맞는 Onboarding 객체를 찾는다.
         Onboarding onboarding = onboardingRepository.findByTimeSlotAndEmotionTypeAndRealOutingFrequencyAndTargetOutingFrequency(
-                onboardingRequest.getTimeSlot(),
-                onboardingRequest.getEmotionType(),
-                onboardingRequest.getRealOutingFrequency(),
-                onboardingRequest.getTargetOutingFrequency()
+                request.getTimeSlot(),
+                request.getEmotionType(),
+                request.getRealOutingFrequency(),
+                request.getTargetOutingFrequency()
         );
 
         // 회원은 온보딩과의 연관관계를 설정한다.
@@ -100,10 +99,6 @@ public class OnboardingService {
      */
     @Transactional
     public void registrationRoutines(RegistrationRoutinesRequest request, User user) {
-        // 요청에 알맞는 User 객체를 찾는다.
-        user = userRepository.findById(user.getUserId()).orElseGet(() -> {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER);
-        });
 
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
