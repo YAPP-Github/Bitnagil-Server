@@ -1,6 +1,5 @@
 package bitnagil.bitnagil_backend.routine.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -12,13 +11,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;
 import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
-import bitnagil.bitnagil_backend.routine.request.RoutineRequest;
+import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 
 class RoutineServiceTest {
@@ -41,13 +38,13 @@ class RoutineServiceTest {
     public void registerRoutine_Success() {
         // given
         User user = mock(User.class);
-        RoutineRequest routineRequest = mock(RoutineRequest.class);
+        RegisterRoutineRequest registerRoutineRequest = mock(RegisterRoutineRequest.class);
 
-        when(routineRequest.getRoutineName()).thenReturn("Morning Routine");
-        when(routineRequest.getSubRoutineName()).thenReturn(List.of("손 씻기", "양치하기", "세수하기"));
+        when(registerRoutineRequest.getRoutineName()).thenReturn("Morning Routine");
+        when(registerRoutineRequest.getSubRoutineName()).thenReturn(List.of("손 씻기", "양치하기", "세수하기"));
 
         // when
-        routineService.registerRoutine(user, routineRequest);
+        routineService.registerRoutine(user, registerRoutineRequest);
 
         // then
         verify(routineRepository).save(any(Routine.class));
