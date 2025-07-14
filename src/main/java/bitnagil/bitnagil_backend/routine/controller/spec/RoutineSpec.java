@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routine.controller.spec;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
@@ -23,4 +24,8 @@ public interface RoutineSpec {
     @Operation(summary = "루틴 및 서브 루틴을 수정합니다.")
     @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED})
     CustomResponseDto<Object> updateRoutine(User user, UpdateRoutineRequest updateRoutineRequest);
+
+    @Operation(summary = "루틴 및 서브 루틴을 모두 삭제합니다.")
+    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED})
+    CustomResponseDto<Object> deleteRoutine(@CurrentUser User user, @PathVariable Long routineId);
 }

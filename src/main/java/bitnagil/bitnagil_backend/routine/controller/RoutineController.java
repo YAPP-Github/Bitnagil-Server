@@ -1,6 +1,8 @@
 package bitnagil.bitnagil_backend.routine.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.routine.controller.spec.RoutineSpec;
+import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.routine.service.RoutineService;
@@ -34,6 +37,13 @@ public class RoutineController implements RoutineSpec {
     public CustomResponseDto<Object> updateRoutine(@CurrentUser User user,
         @RequestBody UpdateRoutineRequest updateRoutineRequest) {
         routineService.updateRoutine(user, updateRoutineRequest);
+
+        return CustomResponseDto.from(null);
+    }
+
+    @DeleteMapping("/{routineId}")
+    public CustomResponseDto<Object> deleteRoutine(@CurrentUser User user, @PathVariable Long routineId) {
+        routineService.deleteRoutine(user, routineId);
 
         return CustomResponseDto.from(null);
     }
