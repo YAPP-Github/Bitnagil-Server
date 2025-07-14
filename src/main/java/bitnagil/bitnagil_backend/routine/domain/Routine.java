@@ -1,7 +1,6 @@
 package bitnagil.bitnagil_backend.routine.domain;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -70,7 +69,7 @@ public class Routine extends BaseTimeEntity {
         this.user = user;
     }
 
-    public void updateHistory(LocalDateTime updateDateTime) {
+    public void updateHistoryEndDate(LocalDateTime updateDateTime) {
         this.historyEndDate = updateDateTime;
     }
 }

@@ -1,7 +1,6 @@
 package bitnagil.bitnagil_backend.routine.domain;
 
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import bitnagil.bitnagil_backend.global.BaseTimeEntity;
@@ -54,7 +53,7 @@ public class SubRoutine extends BaseTimeEntity {
         this.routine = routine;
     }
 
-    public void updateHistory(LocalDateTime updateDateTime) {
+    public void updateHistoryEndDate(LocalDateTime updateDateTime) {
         this.historyEndDate = updateDateTime;
     }
 }
