@@ -74,4 +74,18 @@ public class User extends BaseTimeEntity {
     public void updateOnboarding(Onboarding onboarding) {
         this.onboarding = onboarding;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        // userId가 null이면 동등하지 않다고 판단
+        return userId != null && userId.equals(user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return userId != null ? userId.hashCode() : 0;
+    }
 }
