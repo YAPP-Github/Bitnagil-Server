@@ -39,26 +39,40 @@ public class RoutineService {
     // 루틴, 세부 루틴을 수정하는 메서드
     @Transactional
     public void updateRoutine(User user, UpdateRoutineRequest request) {
-        // 요청 루틴 ID가 유저가 가지고 있는지 검증
-        Routine routine = routineRepository.findById(request.getRoutineId()).orElseThrow(
-            () -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
-        if (user.equals(routine.getUser())) {
-            throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
-        }
+        Routine routine = validateRoutineOwnership(request.getRoutineId(), user);
 
-        // 기존 루틴의 이력 종료일시를 갱신합니다.
-        routine.updateHistory(LocalDateTime.now());
-
-        // 기존 서브 루틴의 이력 종료일시를 갱신합니다.
-        List<SubRoutine> subRoutines = subRoutineRepository.findByRoutine(routine);
-        for (SubRoutine subRoutine : subRoutines) {
-            subRoutine.updateHistory(LocalDateTime.now());
-        }
+        // 기존 루틴, 서브 루틴의 이력 종료일시를 갱신합니다.
+        routine.updateHistoryEndDate(TimeUtils.CURRENT_DATE_TIME);
+        subRoutineRepository.findByRoutine(routine)
+            .forEach(subRoutine -> subRoutine.updateHistoryEndDate(TimeUtils.CURRENT_DATE_TIME));
 
         // 변경된 루틴, 세부루틴에 대한 새로운 ROW 추가
         Routine updateRoutine = saveRoutine(user, request);
         saveSubRoutine(request.getSubRoutineName(), updateRoutine);
+    }
+
+    // 루틴, 세부 루틴을 삭제하는 메서드
+    @Transactional
+    public void deleteRoutine(User user, Long routineId) {
+        Routine routine = validateRoutineOwnership(routineId, user);
+
+        // 기존 루틴, 서브 루틴의 이력 종료일시를 갱신합니다.
+        routine.updateHistoryEndDate(TimeUtils.CURRENT_DATE_TIME);
+        subRoutineRepository.findByRoutine(routine)
+            .forEach(subRoutine -> subRoutine.updateHistoryEndDate(TimeUtils.CURRENT_DATE_TIME));
+    }
+
+    // 요청 루틴 ID가 유저가 등록한 루틴인지 검증하는 메서드
+    private Routine validateRoutineOwnership(Long routineId, User user) {
+        Routine routine = routineRepository.findById(routineId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+        if (!user.equals(routine.getUser())) {
+            throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
+        }
+
+        return routine;
     }
 
     // 루틴을 등록할 때, 수정할 때 모두 사용되는 루틴 저장 메서드
@@ -67,7 +81,7 @@ public class RoutineService {
             .name(request.getRoutineName())
             .repeatDay(request.getRepeatDay())
             .executionTime(request.getExecutionTime())
-            .historyStartDate(LocalDateTime.now())
+            .historyStartDate(TimeUtils.CURRENT_DATE_TIME)
             .historyEndDate(TimeUtils.END_DATE_TIME)
             .user(user)
             .build();
@@ -79,7 +93,7 @@ public class RoutineService {
         for (String subRoutineName : subRoutineNames) {
             SubRoutine subRoutine = SubRoutine.builder()
                 .name(subRoutineName)
-                .historyStartDate(LocalDateTime.now())
+                .historyStartDate(TimeUtils.CURRENT_DATE_TIME)
                 .historyEndDate(TimeUtils.END_DATE_TIME)
                 .routine(routine)
                 .build();
