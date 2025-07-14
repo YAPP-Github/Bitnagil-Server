@@ -11,28 +11,32 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "루틴 등록 및 수정 요청 DTO")
-public class RoutineRequest {
+@Schema(description = "루틴 수정 요청 DTO")
+public class UpdateRoutineRequest implements RoutineRequestBase {
 
-    @Schema(description = "루틴 이름입니다.",
-            example = "아침 준비",
+    @Schema(description = "루틴 ID 값입니다.",
+            example = "1",
             required = true)
     @NotNull
+    private Long routineId;
+
+    @Schema(description = "루틴 이름입니다.",
+            example = "모닝 루틴",
+            required = true)
     private String routineName;
 
     @Schema(description = "반복 요일에 대한 리스트입니다.",
-            example = "[\"MONDAY\", \"FRIDAY\"]",
+            example = "[\"MONDAY\", \"WEDNESDAY\", \"FRIDAY\"]",
             required = true)
-    @NotNull
     private List<DayOfWeek> repeatDay;
 
     @Schema(description = "루틴 시작 시간입니다.",
-            example = "08:15:00",
+            example = "07:30:00",
             required = true)
-    @NotNull
     private LocalTime executionTime;
 
     @Schema(description = "세부 루틴 이름에 대한 리스트입니다.",
-            example = "[\"손 씻기\", \"세수 하기\", \"양치 하기\"]")
+            example = "[\"손 씻기\", \"침대 정리하기\", \"양치 하기\"]",
+            required = true)
     private List<String> subRoutineName;
 }
