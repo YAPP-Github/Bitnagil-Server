@@ -4,7 +4,9 @@ package bitnagil.bitnagil_backend.routine.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import bitnagil.bitnagil_backend.global.BaseTimeEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class SubRoutine {
+public class SubRoutine extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +41,7 @@ public class SubRoutine {
     @NotNull
     private LocalDateTime historyEndDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id")
     @NotNull
     private Routine routine;
@@ -50,5 +52,9 @@ public class SubRoutine {
         this.historyStartDate = historyStartDate;
         this.historyEndDate = historyEndDate;
         this.routine = routine;
+    }
+
+    public void updateHistory(LocalDateTime updateDateTime) {
+        this.historyEndDate = updateDateTime;
     }
 }

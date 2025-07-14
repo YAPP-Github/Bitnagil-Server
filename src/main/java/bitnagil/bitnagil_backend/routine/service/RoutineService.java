@@ -1,9 +1,8 @@
 package bitnagil.bitnagil_backend.routine.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,9 @@ import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;
 import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
-import bitnagil.bitnagil_backend.routine.request.RoutineRequest;
+import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
+import bitnagil.bitnagil_backend.routine.request.RoutineRequestBase;
+import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
@@ -30,16 +31,42 @@ public class RoutineService {
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
-    public void registerRoutine(User user, RoutineRequest routineRequest) {
-        Routine routine = saveRoutine(user, routineRequest);
-        saveSubRoutine(routineRequest, routine);
+    public void registerRoutine(User user, RegisterRoutineRequest request) {
+        Routine routine = saveRoutine(user, request);
+        saveSubRoutine(request.getSubRoutineName(), routine);
     }
 
-    private Routine saveRoutine(User user, RoutineRequest routineRequest) {
+    // 루틴, 세부 루틴을 수정하는 메서드
+    @Transactional
+    public void updateRoutine(User user, UpdateRoutineRequest request) {
+        // 요청 루틴 ID가 유저가 가지고 있는지 검증
+        Routine routine = routineRepository.findById(request.getRoutineId()).orElseThrow(
+            () -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+        if (user.equals(routine.getUser())) {
+            throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
+        }
+
+        // 기존 루틴의 이력 종료일시를 갱신합니다.
+        routine.updateHistory(LocalDateTime.now());
+
+        // 기존 서브 루틴의 이력 종료일시를 갱신합니다.
+        List<SubRoutine> subRoutines = subRoutineRepository.findByRoutine(routine);
+        for (SubRoutine subRoutine : subRoutines) {
+            subRoutine.updateHistory(LocalDateTime.now());
+        }
+
+        // 변경된 루틴, 세부루틴에 대한 새로운 ROW 추가
+        Routine updateRoutine = saveRoutine(user, request);
+        saveSubRoutine(request.getSubRoutineName(), updateRoutine);
+    }
+
+    // 루틴을 등록할 때, 수정할 때 모두 사용되는 루틴 저장 메서드
+    private Routine saveRoutine(User user, RoutineRequestBase request) {
         Routine routine = Routine.builder()
-            .name(routineRequest.getRoutineName())
-            .repeatDay(routineRequest.getRepeatDay())
-            .executionTime(routineRequest.getExecutionTime())
+            .name(request.getRoutineName())
+            .repeatDay(request.getRepeatDay())
+            .executionTime(request.getExecutionTime())
             .historyStartDate(LocalDateTime.now())
             .historyEndDate(TimeUtils.END_DATE_TIME)
             .user(user)
@@ -48,8 +75,8 @@ public class RoutineService {
         return routineRepository.save(routine);
     }
 
-    private void saveSubRoutine(RoutineRequest routineRequest, Routine routine) {
-        for (String subRoutineName : routineRequest.getSubRoutineName()) {
+    private void saveSubRoutine(List<String> subRoutineNames, Routine routine) {
+        for (String subRoutineName : subRoutineNames) {
             SubRoutine subRoutine = SubRoutine.builder()
                 .name(subRoutineName)
                 .historyStartDate(LocalDateTime.now())

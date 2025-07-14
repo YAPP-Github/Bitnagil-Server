@@ -6,10 +6,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import bitnagil.bitnagil_backend.global.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,7 +31,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Routine {
+public class Routine extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +53,7 @@ public class Routine {
     @NotNull
     private LocalDateTime historyEndDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;
@@ -66,5 +68,9 @@ public class Routine {
         this.historyStartDate = historyStartDate;
         this.historyEndDate = historyEndDate;
         this.user = user;
+    }
+
+    public void updateHistory(LocalDateTime updateDateTime) {
+        this.historyEndDate = updateDateTime;
     }
 }
