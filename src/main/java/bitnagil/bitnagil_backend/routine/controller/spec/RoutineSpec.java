@@ -22,7 +22,8 @@ public interface RoutineSpec {
     CustomResponseDto<Object> registerRoutine(User user, RegisterRoutineRequest registerRoutineRequest);
 
     @Operation(summary = "루틴 및 서브 루틴을 수정합니다.")
-    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED})
+    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.NOT_FOUND_SUB_ROUTINE,
+        ErrorCode.ROUTINE_USER_NOT_MATCHED})
     CustomResponseDto<Object> updateRoutine(User user, UpdateRoutineRequest updateRoutineRequest);
 
     @Operation(summary = "루틴 및 서브 루틴을 모두 삭제합니다.")
