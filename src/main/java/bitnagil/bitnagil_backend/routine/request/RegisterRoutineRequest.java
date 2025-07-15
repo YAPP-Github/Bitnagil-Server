@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Schema(description = "루틴 등록 요청 DTO")
-public class RegisterRoutineRequest implements RoutineRequestBase {
+public class RegisterRoutineRequest {
 
     @Schema(description = "루틴 이름입니다.",
             example = "아침 준비",
