@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.changedRoutine.domain;
 
+import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.global.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
@@ -46,6 +47,10 @@ public class ChangedRoutine extends BaseTimeEntity {
     @NotNull
     private LocalDateTime historyEndDate; // 이력 종료일시
 
+    @Enumerated
+    @Column(columnDefinition = "varchar(40)")
+    private ChangedDivCode changedDivCode; // 변경 구분 코드 (시간 변경, 내일 미루기, 오늘만 루틴 삭제 등)
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotNull
@@ -58,13 +63,14 @@ public class ChangedRoutine extends BaseTimeEntity {
     @Builder
     public ChangedRoutine(String changedRoutineName, LocalTime changedExecutionTime, LocalDate originalRoutineDate,
                           LocalDate changedRoutineDate, LocalDateTime historyStartDate, LocalDateTime historyEndDate,
-                          User user, Routine routine) {
+                          ChangedDivCode changedDivCode, User user, Routine routine) {
         this.changedRoutineName = changedRoutineName;
         this.changedExecutionTime = changedExecutionTime;
         this.originalRoutineDate = originalRoutineDate;
         this.changedRoutineDate = changedRoutineDate;
         this.historyStartDate = historyStartDate;
         this.historyEndDate = historyEndDate;
+        this.changedDivCode = changedDivCode;
         this.user = user;
         this.routine = routine;
     }
