@@ -1,14 +1,25 @@
 package bitnagil.bitnagil_backend.routine.service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
+import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
+import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
+import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
+import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
+import bitnagil.bitnagil_backend.routine.request.RoutineSearchRequest;
+import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
+import bitnagil.bitnagil_backend.routine.response.RoutineSearchResultDto;
+import bitnagil.bitnagil_backend.routine.response.SubRoutineSearchResultDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
@@ -27,12 +38,23 @@ public class RoutineService {
 
     private final RoutineRepository routineRepository;
     private final SubRoutineRepository subRoutineRepository;
+    private final ChangedRoutineRepository changedRoutineRepository;
+    private final ChangedSubRoutineRepository changedSubRoutineRepository;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
     public void registerRoutine(User user, RoutineRequest routineRequest) {
         Routine routine = saveRoutine(user, routineRequest);
         saveSubRoutine(routineRequest, routine);
+    }
+
+    /**
+     * 회원이 보유한 특정 기간(start_date, end_date)의 루틴을 조회하는 메서드입니다.
+     */
+    @Transactional(readOnly = true)
+    public RoutineSearchResponse getRoutines(User user, RoutineSearchRequest routineSearchRequest) {
+        queryRoutines(user, routineSearchRequest.getStartDate(), routineSearchRequest.getEndDate());
+        return null;
     }
 
     private Routine saveRoutine(User user, RoutineRequest routineRequest) {
@@ -59,5 +81,116 @@ public class RoutineService {
 
             subRoutineRepository.save(subRoutine);
         }
+    }
+
+    /**
+     * 특정 기간(startDate ~ endDate)의 루틴을 조회하는 메서드
+     * 루틴과 변경 루틴에 대한 조회를 통해 조회시 변경분에 대한 부분을 반영한다.
+     */
+    private RoutineSearchResponse queryRoutines(User user, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime now = LocalDateTime.now();
+
+        // 루틴 테이블의 살아있는 이력을 모두 조회한다.
+        List<Routine> routines = routineRepository.findByUserAndHistoryStartDateBeforeAndHistoryEndDateGreaterThanEqual(
+                user, now, now
+        );
+
+        // 변경 루틴 테이블의 변경된 루틴 날짜가 startDate ~ endDate인 살아있는 이력을 모두 조회한다.
+        List<ChangedRoutine> changedRoutines = changedRoutineRepository.findByUserAndHistoryStartDateBeforeAndHistoryEndDateGreaterThanEqualAndChangedRoutineDateBetween(
+                user, now, now, startDate, endDate
+        );
+
+        // 루틴을 날짜별로 묶어서 반환할 Map을 날짜별로 초기화 해놓는다.
+        Map<LocalDate, List<RoutineSearchResultDto>> routinesByDateResponse = new HashMap<>();
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            routinesByDateResponse.put(date, new ArrayList<>());
+        }
+
+        // 날짜 루프: startDate ~ endDate(date 변수가 현재 날짜)
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            DayOfWeek currentDayOfWeek = date.getDayOfWeek(); // 현재 날짜의 요일
+            for (Routine routine : routines) {
+                List<DayOfWeek> repeatDays = routine.getRepeatDay();
+
+                // 루틴의 반복요일이 현재 날짜의 요일과 일치하는지 확인(일치하는 경우에만 해당 날짜에 루틴을 담는다.)
+                if (repeatDays.contains(currentDayOfWeek)) {
+
+                    // 현재 루틴의 ID를 FK로 가지는 서브루틴 조회
+                    List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineAndHistoryStartDateBeforeAndHistoryEndDateGreaterThanEqual(
+                            routine, now, now
+                    );
+
+                    // 서브루틴 List DTO 생성
+                    List<SubRoutineSearchResultDto> subRoutineSearchResultList = new ArrayList<>();
+                    for (SubRoutine subRoutine : subRoutines) {
+                        SubRoutineSearchResultDto subRoutineSearchResultDto = SubRoutineSearchResultDto.builder()
+                                .subRoutineId(subRoutine.getSubRoutineId())
+                                .subRoutineName(subRoutine.getName())
+                                .build();
+                        subRoutineSearchResultList.add(subRoutineSearchResultDto);
+                    }
+
+                    // todo: 완료여부 추가
+                    RoutineSearchResultDto routineSearchResultDto = RoutineSearchResultDto.builder()
+                            .routineId(routine.getRoutineId())
+                            .routineName(routine.getName())
+                            .executionTime(routine.getExecutionTime())
+                            .subRoutineSearchResultDto(subRoutineSearchResultList) // 서브루틴은 나중에 추가
+                            .modifiedYn(false) // 기존의 반복 루틴은 수정 여부가 false
+                            .build();
+                    routinesByDateResponse.get(date).add(routineSearchResultDto); // map에 현재날짜에 해당하는 루틴을 담는다.
+
+                    // 변경루틴을 확인해서 만약 방금 담은 루틴이 변경된 루틴이라면(삭제, 미루기, 변경 등)
+                    for (ChangedRoutine changedRoutine : changedRoutines) {
+                        // 변경루틴의 원본 날짜가 현재 날짜에 해당하고, 현재 루틴의 ID와 변경 루틴의 원본 루틴 ID가 일치하는 경우
+                        if (date.isEqual(changedRoutine.getOriginalRoutineDate()) &&
+                                routine.getRoutineId().equals(changedRoutine.getRoutine().getRoutineId())) {
+                            // 변경 루틴의 구분코드를 보니 삭제인 경우에는 방금 담은 루틴을 지운다.
+                            if (changedRoutine.getChangedDivCode() == ChangedDivCode.TODAY_DELETE) {
+                                routinesByDateResponse.get(date).remove(routineSearchResultDto);
+                                break; // 변경된 루틴이 삭제인 경우에는 더 이상 확인할 필요가 없으므로 루프를 빠져나온다.
+                            } else { // 변경된 루틴인 경우 원본 루틴 대신 변경 루틴을 담는다.
+                                routinesByDateResponse.get(date).remove(routineSearchResultDto);
+
+                                // 현재 변경루틴의 ID를 FK로 가지는 변경서브루틴 조회
+                                List<ChangedSubRoutine> changedSubRoutines = changedSubRoutineRepository.findByChangedRoutineAndHistoryStartDateBeforeAndHistoryEndDateGreaterThanEqual(
+                                        changedRoutine, now, now
+                                );
+
+                                // 변경 서브루틴 List DTO 생성
+                                List<SubRoutineSearchResultDto> changedSubRoutineSearchResultList = new ArrayList<>();
+                                for (ChangedSubRoutine changedSubRoutine : changedSubRoutines) {
+                                    SubRoutineSearchResultDto changedSubRoutineSearchResultDto = SubRoutineSearchResultDto.builder()
+                                            .subRoutineId(changedSubRoutine.getChangedSubRoutineId())
+                                            .subRoutineName(changedSubRoutine.getChangedSubRoutineName())
+                                            .build();
+                                    changedSubRoutineSearchResultList.add(changedSubRoutineSearchResultDto);
+                                }
+
+                                // todo: 완료여부 추가
+                                RoutineSearchResultDto changedRoutineSearchResultDto = RoutineSearchResultDto.builder()
+                                        // 원본 루틴 id를 담아야할지 변경 루틴 id를 담아야할지 고민(화면에서 해당 루틴 수정할때, 해당 루틴이 변경루틴인지 아직 변경안된건지를 구분해서 요청해야할거 같아서..)
+                                        .routineId(changedRoutine.getChangedRoutineId())
+//                                        .hisseq()
+                                        .routineName(changedRoutine.getChangedRoutineName())
+                                        .executionTime(changedRoutine.getChangedExecutionTime())
+                                        .subRoutineSearchResultDto(changedSubRoutineSearchResultList) // 서브루틴은 나중에 추가
+                                        .modifiedYn(true) // 변경 루틴은 수정 여부가 true
+                                        .build();
+                                routinesByDateResponse.get(changedRoutine.getChangedRoutineDate()).add(changedRoutineSearchResultDto);
+                                break; // 변경된 루틴이 있는 경우에는 더 이상 확인할 필요가 없으므로 루프를 빠져나온다.
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 루틴(대분류)는 실행 시간순으로 정렬한다.
+            for(LocalDate key: routinesByDateResponse.keySet()) {
+                routinesByDateResponse.get(key).sort((a, b)
+                        -> a.getExecutionTime().compareTo(b.getExecutionTime()));
+            }
+        }
+        return RoutineSearchResponse.builder().routines(routinesByDateResponse).build();
     }
 }
