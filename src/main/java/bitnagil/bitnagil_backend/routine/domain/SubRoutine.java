@@ -2,15 +2,14 @@ package bitnagil.bitnagil_backend.routine.domain;
 
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-import bitnagil.bitnagil_backend.global.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,33 +26,33 @@ import lombok.NoArgsConstructor;
 @Entity
 public class SubRoutine extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long subRoutineId;
+    @EmbeddedId
+    @AttributeOverride(name = "id", column=@Column(name = "sub_routine_id"))
+    private HistoryPk subRoutinePk;
 
     @NotNull
     private String name;
 
     @NotNull
-    private LocalDateTime historyStartDate;
+    private LocalDateTime historyStartDateTime;
 
     @NotNull
-    private LocalDateTime historyEndDate;
+    private LocalDateTime historyEndDateTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routine_id")
     @NotNull
-    private Routine routine;
+    private UUID routineId;
 
     @Builder
-    public SubRoutine(String name, LocalDateTime historyStartDate, LocalDateTime historyEndDate, Routine routine) {
+    public SubRoutine(HistoryPk subRoutinePk, String name, LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime,
+        UUID routineId) {
+        this.subRoutinePk = subRoutinePk;
         this.name = name;
-        this.historyStartDate = historyStartDate;
-        this.historyEndDate = historyEndDate;
-        this.routine = routine;
+        this.historyStartDateTime = historyStartDateTime;
+        this.historyEndDateTime = historyEndDateTime;
+        this.routineId = routineId;
     }
 
     public void updateHistoryEndDate(LocalDateTime updateDateTime) {
-        this.historyEndDate = updateDateTime;
+        this.historyEndDateTime = updateDateTime;
     }
 }

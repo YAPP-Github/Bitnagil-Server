@@ -5,15 +5,17 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import bitnagil.bitnagil_backend.global.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.user.domain.User;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
@@ -32,9 +34,12 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Routine extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long routineId;
+    @EmbeddedId
+    @AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = "routine_id")),
+        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
+    })
+    private HistoryPk routinePk;
 
     @NotNull
     private String name;
@@ -47,10 +52,10 @@ public class Routine extends BaseTimeEntity {
     private LocalTime executionTime;
 
     @NotNull
-    private LocalDateTime historyStartDate;
+    private LocalDateTime historyStartDateTime;
 
     @NotNull
-    private LocalDateTime historyEndDate;
+    private LocalDateTime historyEndDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -58,18 +63,18 @@ public class Routine extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Routine(String name, List<DayOfWeek> repeatDay, LocalTime executionTime, LocalDateTime historyStartDate,
-        LocalDateTime historyEndDate,
-        User user) {
+    public Routine(HistoryPk routinePk, String name, List<DayOfWeek> repeatDay, LocalTime executionTime,
+        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, User user) {
+        this.routinePk = routinePk;
         this.name = name;
         this.repeatDay = repeatDay;
         this.executionTime = executionTime;
-        this.historyStartDate = historyStartDate;
-        this.historyEndDate = historyEndDate;
+        this.historyStartDateTime = historyStartDateTime;
+        this.historyEndDateTime = historyEndDateTime;
         this.user = user;
     }
 
     public void updateHistoryEndDate(LocalDateTime updateDateTime) {
-        this.historyEndDate = updateDateTime;
+        this.historyEndDateTime = updateDateTime;
     }
 }
