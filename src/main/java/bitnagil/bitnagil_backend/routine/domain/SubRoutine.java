@@ -7,6 +7,7 @@ import java.util.UUID;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -27,7 +28,10 @@ import lombok.NoArgsConstructor;
 public class SubRoutine extends BaseTimeEntity {
 
     @EmbeddedId
-    @AttributeOverride(name = "id", column=@Column(name = "sub_routine_id"))
+    @AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = "sub_routine_id")),
+        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
+    })
     private HistoryPk subRoutinePk;
 
     @NotNull

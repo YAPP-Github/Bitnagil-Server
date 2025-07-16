@@ -60,7 +60,7 @@ public class ChangedRoutine extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name = "routine_id", referencedColumnName = "routine_id"),
-        @JoinColumn(name = "routine_historySeq", referencedColumnName = "history_seq")
+        @JoinColumn(name = "routine_history_seq", referencedColumnName = "history_seq")
     })
     private Routine routine; // 원본 루틴
 
