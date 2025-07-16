@@ -32,6 +32,7 @@ public class RoutineService {
     private final SubRoutineRepository subRoutineRepository;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
+    @Transactional
     public void registerRoutine(User user, RegisterRoutineRequest request) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         Routine routine = saveRoutine(user, request, currentDateTime);
@@ -55,7 +56,7 @@ public class RoutineService {
         for (SubRoutineInfo subRoutineInfo : request.getSubRoutineInfos()) {
 
             SubRoutine previousSubRoutine = subRoutineRepository
-                .findBySubRoutinePk_IdAndHistoryStartDateTimeLessThanEqualAndHistoryEndDateTimeGreaterThanEqual(
+                .findBySubRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
                     subRoutineInfo.getSubRoutineId(), currentDateTime, currentDateTime)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
 
@@ -141,7 +142,7 @@ public class RoutineService {
     private Routine validateRoutineOwnership(UUID routineId, User user, LocalDateTime currentDateTime) {
 
         Routine routine = routineRepository
-            .findByRoutinePk_IdAndHistoryStartDateTimeLessThanEqualAndHistoryEndDateTimeGreaterThanEqual(
+            .findByRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
                 routineId, currentDateTime, currentDateTime)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
