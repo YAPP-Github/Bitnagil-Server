@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.onboarding.domain;
 
-import bitnagil.bitnagil_backend.global.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.onboarding.domain.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

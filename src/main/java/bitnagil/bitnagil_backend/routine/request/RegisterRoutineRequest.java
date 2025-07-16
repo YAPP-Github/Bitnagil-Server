@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "루틴 등록 및 수정 요청 DTO")
-public class RoutineRequest {
+@Schema(description = "루틴 등록 요청 DTO")
+public class RegisterRoutineRequest {
 
     @Schema(description = "루틴 이름입니다.",
             example = "아침 준비",
@@ -23,7 +23,6 @@ public class RoutineRequest {
     @Schema(description = "반복 요일에 대한 리스트입니다.",
             example = "[\"MONDAY\", \"FRIDAY\"]",
             required = true)
-    @NotNull
     private List<DayOfWeek> repeatDay;
 
     @Schema(description = "루틴 시작 시간입니다.",
