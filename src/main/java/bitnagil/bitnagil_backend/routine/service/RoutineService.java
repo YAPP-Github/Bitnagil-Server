@@ -144,7 +144,7 @@ public class RoutineService {
                 routineId, currentDateTime, currentDateTime)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
-        if (!user.getUserId().equals(routine.getUser().getUserId())) {
+        if (!user.getUserPk().equals(routine.getUser().getUserPk())) {
             throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
         }
 

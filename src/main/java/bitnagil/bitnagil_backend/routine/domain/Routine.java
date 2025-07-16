@@ -17,6 +17,7 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -58,7 +59,10 @@ public class Routine extends BaseTimeEntity {
     private LocalDateTime historyEndDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumns({
+        @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+        @JoinColumn(name = "user_history_seq", referencedColumnName = "history_seq")
+    })
     @NotNull
     private User user;
 
