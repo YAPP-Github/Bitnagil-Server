@@ -43,11 +43,11 @@ public class RoutineService {
     public void updateRoutine(User user, UpdateRoutineRequest request) {
         LocalDateTime currentDateTime = LocalDateTime.now();
 
-        Routine previousRoutine = validateRoutineOwnership(request, user, currentDateTime);
+        Routine previousRoutine = validateRoutineOwnership(request.getRoutineId(), user, currentDateTime);
 
         if (hasRoutineChanged(request, previousRoutine))  {
 
-            previousRoutine.updateHistoryEndDate(currentDateTime);
+            previousRoutine.updateHistoryEndDateTime(currentDateTime);
             addUpdatedRoutine(user, request, previousRoutine, currentDateTime);
         }
 
@@ -59,12 +59,32 @@ public class RoutineService {
                     subRoutineInfo.getSubRoutineId(), currentDateTime, currentDateTime)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
 
+            // 갱신할 서브 루틴명이 null이면 해당 서브 루틴을 삭제
+            if (subRoutineInfo.getSubRoutineName() == null) {
+                previousSubRoutine.updateHistoryEndDateTime(currentDateTime);
+                continue;
+            }
+
             if (!subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName())) {
 
-                previousSubRoutine.updateHistoryEndDate(currentDateTime);
+                previousSubRoutine.updateHistoryEndDateTime(currentDateTime);
                 addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine, currentDateTime);
             }
         }
+    }
+
+    // 루틴, 세부 루틴을 삭제하는 메서드
+    @Transactional
+    public void deleteRoutine(User user, UUID routineId) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        Routine routine = validateRoutineOwnership(routineId, user, currentDateTime);
+
+        // 기존 루틴, 서브 루틴의 이력 종료일시를 갱신합니다.
+        routine.updateHistoryEndDateTime(currentDateTime);
+
+        subRoutineRepository.findByRoutineId(routineId)
+            .forEach(subRoutine -> subRoutine.updateHistoryEndDateTime(currentDateTime));
     }
 
     // 갱신된 서브루틴을 SubRoutine 테이블에 새로운 Row 추가
@@ -116,25 +136,12 @@ public class RoutineService {
             !previousRoutine.getExecutionTime().equals(request.getExecutionTime());
     }
 
-    // 루틴, 세부 루틴을 삭제하는 메서드
-    // @Transactional
-    // public void deleteRoutine(User user, Long routineId) {
-    //     LocalDateTime currentDateTime = LocalDateTime.now();
-    //
-    //     Routine routine = validateRoutineOwnership(routineId, user);
-    //
-    //     // 기존 루틴, 서브 루틴의 이력 종료일시를 갱신합니다.
-    //     routine.updateHistoryEndDate(TimeUtils.CURRENT_DATE_TIME);
-    //     subRoutineRepository.findByRoutine(routine)
-    //         .forEach(subRoutine -> subRoutine.updateHistoryEndDate(TimeUtils.CURRENT_DATE_TIME));
-    // }
-
     // 요청 루틴 ID가 유저가 등록한 루틴인지 검증하는 메서드
-    private Routine validateRoutineOwnership(UpdateRoutineRequest request, User user, LocalDateTime currentDateTime) {
+    private Routine validateRoutineOwnership(UUID routineId, User user, LocalDateTime currentDateTime) {
 
         Routine routine = routineRepository
             .findByRoutinePk_IdAndHistoryStartDateTimeLessThanEqualAndHistoryEndDateTimeGreaterThanEqual(
-                request.getRoutineId(), currentDateTime, currentDateTime)
+                routineId, currentDateTime, currentDateTime)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
         if (!user.getUserId().equals(routine.getUser().getUserId())) {
