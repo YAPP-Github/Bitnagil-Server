@@ -53,7 +53,7 @@ public class SubRoutine extends BaseTimeEntity {
     }
 
     // 이전 서브루틴의 이력 종료일시 갱신
-    public void updateHistoryEndDate(LocalDateTime updateDateTime) {
+    public void updateHistoryEndDateTime(LocalDateTime updateDateTime) {
         this.historyEndDateTime = updateDateTime;
     }
 }

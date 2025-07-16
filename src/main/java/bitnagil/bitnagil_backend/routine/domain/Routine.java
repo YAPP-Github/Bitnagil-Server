@@ -75,7 +75,7 @@ public class Routine extends BaseTimeEntity {
     }
 
     // 이전 루틴의 이력 종료일시를 갱신
-    public void updateHistoryEndDate(LocalDateTime updateDateTime) {
+    public void updateHistoryEndDateTime(LocalDateTime updateDateTime) {
         this.historyEndDateTime = updateDateTime;
     }
 }
