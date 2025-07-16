@@ -25,7 +25,6 @@ import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -161,7 +160,10 @@ public class UserAuthService {
 
     // 소셜 로그인 - 신규 유저는 DB 등록
     private User signUpOrLogin(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
-        return userRepository.findBySocialTypeAndSocialId(socialType, userAuthInfo.getSocialId())
+        LocalDateTime now = LocalDateTime.now();
+
+        return userRepository.findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
+            socialType, userAuthInfo.getSocialId(), now, now)
             .orElseGet(() -> saveUser(socialType, nickname, userAuthInfo));
     }
 
