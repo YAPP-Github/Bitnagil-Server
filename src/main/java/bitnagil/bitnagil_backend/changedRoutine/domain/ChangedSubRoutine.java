@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.changedRoutine.domain;
 
-import bitnagil.bitnagil_backend.global.BaseTimeEntity;
-import bitnagil.bitnagil_backend.routine.domain.Routine;
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -16,30 +16,29 @@ import java.time.LocalDateTime;
 @Entity
 public class ChangedSubRoutine extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long changedSubRoutineId;
+    @EmbeddedId
+    @AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = "changed_sub_routine_id")),
+        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
+    })
+    private HistoryPk changedSubRoutinePk;
 
     @NotNull
     private String changedSubRoutineName;
 
     @NotNull
-    private LocalDateTime historyStartDate;
+    private LocalDateTime historyStartDateTime;
 
     @NotNull
-    private LocalDateTime historyEndDate;
+    private LocalDateTime historyEndDateTime;
 
-    @ManyToOne
-    @JoinColumn(name = "changed_routine_id")
-    @NotNull
-    private ChangedRoutine changedRoutine;
 
     @Builder
-    public ChangedSubRoutine(String changedSubRoutineName, LocalDateTime historyStartDate, LocalDateTime historyEndDate,
-                             ChangedRoutine changedRoutine) {
+    public ChangedSubRoutine(HistoryPk changedSubRoutinePk, String changedSubRoutineName,
+        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime) {
+        this.changedSubRoutinePk = changedSubRoutinePk;
         this.changedSubRoutineName = changedSubRoutineName;
-        this.historyStartDate = historyStartDate;
-        this.historyEndDate = historyEndDate;
-        this.changedRoutine = changedRoutine;
+        this.historyStartDateTime = historyStartDateTime;
+        this.historyEndDateTime = historyEndDateTime;
     }
 }

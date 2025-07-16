@@ -25,9 +25,12 @@ import java.time.LocalTime;
 @Entity
 public class ChangedRoutine extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long changedRoutineId;
+    @EmbeddedId
+    @AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = "changed_routine_id")),
+        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
+    })
+    private HistoryPk changedRoutinePk;
 
     @NotNull
     private String changedRoutineName; // 변경된 루틴 이름
@@ -42,34 +45,41 @@ public class ChangedRoutine extends BaseTimeEntity {
     private LocalDate changedRoutineDate; // 변경된 루틴 날짜(실제 루틴이 실행될 날짜)
 
     @NotNull
-    private LocalDateTime historyStartDate; // 이력 시작일시
+    private LocalDateTime historyStartDateTime; // 이력 시작일시
 
     @NotNull
-    private LocalDateTime historyEndDate; // 이력 종료일시
+    private LocalDateTime historyEndDateTime; // 이력 종료일시
 
     @Enumerated
     @Column(columnDefinition = "varchar(40)")
     private ChangedDivCode changedDivCode; // 변경 구분 코드 (시간 변경, 내일 미루기, 오늘만 루틴 삭제 등)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumns({
+        @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+        @JoinColumn(name = "user_history_seq", referencedColumnName = "history_seq")
+    })
     @NotNull
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routine_id")
+    @JoinColumns({
+        @JoinColumn(name = "routine_id", referencedColumnName = "routine_id"),
+        @JoinColumn(name = "routine_history_seq", referencedColumnName = "history_seq")
+    })
     private Routine routine; // 원본 루틴
 
     @Builder
-    public ChangedRoutine(String changedRoutineName, LocalTime changedExecutionTime, LocalDate originalRoutineDate,
-                          LocalDate changedRoutineDate, LocalDateTime historyStartDate, LocalDateTime historyEndDate,
-                          ChangedDivCode changedDivCode, User user, Routine routine) {
+    public ChangedRoutine(HistoryPk changedRoutinePk, String changedRoutineName, LocalTime changedExecutionTime,
+        LocalDate originalRoutineDate, LocalDate changedRoutineDate, LocalDateTime historyStartDateTime,
+        LocalDateTime historyEndDateTime, User user, Routine routine, ChangedDivCode changedDivCode) {
+        this.changedRoutinePk = changedRoutinePk;
         this.changedRoutineName = changedRoutineName;
         this.changedExecutionTime = changedExecutionTime;
         this.originalRoutineDate = originalRoutineDate;
         this.changedRoutineDate = changedRoutineDate;
-        this.historyStartDate = historyStartDate;
-        this.historyEndDate = historyEndDate;
+        this.historyStartDateTime = historyStartDateTime;
+        this.historyEndDateTime = historyEndDateTime;
         this.changedDivCode = changedDivCode;
         this.user = user;
         this.routine = routine;

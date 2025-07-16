@@ -4,6 +4,7 @@ import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
@@ -20,7 +21,6 @@ import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,19 +45,18 @@ public class OnboardingService {
      * 유저와 매칭되는 온보딩 결과를 설정하고, 리턴하는 메서드
      */
     @Transactional
-    public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest onboardingRequest, User user) {
+    public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest request, User user) {
         // 요청에 알맞는 Onboarding 객체를 찾는다.
         Onboarding onboarding = onboardingRepository.findByTimeSlotAndEmotionTypeAndRealOutingFrequencyAndTargetOutingFrequency(
-                onboardingRequest.getTimeSlot(),
-                onboardingRequest.getEmotionType(),
-                onboardingRequest.getRealOutingFrequency(),
-                onboardingRequest.getTargetOutingFrequency()
+                request.getTimeSlot(),
+                request.getEmotionType(),
+                request.getRealOutingFrequency(),
+                request.getTargetOutingFrequency()
         );
 
         // 회원은 온보딩과의 연관관계를 설정한다.
-        user = userRepository.findById(user.getUserId()).orElseGet(() -> {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER);
-        });
+        user = userRepository.findByUserPk(user.getUserPk()).orElseThrow(
+            () -> new CustomException(ErrorCode.NOT_FOUND_USER));
         user.updateOnboarding(onboarding);
 
         // 온보딩의 CASE를 통해 추천루틴을 조회한다.
@@ -99,23 +99,18 @@ public class OnboardingService {
      * 온보딩 시 추천 등록을 저장하는 메서드
      */
     @Transactional
-    public CustomResponseDto<Null> registrationRoutines(RegistrationRoutinesRequest request, User user) {
-        // 요청에 알맞는 User 객체를 찾는다.
-        user = userRepository.findById(user.getUserId()).orElseGet(() -> {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER);
-        });
+    public void registrationRoutines(RegistrationRoutinesRequest request, User user) {
 
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
 
-        List<ChangedRoutine> changedRoutineList = new ArrayList<>(); // 변경 루틴 리스트
-        List<ChangedSubRoutine> changedSubRoutineList = new ArrayList<>(); // 변경 세부 루틴 리스트
+        List<ChangedRoutine> changedRoutines = new ArrayList<>(); // 변경 루틴 리스트
+        List<ChangedSubRoutine> changedSubRoutines = new ArrayList<>(); // 변경 세부 루틴 리스트
 
         for (Long routineId : request.getRecommendedRoutineIds()) {
             // 인자로 전달받은 추천 루틴을 조회한다
-            RecommendedRoutine recommendRoutine = recommendRoutineRepository.findById(routineId).orElseGet(() -> {
-                throw new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE);
-            });
+            RecommendedRoutine recommendRoutine = recommendRoutineRepository.findById(routineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
 
             // 온보딩의 추천 루틴 등록은 반복 루틴이 아닌 당일날만 수행되는 루틴이므로 변경루틴 테이블에 저장한다.
             // 원본 루틴이 존재하지 않으므로 원본 루틴 ID는 null로 설정
@@ -124,25 +119,24 @@ public class OnboardingService {
                     .changedExecutionTime(recommendRoutine.getTime())
                     .originalRoutineDate(today) // 원본 루틴 날짜는 현재 날짜로 설정
                     .changedRoutineDate(today) // 변경된 루틴 날짜도 현재 날짜로 설정
-                    .historyStartDate(now)
-                    .historyEndDate(TimeUtils.END_DATE_TIME)
+                    .historyStartDateTime(now)
+                    .historyEndDateTime(TimeUtils.END_DATE_TIME)
                     .user(user)
                     .build();
-            changedRoutineList.add(changedRoutine);
+            changedRoutines.add(changedRoutine);
 
             List<ChangedSubRoutine> subRoutines = recommendRoutine.getRecommendedSubRoutines().stream()
                     .map(sub -> ChangedSubRoutine.builder()
-                            .changedSubRoutineName(sub.getSubRoutineName())
-                            .changedRoutine(changedRoutine)
-                            .historyStartDate(now)
-                            .historyEndDate(TimeUtils.END_DATE_TIME)
-                            .build())
+                        .changedSubRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
+                        .changedSubRoutineName(sub.getSubRoutineName())
+                        .historyStartDateTime(now)
+                        .historyEndDateTime(TimeUtils.END_DATE_TIME)
+                        .build())
                     .toList();
-            changedSubRoutineList.addAll(subRoutines);
+            changedSubRoutines.addAll(subRoutines);
         }
 
-        changedRoutineRepository.saveAll(changedRoutineList);
-        changedSubRoutineRepository.saveAll(changedSubRoutineList);
-        return CustomResponseDto.from(null);
+        changedRoutineRepository.saveAll(changedRoutines);
+        changedSubRoutineRepository.saveAll(changedSubRoutines);
     }
 }

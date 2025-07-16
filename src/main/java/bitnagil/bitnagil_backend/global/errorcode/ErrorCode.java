@@ -1,8 +1,5 @@
 package bitnagil.bitnagil_backend.global.errorcode;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,7 +32,7 @@ public enum ErrorCode {
 
     // User 관련 에러 코드
     INACTIVE_USER("US000", HttpStatus.FORBIDDEN, "사용할 수 없는 사용자입니다."),
-    NOT_FOUND_USER("US001", HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
+    NOT_FOUND_USER("US001", HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다. (탈퇴 회원 가능성도 있습니다.)"),
 
     // User 인증 관련 에러 코드
     AGREEMENT_NOT_ACCEPTED("UA000", HttpStatus.BAD_REQUEST, "필수 약관에 모두 동의해야 서비스를 이용할 수 있습니다."),
@@ -56,7 +53,11 @@ public enum ErrorCode {
     KAKAO_FEIGN_CALL_FAILED("KA004", HttpStatus.BAD_GATEWAY, "카카오 서버 Feign Client 호출에 실패했습니다."),
 
     // 루틴 관련 에러 코드
-    ROUTINE_ALREADY_EXISTS("RT001", HttpStatus.CONFLICT, "같은 이름의 루틴이 이미 존재합니다."),
+    NOT_FOUND_ROUTINE("RT001", HttpStatus.NOT_FOUND, "존재하지 않는 루틴입니다."),
+    ROUTINE_USER_NOT_MATCHED("RT002", HttpStatus.FORBIDDEN, "루틴의 유저 정보와 로그인 유저 정보가 일치하지 않습니다."),
+
+    // 서브 루틴 관련 에러 코드
+    NOT_FOUND_SUB_ROUTINE("SR001", HttpStatus.NOT_FOUND, "해당 복합 키에 맞는 서브 루틴이 존재하지 않습니다."),
 
     // 온보딩 관련 에러 코드
     NOT_FOUND_RECOMMENDED_ROUTINE("ON000", HttpStatus.NOT_FOUND, "조건에 맞는 추천 루틴을 찾을 수 없습니다."),

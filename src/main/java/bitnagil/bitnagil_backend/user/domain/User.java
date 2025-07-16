@@ -1,10 +1,14 @@
 package bitnagil.bitnagil_backend.user.domain;
 
+import java.time.LocalDateTime;
+
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
-import bitnagil.bitnagil_backend.global.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,9 +23,12 @@ import lombok.NoArgsConstructor;
 @Entity
 public class User extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    @EmbeddedId
+    @AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = "user_id")),
+        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
+    })
+    private HistoryPk userPk;
 
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(40)")
@@ -42,6 +49,12 @@ public class User extends BaseTimeEntity {
 
     private String refreshToken; // 애플의 경우 탈퇴를 위한 필수값
 
+    @NotNull
+    private LocalDateTime historyStartDateTime;
+
+    @NotNull
+    private LocalDateTime historyEndDateTime;
+
     private Boolean agreedToTermsOfService; // 서비스 이용약관 동의
     private Boolean agreedToPrivacyPolicy; // 개인정보 수집 동의
     private Boolean isOverFourteen; // 14세 이상 여부
@@ -51,17 +64,17 @@ public class User extends BaseTimeEntity {
     private Onboarding onboarding;
 
     @Builder
-    public User(SocialType socialType, String socialId, Role role, String email, String nickname, String refreshToken,
-                Boolean agreedToTermsOfService, Boolean agreedToPrivacyPolicy, Boolean isOverFourteen) {
+    public User(HistoryPk userPk, SocialType socialType, String socialId, Role role, String email, String nickname,
+        String refreshToken, LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime) {
+        this.userPk = userPk;
         this.socialType = socialType;
         this.socialId = socialId;
         this.role = role;
         this.email = email;
         this.nickname = nickname;
         this.refreshToken = refreshToken;
-        this.agreedToTermsOfService = agreedToTermsOfService;
-        this.agreedToPrivacyPolicy = agreedToPrivacyPolicy;
-        this.isOverFourteen = isOverFourteen;
+        this.historyStartDateTime = historyStartDateTime;
+        this.historyEndDateTime = historyEndDateTime;
     }
 
     public void updateAgreements(Boolean agreedToTermsOfService, Boolean agreedToPrivacyPolicy, Boolean isOverFourteen) {
@@ -73,5 +86,9 @@ public class User extends BaseTimeEntity {
 
     public void updateOnboarding(Onboarding onboarding) {
         this.onboarding = onboarding;
+    }
+
+    public void updateHistoryEndDateTime(LocalDateTime endDateTime) {
+        this.historyEndDateTime = endDateTime;
     }
 }

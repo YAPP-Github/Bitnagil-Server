@@ -6,6 +6,7 @@ import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -43,17 +45,19 @@ class UserAuthServiceTest {
     @DisplayName("약관 동의 테스트 - 약관 동의를 수행하면 USER의 ROLE이 USER로 변경된다.")
     void whenAgreeToTerms_thenRoleChangesFromGuestToUser(){
         // given
+        UUID uuid = UUID.randomUUID();
+
         User user = User.builder()
-                .socialType(SocialType.APPLE)
-                .role(Role.GUEST) // 초기 ROLE은 GUEST
-                .email("test@naver.com")
-                .nickname("테스트유저")
-                .refreshToken("refreshToken")
-                .build();
-        ReflectionTestUtils.setField(user, "userId", 1L);
+            .userPk(new HistoryPk(uuid, 1L))
+            .socialType(SocialType.APPLE)
+            .role(Role.GUEST) // 초기 ROLE은 GUEST
+            .email("test@naver.com")
+            .nickname("테스트유저")
+            .refreshToken("refreshToken")
+            .build();
 
         UserAgreementsRequest reqeust = new UserAgreementsRequest(true, true, true);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user)); // mocking
+        when(userRepository.findByUserPk(new HistoryPk(uuid, 1L))).thenReturn(Optional.of(user)); // mocking
 
         // when
         userAuthService.agreements(reqeust, user);

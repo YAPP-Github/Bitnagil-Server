@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.auth.kakao.service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.auth.kakao.domain.CustomOAuth2User;
 import bitnagil.bitnagil_backend.auth.kakao.domain.OAuth2Attribute;
+import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.user.domain.User;
@@ -57,7 +60,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         return new CustomOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(createdUser.getRole().getDescription())),
-            attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserId(), createdUser.getRole());
+            attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserPk(), createdUser.getRole());
     }
 
     private String getUserNameAttributeName(final OAuth2UserRequest userRequest) {
@@ -76,7 +79,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private User getMember(OAuth2Attribute attributes, SocialType socialType) {
-        User findUser = userRepository.findBySocialTypeAndSocialId(socialType, attributes.getSocialId()).orElse(null);
+        LocalDateTime now = LocalDateTime.now();
+
+        User findUser = userRepository
+            .findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
+                socialType, attributes.getSocialId(), now, now)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         if (findUser == null) {
             return saveMember(attributes, socialType);
