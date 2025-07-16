@@ -13,5 +13,7 @@ public class SubRoutineSearchResultDto {
     private Long subRoutineId; // 서브 루틴 ID
     @Schema(example = "물 10초만에 마시기")
     private String subRoutineName; // 서브 루틴 이름
+    @Schema(example = "false")
+    private Boolean modifiedYn; // 수정 여부
     // todo: 서브루틴 완료여부 추가
 }
