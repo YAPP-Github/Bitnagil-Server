@@ -32,7 +32,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtProvider {
@@ -144,16 +143,9 @@ public class JwtProvider {
         }
     }
 
-    // accessToken의 만료 시간 조회
-    public Long getExpirationTime(String accessToken) {
-        return parseClaims(accessToken).getExpiration().getTime();
-    }
-
     private Collection<GrantedAuthority> getAuthorities(User user) {
         return Collections.singletonList(
             new SimpleGrantedAuthority("ROLE_" + user.getRole().toString())
         );
     }
-
-
 }
