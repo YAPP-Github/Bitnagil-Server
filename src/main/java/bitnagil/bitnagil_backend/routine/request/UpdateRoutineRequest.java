@@ -41,7 +41,8 @@ public class UpdateRoutineRequest{
 
     @Schema(description = "세부 루틴 이름에 대한 리스트입니다.",
             example = "[{\"subRoutineId\": \"4fa85f64-5717-4562-b3fc-2c963f66afa6\", \"subRoutineName\": \"손 씻기\"}, " +
-            "{\"subRoutineId\": \"4fa85f64-5717-4562-b3fc-2c963f66afa6\", \"subRoutineName\": \"침대 정리하기\"}]",
+            "{\"subRoutineId\": \"4fa85f64-5717-4562-b3fc-2c963f66afa6\", \"subRoutineName\": \"침대 정리하기\"}, " +
+                "{\"subRoutineId\": \"4fa85f64-5717-4562-b3fc-2c963f66afa6\", \"subRoutineName\": null}]",
             required = true)
     @NotNull
     private List<SubRoutineInfo> subRoutineInfos;
