@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 import bitnagil.bitnagil_backend.enums.Role;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import lombok.Getter;
 
 /**
@@ -18,13 +19,13 @@ import lombok.Getter;
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
 
-    private final Long userId;
+    private final HistoryPk userPk;
     private final Role userRole;
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
-        Map<String, Object> attributes, String nameAttributeKey, Long userId, Role userRole) {
+        Map<String, Object> attributes, String nameAttributeKey, HistoryPk userPk, Role userRole) {
         super(authorities, attributes, nameAttributeKey);
-        this.userId = userId;
+        this.userPk = userPk;
         this.userRole = userRole;
     }
 }

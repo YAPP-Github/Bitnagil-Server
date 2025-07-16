@@ -57,7 +57,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         return new CustomOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(createdUser.getRole().getDescription())),
-            attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserId(), createdUser.getRole());
+            attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserPk(), createdUser.getRole());
     }
 
     private String getUserNameAttributeName(final OAuth2UserRequest userRequest) {

@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
@@ -57,7 +59,7 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public Token generateToken(Long userId) {
+    public Token generateToken(HistoryPk userPk) {
         Date now = new Date();
 
         // Access Token 생성
@@ -65,7 +67,8 @@ public class JwtProvider {
 
         String accessToken = Jwts.builder()
             .setSubject(ACCESS_TOKEN_SUBJECT)
-            .claim("userId", userId)
+            .claim("userId", userPk.getId())
+            .claim("userHistorySeq", userPk.getHistorySeq())
             .setExpiration(accessTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact();
@@ -74,12 +77,13 @@ public class JwtProvider {
         Date refreshTokenExpiresIn = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);
         String refreshToken = Jwts.builder()
             .setSubject(REFRESH_TOKEN_SUBJECT)
-            .claim("userId", userId)
+            .claim("userId", userPk.getId())
+            .claim("userHistorySeq", userPk.getHistorySeq())
             .setExpiration(refreshTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact();
 
-        authRedisService.saveRefreshToken(userId, refreshToken);
+        authRedisService.saveRefreshToken(userPk, refreshToken);
 
         return Token.builder()
             .accessToken(accessToken)
@@ -99,14 +103,21 @@ public class JwtProvider {
     }
 
     public Authentication getAuthentication(String accessToken) {
-        // 토큰 복호화
-        Claims claims = parseClaims(accessToken);
-
-        Long userId = Long.valueOf(claims.get("userId", Integer.class));
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        User user = findValidUserByRefreshTokenOrAccessToken(accessToken);
 
         return new UsernamePasswordAuthenticationToken(user, null, getAuthorities(user));
         // TODO 추후 회원탈퇴한 유저를 어떻게 관리하는지에 따라 추가 검증 필요
+    }
+
+    // RefreshToken 혹은 AccessToken으로 인증된 유효 User 조회
+    public User findValidUserByRefreshTokenOrAccessToken(String token) {
+        // JWT에서 유저 관련 정보 추출 후, UserPk 생성
+        UUID userId = UUID.fromString(parseClaims(token).get("userId", String.class));
+        Long historySeq = parseClaims(token).get("userHistorySeq", Long.class);
+
+        HistoryPk userPk = new HistoryPk(userId, historySeq);
+
+        return userRepository.findByUserPk(userPk).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
     public boolean validateToken(String token) {

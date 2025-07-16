@@ -1,5 +1,10 @@
 package bitnagil.bitnagil_backend.user.service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +25,7 @@ import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -43,7 +49,7 @@ public class UserAuthService {
 
         User user = signUpOrLogin(socialType, nickname, userAuthInfo);
 
-        Token token = jwtProvider.generateToken(user.getUserId());
+        Token token = jwtProvider.generateToken(user.getUserPk());
 
         return TokenResponse.of(token, user.getRole());
     }
@@ -56,18 +62,16 @@ public class UserAuthService {
             throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
         }
 
-        Long userId = Long.valueOf(jwtProvider.parseClaims(refreshToken).get("userId", Integer.class));
-        // 실제로 DB에 있는 userId 인지 검증
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        User user = jwtProvider.findValidUserByRefreshTokenOrAccessToken(refreshToken);
 
-        RefreshToken refreshTokenByRedis = authRedisService.getRefreshTokenByUserId(user.getUserId())
+        RefreshToken refreshTokenByRedis = authRedisService.getRefreshTokenByUserPk(user.getUserPk())
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_JWT_TOKEN));
 
         if(!refreshTokenByRedis.getRefreshToken().equals(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
         }
 
-        Token token = jwtProvider.generateToken(userId);
+        Token token = jwtProvider.generateToken(user.getUserPk());
 
         return TokenResponse.of(token);
     }
@@ -85,10 +89,12 @@ public class UserAuthService {
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
     public void withdrawal(User user) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
         invalidateToken(user);
 
-        userRepository.deleteById(user.getUserId());
-        // TODO soft delete 범위에 대해 추후 논의 후 적용
+        // 기존 유저의 이력 종료일시를 갱신
+        user.updateHistoryEndDateTime(currentDateTime);
 
         unlinkFromSocial(user);
     }
@@ -97,9 +103,8 @@ public class UserAuthService {
     @Transactional
     public void agreements(UserAgreementsRequest userAgreeMentsRequest, User user) {
         // 약관 동의 시 ROLE을 USER로 변경 및 동의 여부 업데이트
-        User findUser = userRepository.findById(user.getUserId()).orElseGet(() -> {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER);
-        });
+        User findUser = userRepository.findByUserPk(user.getUserPk()).orElseThrow(() ->
+            new CustomException(ErrorCode.NOT_FOUND_USER));
 
         if(userAgreeMentsRequest.getAgreedToTermsOfService() == false ||
             userAgreeMentsRequest.getAgreedToPrivacyPolicy() == false ||
@@ -146,7 +151,7 @@ public class UserAuthService {
 
     // 서비스 refreshToken 무효화
     private void invalidateToken(User user) {
-        authRedisService.deleteRefreshToken(user.getUserId());
+        authRedisService.deleteRefreshToken(user.getUserPk());
 
         // 서비스 액세스 토큰 블랙리스트 처리
         // String accessToken = jwtProvider.resolveToken(request);
@@ -161,16 +166,20 @@ public class UserAuthService {
     }
 
     private User saveUser(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
         // 애플 로그인 시 닉네임은 클라이언트에서 보내준 값을 사용한다.
         nickname = (socialType == SocialType.APPLE) ? nickname : userAuthInfo.getNickname();
 
         User user = User.builder()
+            .userPk(new HistoryPk(UUID.randomUUID(), 1L))
             .socialType(socialType)
             .socialId(userAuthInfo.getSocialId())
             .role(Role.GUEST) // 최초 가입 시 GUEST로 설정
             .email(userAuthInfo.getEmail())
             .nickname(nickname)
             .refreshToken(userAuthInfo.getRefreshToken()) // 애플 로그인의 경우만 세팅
+            .historyStartDateTime(currentDateTime)
+            .historyEndDateTime(TimeUtils.END_DATE_TIME)
             .build();
 
         return userRepository.save(user);
