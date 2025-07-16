@@ -88,12 +88,12 @@ public class UserAuthService {
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
     public void withdrawal(User user) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
 
         invalidateToken(user);
 
         // 기존 유저의 이력 종료일시를 갱신
-        user.updateHistoryEndDateTime(currentDateTime);
+        user.updateHistoryEndDateTime(now);
 
         unlinkFromSocial(user);
     }
@@ -162,13 +162,14 @@ public class UserAuthService {
     private User signUpOrLogin(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
         LocalDateTime now = LocalDateTime.now();
 
-        return userRepository.findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
+        return userRepository
+            .findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
             socialType, userAuthInfo.getSocialId(), now, now)
             .orElseGet(() -> saveUser(socialType, nickname, userAuthInfo));
     }
 
     private User saveUser(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         // 애플 로그인 시 닉네임은 클라이언트에서 보내준 값을 사용한다.
         nickname = (socialType == SocialType.APPLE) ? nickname : userAuthInfo.getNickname();
 
@@ -180,7 +181,7 @@ public class UserAuthService {
             .email(userAuthInfo.getEmail())
             .nickname(nickname)
             .refreshToken(userAuthInfo.getRefreshToken()) // 애플 로그인의 경우만 세팅
-            .historyStartDateTime(currentDateTime)
+            .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
             .build();
 

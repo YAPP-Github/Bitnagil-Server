@@ -102,7 +102,7 @@ public class OnboardingService {
     public void registrationRoutines(RegistrationRoutinesRequest request, User user) {
 
         LocalDate today = LocalDate.now();
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
 
         List<ChangedRoutine> changedRoutines = new ArrayList<>(); // 변경 루틴 리스트
         List<ChangedSubRoutine> changedSubRoutines = new ArrayList<>(); // 변경 세부 루틴 리스트
@@ -119,7 +119,7 @@ public class OnboardingService {
                     .changedExecutionTime(recommendRoutine.getTime())
                     .originalRoutineDate(today) // 원본 루틴 날짜는 현재 날짜로 설정
                     .changedRoutineDate(today) // 변경된 루틴 날짜도 현재 날짜로 설정
-                    .historyStartDateTime(currentDateTime)
+                    .historyStartDateTime(now)
                     .historyEndDateTime(TimeUtils.END_DATE_TIME)
                     .user(user)
                     .build();
@@ -129,7 +129,7 @@ public class OnboardingService {
                     .map(sub -> ChangedSubRoutine.builder()
                         .changedSubRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
                         .changedSubRoutineName(sub.getSubRoutineName())
-                        .historyStartDateTime(currentDateTime)
+                        .historyStartDateTime(now)
                         .historyEndDateTime(TimeUtils.END_DATE_TIME)
                         .build())
                     .toList();

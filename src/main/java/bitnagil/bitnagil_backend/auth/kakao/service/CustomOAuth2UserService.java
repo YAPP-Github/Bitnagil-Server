@@ -79,11 +79,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private User getMember(OAuth2Attribute attributes, SocialType socialType) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
 
         User findUser = userRepository
             .findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
-                socialType, attributes.getSocialId(), currentDateTime, currentDateTime)
+                socialType, attributes.getSocialId(), now, now)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         if (findUser == null) {
