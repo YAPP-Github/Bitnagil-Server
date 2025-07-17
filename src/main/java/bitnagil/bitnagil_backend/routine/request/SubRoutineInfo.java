@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class SubRoutineInfo {
     private UUID subRoutineId;
     private String subRoutineName;
+    private Integer sortOrder;
 }
