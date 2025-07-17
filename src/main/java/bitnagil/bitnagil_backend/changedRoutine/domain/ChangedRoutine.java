@@ -49,7 +49,7 @@ public class ChangedRoutine extends BaseTimeEntity {
     @NotNull
     private LocalDateTime historyEndDateTime; // 이력 종료일시
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(40)")
     private ChangedDivCode changedDivCode; // 변경 구분 코드 (시간 변경, 내일 미루기, 오늘만 루틴 삭제 등)
 
