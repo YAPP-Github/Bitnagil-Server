@@ -56,7 +56,6 @@ public class ChangedRoutine extends BaseTimeEntity {
     @NotNull
     private UUID userId;
 
-    @NotNull
     private UUID routineId;
 
     @Builder

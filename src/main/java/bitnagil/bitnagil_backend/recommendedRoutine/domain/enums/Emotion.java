@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum Emotion implements EnumType {
     VITALITY("활력"),
-    STABILITY("안정"),
-    DEPRESSION("우울"),
-    LETHARGY("무기력"),
-    JOY("기쁨");
+    FATIGUE("피로"),
+    ANXIETY("불안"),
+    CALM("평온"),
+    SATISFACTION("만족"),
+    LETHARGY("무기력");
 
     private final String description;
 }

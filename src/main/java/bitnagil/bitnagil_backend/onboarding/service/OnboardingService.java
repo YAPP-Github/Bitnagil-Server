@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.onboarding.service;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
+import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
 import bitnagil.bitnagil_backend.global.entity.HistoryPk;
@@ -19,6 +20,8 @@ import bitnagil.bitnagil_backend.onboarding.response.RecommendedRoutineDto;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
+import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRoutineRepository;
+import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +43,10 @@ public class OnboardingService {
     private final OnboardingRepository onboardingRepository;
     private final UserRepository userRepository;
     private final RecommendedRoutineRepository recommendRoutineRepository;
+    private final RecommendedSubRoutineRepository recommendedSubRoutineRepository;
     private final ChangedRoutineRepository changedRoutineRepository;
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
+    private final SubRoutineRepository subRoutineRepository;
 
     /**
      * 유저와 매칭되는 온보딩 결과를 설정하고, 리턴하는 메서드
@@ -70,8 +77,10 @@ public class OnboardingService {
         for (RecommendedRoutine recommendedRoutine : recommendedRoutines) {
             List<RecommendedSubRoutineDto> recommendedRoutineDetailDtoList = new ArrayList<>();
 
+            List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+
             // 추천 루틴의 세부 루틴을 dto로 변환한다.
-            for (RecommendedSubRoutine recommendedSubRoutine : recommendedRoutine.getRecommendedSubRoutines()) {
+            for (RecommendedSubRoutine recommendedSubRoutine : recommendedSubRoutines) {
                 RecommendedSubRoutineDto recommendedRoutineDetailDto = RecommendedSubRoutineDto.builder()
                         .recommendedSubRoutineId(recommendedSubRoutine.getRecommendedSubRoutineId())
                         .recommendedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
@@ -109,29 +118,38 @@ public class OnboardingService {
 
         for (Long routineId : request.getRecommendedRoutineIds()) {
             // 인자로 전달받은 추천 루틴을 조회한다
-            RecommendedRoutine recommendRoutine = recommendRoutineRepository.findById(routineId)
+            RecommendedRoutine recommendedRoutine = recommendRoutineRepository.findById(routineId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
 
             // 온보딩의 추천 루틴 등록은 반복 루틴이 아닌 당일날만 수행되는 루틴이므로 변경루틴 테이블에 저장한다.
             // 원본 루틴이 존재하지 않으므로 원본 루틴 ID는 null로 설정
             ChangedRoutine changedRoutine = ChangedRoutine.builder()
-                    .changedRoutineName(recommendRoutine.getRecommendedRoutineName())
-                    .changedExecutionTime(recommendRoutine.getTime())
+                    .changedRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
+                    .changedRoutineName(recommendedRoutine.getRecommendedRoutineName())
+                    .changedExecutionTime(recommendedRoutine.getTime())
                     .originalRoutineDate(today) // 원본 루틴 날짜는 현재 날짜로 설정
                     .changedRoutineDate(today) // 변경된 루틴 날짜도 현재 날짜로 설정
                     .historyStartDateTime(now)
                     .historyEndDateTime(TimeUtils.END_DATE_TIME)
-                    .user(user)
+                    .userId(user.getUserPk().getId())
+                    .changedDivCode(ChangedDivCode.ONBOARDING)
                     .build();
             changedRoutines.add(changedRoutine);
 
-            List<ChangedSubRoutine> subRoutines = recommendRoutine.getRecommendedSubRoutines().stream()
-                    .map(sub -> ChangedSubRoutine.builder()
-                        .changedSubRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-                        .changedSubRoutineName(sub.getSubRoutineName())
-                        .historyStartDateTime(now)
-                        .historyEndDateTime(TimeUtils.END_DATE_TIME)
-                        .build())
+            List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+
+            List<ChangedSubRoutine> subRoutines = IntStream.range(0, recommendedSubRoutines.size())
+                    .mapToObj(i -> {
+                        RecommendedSubRoutine sub = recommendedSubRoutines.get(i);
+                        return ChangedSubRoutine.builder()
+                                .changedSubRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
+                                .changedSubRoutineName(sub.getSubRoutineName())
+                                .historyStartDateTime(now)
+                                .historyEndDateTime(TimeUtils.END_DATE_TIME)
+                                .changedRoutineId(changedRoutine.getChangedRoutinePk().getId())
+                                .sortOrder(i + 1) // 1부터 시작
+                                .build();
+                    })
                     .toList();
             changedSubRoutines.addAll(subRoutines);
         }

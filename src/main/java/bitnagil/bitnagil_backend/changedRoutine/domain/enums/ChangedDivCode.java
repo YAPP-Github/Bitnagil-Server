@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 public enum ChangedDivCode implements EnumType {
     TIME_CHANGE("시간 변경"),
     DELAY("미루기"),
-    TODAY_DELETE("오늘만 루틴 삭제");
+    TODAY_DELETE("오늘만 루틴 삭제"),
+    ONBOARDING("온보딩 루틴")
+    ;
 
     private final String description;
 }
