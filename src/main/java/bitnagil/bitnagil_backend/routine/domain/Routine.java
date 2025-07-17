@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.entity.HistoryPk;
@@ -58,24 +59,19 @@ public class Routine extends BaseTimeEntity {
     @NotNull
     private LocalDateTime historyEndDateTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-        @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
-        @JoinColumn(name = "user_history_seq", referencedColumnName = "history_seq")
-    })
     @NotNull
-    private User user;
+    private UUID userId;
 
     @Builder
     public Routine(HistoryPk routinePk, String name, List<DayOfWeek> repeatDay, LocalTime executionTime,
-        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, User user) {
+        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, UUID userId) {
         this.routinePk = routinePk;
         this.name = name;
         this.repeatDay = repeatDay;
         this.executionTime = executionTime;
         this.historyStartDateTime = historyStartDateTime;
         this.historyEndDateTime = historyEndDateTime;
-        this.user = user;
+        this.userId = userId;
     }
 
     // 이전 루틴의 이력 종료일시를 갱신

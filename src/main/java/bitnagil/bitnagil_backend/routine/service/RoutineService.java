@@ -125,7 +125,7 @@ public class RoutineService {
                 previousRoutine.getExecutionTime() : request.getExecutionTime())
             .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .user(user)
+            .userId(user.getUserPk().getId())
             .build();
 
         routineRepository.save(updateRoutine);
@@ -146,7 +146,7 @@ public class RoutineService {
                 routineId, now, now)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
-        if (!user.getUserPk().equals(routine.getUser().getUserPk())) {
+        if (!user.getUserPk().getId().equals(routine.getUserId())) {
             throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
         }
 
@@ -163,7 +163,7 @@ public class RoutineService {
             .executionTime(request.getExecutionTime())
             .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .user(user)
+            .userId(user.getUserPk().getId())
             .build();
 
         return routineRepository.save(routine);
