@@ -52,24 +52,48 @@ public class RoutineService {
             addUpdatedRoutine(user, request, previousRoutine, now);
         }
 
-        // 갱신할 서브 루틴이 있는지 탐색 및 갱신 수행
+        // 서브루틴 갱신
         for (SubRoutineInfo subRoutineInfo : request.getSubRoutineInfos()) {
 
-            SubRoutine previousSubRoutine = subRoutineRepository
-                .findBySubRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
-                    subRoutineInfo.getSubRoutineId(), now, now)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
+            // 기존 서브루틴 유지
+            if (subRoutineInfo.getSubRoutineId() != null && subRoutineInfo.getSubRoutineName() != null) {
+                SubRoutine previousSubRoutine = subRoutineRepository
+                    .findBySubRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
+                        subRoutineInfo.getSubRoutineId(), now, now)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
 
-            // 갱신할 서브 루틴명이 null이면 해당 서브 루틴을 삭제
-            if (subRoutineInfo.getSubRoutineName() == null) {
-                previousSubRoutine.updateHistoryEndDateTime(now);
-                continue;
+                // 기존 서브루틴의 이름을 변경한 경우 (이력 갱신)
+                if (!subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName())) {
+                    previousSubRoutine.updateHistoryEndDateTime(now);
+                    addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine, now);
+                }
+                else { // 기존 서브루틴을 유지하는 경우 (sortOrder만 업데이트)
+                    previousSubRoutine.updateSortOrder(subRoutineInfo.getSortOrder());
+                }
             }
 
-            if (!subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName())) {
+            // 기존 서브루틴 삭제
+            if (subRoutineInfo.getSubRoutineId() != null && subRoutineInfo.getSubRoutineName() == null) {
+                SubRoutine removeSubRoutine = subRoutineRepository
+                    .findBySubRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
+                        subRoutineInfo.getSubRoutineId(), now, now)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
 
-                previousSubRoutine.updateHistoryEndDateTime(now);
-                addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine, now);
+                removeSubRoutine.updateHistoryEndDateTime(now);
+            }
+
+            // 새로운 서브루틴 추가
+            if (subRoutineInfo.getSubRoutineId() == null && subRoutineInfo.getSubRoutineName() != null) {
+                SubRoutine newSubRoutine = SubRoutine.builder()
+                    .subRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
+                    .name(subRoutineInfo.getSubRoutineName())
+                    .sortOrder(subRoutineInfo.getSortOrder())
+                    .historyStartDateTime(now)
+                    .historyEndDateTime(TimeUtils.END_DATE_TIME)
+                    .routineId(previousRoutine.getRoutinePk().getId())
+                    .build();
+
+                subRoutineRepository.save(newSubRoutine);
             }
         }
     }
@@ -99,6 +123,7 @@ public class RoutineService {
         SubRoutine updateSubRoutine = SubRoutine.builder()
             .subRoutinePk(nextSubRoutinePk)
             .name(subRoutineInfo.getSubRoutineName())
+            .sortOrder(subRoutineInfo.getSortOrder())
             .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
             .routineId(previousSubRoutine.getRoutineId())
@@ -170,10 +195,12 @@ public class RoutineService {
     }
 
     private void saveSubRoutine(List<String> subRoutineNames, Routine routine, LocalDateTime now) {
+        int sortOrder = 1;
         for (String subRoutineName : subRoutineNames) {
             SubRoutine subRoutine = SubRoutine.builder()
                 .subRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
                 .name(subRoutineName)
+                .sortOrder(sortOrder++)
                 .historyStartDateTime(now)
                 .historyEndDateTime(TimeUtils.END_DATE_TIME)
                 .routineId(routine.getRoutinePk().getId())
