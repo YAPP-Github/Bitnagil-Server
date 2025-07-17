@@ -1,10 +1,8 @@
 package bitnagil.bitnagil_backend.changedRoutine.domain;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
-import bitnagil.bitnagil_backend.global.BaseTimeEntity;
-import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
-import bitnagil.bitnagil_backend.routine.domain.Routine;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -15,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.UUID;
 
 /**
  * 규칙적인 류틴에 대해 일시적인 변경이 발생한 루틴에 대해 관리하는 엔티티입니다.
@@ -54,25 +53,16 @@ public class ChangedRoutine extends BaseTimeEntity {
     @Column(columnDefinition = "varchar(40)")
     private ChangedDivCode changedDivCode; // 변경 구분 코드 (시간 변경, 내일 미루기, 오늘만 루틴 삭제 등)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-        @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
-        @JoinColumn(name = "user_history_seq", referencedColumnName = "history_seq")
-    })
     @NotNull
-    private User user;
+    private UUID userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-        @JoinColumn(name = "routine_id", referencedColumnName = "routine_id"),
-        @JoinColumn(name = "routine_history_seq", referencedColumnName = "history_seq")
-    })
-    private Routine routine; // 원본 루틴
+    @NotNull
+    private UUID routineId;
 
     @Builder
     public ChangedRoutine(HistoryPk changedRoutinePk, String changedRoutineName, LocalTime changedExecutionTime,
         LocalDate originalRoutineDate, LocalDate changedRoutineDate, LocalDateTime historyStartDateTime,
-        LocalDateTime historyEndDateTime, User user, Routine routine, ChangedDivCode changedDivCode) {
+        LocalDateTime historyEndDateTime, UUID userId, UUID routineId, ChangedDivCode changedDivCode) {
         this.changedRoutinePk = changedRoutinePk;
         this.changedRoutineName = changedRoutineName;
         this.changedExecutionTime = changedExecutionTime;
@@ -81,8 +71,8 @@ public class ChangedRoutine extends BaseTimeEntity {
         this.historyStartDateTime = historyStartDateTime;
         this.historyEndDateTime = historyEndDateTime;
         this.changedDivCode = changedDivCode;
-        this.user = user;
-        this.routine = routine;
+        this.userId = userId;
+        this.routineId = routineId;
     }
 
 }

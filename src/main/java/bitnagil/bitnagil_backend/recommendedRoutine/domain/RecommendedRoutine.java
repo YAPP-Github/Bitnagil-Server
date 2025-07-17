@@ -11,8 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,14 +50,14 @@ public class RecommendedRoutine extends BaseTimeEntity {
     private Case resultCase;
 
     // RecommendedRoutineDetail과 양방향 연관관계 설정
-    @OneToMany(mappedBy = "recommendedRoutine") // todo: cascade 옵션 추가 필요
-    private List<RecommendedSubRoutine> recommendedSubRoutines = new ArrayList<>();
+//    @OneToMany(mappedBy = "recommendedRoutine") // todo: cascade 옵션 추가 필요
+//    private List<RecommendedSubRoutine> recommendedSubRoutines = new ArrayList<>();
 
     // 양방향 연관관계 편의 메서드
-    public void addRecommendedSubRoutine(RecommendedSubRoutine detail) {
-        this.recommendedSubRoutines.add(detail);
-        if(detail.getRecommendedRoutine() != this){
-            detail.setRecommendedRoutine(this);
-        }
-    }
+//    public void addRecommendedSubRoutine(RecommendedSubRoutine detail) {
+//        this.recommendedSubRoutines.add(detail);
+//        if(detail.getRecommendedRoutine() != this){
+//            detail.setRecommendedRoutine(this);
+//        }
+//    }
 }

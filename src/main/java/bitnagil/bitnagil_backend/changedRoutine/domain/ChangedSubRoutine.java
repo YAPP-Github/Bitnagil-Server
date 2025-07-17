@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,13 +33,22 @@ public class ChangedSubRoutine extends BaseTimeEntity {
     @NotNull
     private LocalDateTime historyEndDateTime;
 
+    @NotNull
+    private UUID changedRoutineId; // 변경된 루틴 ID
+
+    @NotNull
+    private Integer sortOrder; // 변경서브루틴의 순서를 나타내는 필드
+
 
     @Builder
     public ChangedSubRoutine(HistoryPk changedSubRoutinePk, String changedSubRoutineName,
-        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime) {
+        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, UUID changedRoutineId,
+        Integer sortOrder) {
         this.changedSubRoutinePk = changedSubRoutinePk;
         this.changedSubRoutineName = changedSubRoutineName;
         this.historyStartDateTime = historyStartDateTime;
         this.historyEndDateTime = historyEndDateTime;
+        this.changedRoutineId = changedRoutineId;
+        this.sortOrder = sortOrder;
     }
 }

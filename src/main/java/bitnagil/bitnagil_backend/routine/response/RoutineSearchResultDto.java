@@ -7,13 +7,14 @@ import lombok.Getter;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
 @Builder
 public class RoutineSearchResultDto {
     @Schema(example = "1")
-    private Long routineId; // 루틴 ID
+    private UUID routineId; // 루틴 ID
     @Schema(example = "물마시기")
     private String routineName; // 루틴 이름
     // todo: 완료여부 추가
