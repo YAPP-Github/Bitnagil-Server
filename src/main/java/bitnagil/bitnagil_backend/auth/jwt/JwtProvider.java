@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.auth.jwt;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -110,13 +111,18 @@ public class JwtProvider {
 
     // RefreshToken 혹은 AccessToken으로 인증된 유효 User 조회
     public User findValidUserByRefreshTokenOrAccessToken(String token) {
+        LocalDateTime now = LocalDateTime.now();
+
         // JWT에서 유저 관련 정보 추출 후, UserPk 생성
         UUID userId = UUID.fromString(parseClaims(token).get("userId", String.class));
         Long historySeq = parseClaims(token).get("userHistorySeq", Long.class);
 
         HistoryPk userPk = new HistoryPk(userId, historySeq);
 
-        return userRepository.findByUserPk(userPk).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        return userRepository
+            .findByUserPk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
+                userId, now, now)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
     public boolean validateToken(String token) {
