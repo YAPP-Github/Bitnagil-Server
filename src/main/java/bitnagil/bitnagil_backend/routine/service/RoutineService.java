@@ -62,13 +62,15 @@ public class RoutineService {
                         subRoutineInfo.getSubRoutineId(), now, now)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
 
-                // 기존 서브루틴의 이름을 변경한 경우 (이력 갱신)
-                if (!subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName())) {
-                    previousSubRoutine.updateHistoryEndDateTime(now);
-                    addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine, now);
-                }
-                else { // 기존 서브루틴을 유지하는 경우 (sortOrder만 업데이트)
-                    previousSubRoutine.updateSortOrder(subRoutineInfo.getSortOrder());
+                    // 기존 서브루틴의 이름을 변경한 경우 (이력 갱신)
+                    if (!subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName())) {
+                        previousSubRoutine.updateHistoryEndDateTime(now);
+                        addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine, now);
+                    }
+                    // 기존 서브루틴의 이름을 유지하고, 정렬 순서가 변경된 경우
+                    if (subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName()) &&
+                        !previousSubRoutine.getSortOrder().equals(subRoutineInfo.getSortOrder())) {
+                        previousSubRoutine.updateSortOrder(subRoutineInfo.getSortOrder());
                 }
             }
 
@@ -117,11 +119,11 @@ public class RoutineService {
     private void addUpdatedSubRoutine(SubRoutineInfo subRoutineInfo, SubRoutine previousSubRoutine,
         LocalDateTime now) {
         // 서브루틴을 갱신하여 새로운 Row 추가
-        HistoryPk nextSubRoutinePk = new HistoryPk(previousSubRoutine.getSubRoutinePk().getId(),
+        HistoryPk subRoutinePk = new HistoryPk(previousSubRoutine.getSubRoutinePk().getId(),
             previousSubRoutine.getSubRoutinePk().getHistorySeq() + 1);
 
         SubRoutine updateSubRoutine = SubRoutine.builder()
-            .subRoutinePk(nextSubRoutinePk)
+            .subRoutinePk(subRoutinePk)
             .name(subRoutineInfo.getSubRoutineName())
             .sortOrder(subRoutineInfo.getSortOrder())
             .historyStartDateTime(now)
