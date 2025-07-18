@@ -55,7 +55,7 @@ public class RoutineService {
         // 서브루틴 갱신
         for (SubRoutineInfo subRoutineInfo : request.getSubRoutineInfos()) {
 
-            // 기존 서브루틴 유지
+            // 기존 서브루틴 변경 및 유지
             if (subRoutineInfo.getSubRoutineId() != null && subRoutineInfo.getSubRoutineName() != null) {
                 SubRoutine previousSubRoutine = subRoutineRepository
                     .findBySubRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
