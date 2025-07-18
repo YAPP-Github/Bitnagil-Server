@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;
+    private final JwtUtil jwtUtil;
     private static final String[] excludedEndpoints = new String[] {"/swagger-ui/**"};
 
     @Override
@@ -37,12 +37,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         throws IOException, ServletException {
 
         // 1. Request Header 에서 토큰을 꺼냄
-        String jwt = jwtProvider.resolveToken(request);
+        String jwt = jwtUtil.resolveToken(request);
 
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
-        if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
-            Authentication authentication = jwtProvider.getAuthentication(jwt);
+        if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
+            Authentication authentication = jwtUtil.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 

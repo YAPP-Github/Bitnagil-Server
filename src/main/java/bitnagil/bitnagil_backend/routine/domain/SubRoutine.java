@@ -38,6 +38,9 @@ public class SubRoutine extends BaseTimeEntity {
     private String name;
 
     @NotNull
+    private Integer sortOrder;
+
+    @NotNull
     private LocalDateTime historyStartDateTime;
 
     @NotNull
@@ -46,22 +49,25 @@ public class SubRoutine extends BaseTimeEntity {
     @NotNull
     private UUID routineId;
 
-    @NotNull
-    private Integer sortOrder; // 서브루틴의 순서를 나타내는 필드
-
     @Builder
-    public SubRoutine(HistoryPk subRoutinePk, String name, LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime,
-        UUID routineId, Integer sortOrder) {
+    public SubRoutine(HistoryPk subRoutinePk, String name, Integer sortOrder, LocalDateTime historyStartDateTime,
+        LocalDateTime historyEndDateTime, UUID routineId) {
         this.subRoutinePk = subRoutinePk;
         this.name = name;
+        this.sortOrder = sortOrder;
         this.historyStartDateTime = historyStartDateTime;
         this.historyEndDateTime = historyEndDateTime;
         this.routineId = routineId;
-        this.sortOrder = sortOrder;
     }
 
     // 이전 서브루틴의 이력 종료일시 갱신
     public void updateHistoryEndDateTime(LocalDateTime updateDateTime) {
         this.historyEndDateTime = updateDateTime;
     }
+
+    // 서브루틴 순서 갱신
+    public void updateSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
 }
