@@ -13,7 +13,7 @@ import bitnagil.bitnagil_backend.auth.apple.domain.AppleIdTokenPayload;
 import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import bitnagil.bitnagil_backend.auth.jwt.RefreshToken;
 import bitnagil.bitnagil_backend.auth.jwt.Token;
-import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
+import bitnagil.bitnagil_backend.auth.jwt.JwtUtil;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserAuthService {
 
-    private final JwtProvider jwtProvider;
+    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final AuthRedisService authRedisService;
     private final AppleUserInfoService appleUserInfoService;
@@ -48,7 +48,7 @@ public class UserAuthService {
 
         User user = signUpOrLogin(socialType, nickname, userAuthInfo);
 
-        Token token = jwtProvider.generateToken(user.getUserPk());
+        Token token = jwtUtil.generateToken(user.getUserPk());
 
         return TokenResponse.of(token, user.getRole());
     }
@@ -57,11 +57,11 @@ public class UserAuthService {
     @Transactional
     public TokenResponse reissueToken(String refreshToken) {
 
-        if (!jwtProvider.validateToken(refreshToken)) {
+        if (!jwtUtil.validateToken(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
         }
 
-        User user = jwtProvider.findValidUserByRefreshTokenOrAccessToken(refreshToken);
+        User user = jwtUtil.findValidUserByRefreshTokenOrAccessToken(refreshToken);
 
         RefreshToken refreshTokenByRedis = authRedisService.getRefreshTokenByUserPk(user.getUserPk())
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_JWT_TOKEN));
@@ -70,7 +70,7 @@ public class UserAuthService {
             throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
         }
 
-        Token token = jwtProvider.generateToken(user.getUserPk());
+        Token token = jwtUtil.generateToken(user.getUserPk());
 
         return TokenResponse.of(token);
     }

@@ -2,7 +2,7 @@ package bitnagil.bitnagil_backend.user.service;
 
 import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
-import bitnagil.bitnagil_backend.auth.jwt.JwtProvider;
+import bitnagil.bitnagil_backend.auth.jwt.JwtUtil;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +30,7 @@ class UserAuthServiceTest {
     @InjectMocks
     UserAuthService userAuthService;
     @Mock
-    JwtProvider jwtProvider;
+    JwtUtil jwtUtil;
     @Mock
     UserRepository userRepository;
     @Mock

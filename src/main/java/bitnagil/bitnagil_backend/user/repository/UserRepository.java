@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.user.repository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,10 @@ public interface UserRepository extends JpaRepository<User, HistoryPk> {
     // socialType, socialId 기반으로 유저 이력들 특정 후, 이력 시작일시 및 종료일시를 활용해서 현재시간 기준으로 유효한 유저 식별
     Optional<User> findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
         SocialType socialType, String socialId, LocalDateTime historyStartDateBound, LocalDateTime historyEndDateBound);
+
+    // socialId 기반으로 유저 이력들 특정 후, 이력 시작일시 및 종료일시를 활용해서 현재시간 기준으로 유효한 유저 식별
+    Optional<User> findByUserPk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
+        UUID userId, LocalDateTime historyStartDateBound, LocalDateTime historyEndDateBound);
 
     Optional<User> findByUserPk(HistoryPk userPk);
 }

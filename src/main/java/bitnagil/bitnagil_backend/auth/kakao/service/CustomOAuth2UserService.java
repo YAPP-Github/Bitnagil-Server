@@ -20,6 +20,7 @@ import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * OAuth2 로그인 과정에서 사용자 정보를 처리하는 서비스 클래스입니다.
@@ -28,12 +29,14 @@ import lombok.RequiredArgsConstructor;
  * 외부 소셜 로그인(Kakao 등) 후 사용자 정보를 파싱하고 DB에 저장 또는 조회하여
  * 인증된 {@link CustomOAuth2User} 객체를 반환합니다.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private static final String KAKAO = "kakao";
     private final UserRepository userRepository;
+
 
     /**
      * OAuth2 로그인 시 호출되는 메서드로, 외부 서비스에서 사용자 정보를 받아와 처리합니다.
@@ -43,6 +46,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
      */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("CustomOAuth2UserService 진입-----");
+
 
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
