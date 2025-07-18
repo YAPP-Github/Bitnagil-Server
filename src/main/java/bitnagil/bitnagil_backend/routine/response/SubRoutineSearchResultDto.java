@@ -19,5 +19,6 @@ public class SubRoutineSearchResultDto {
     private Boolean modifiedYn; // 수정 여부
     @Schema(example = "1")
     private Integer sortOrder; // 정렬 순서
-    // todo: 서브루틴 완료여부 추가
+    @Schema(example = "false", description = "true: 완료, false: 미완료 (default는 false)")
+    private Boolean completeYn; // 완료 여부 (true: 완료, false: 미완료)
 }

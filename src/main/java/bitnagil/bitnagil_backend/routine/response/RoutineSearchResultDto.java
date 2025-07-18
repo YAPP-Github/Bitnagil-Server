@@ -23,4 +23,6 @@ public class RoutineSearchResultDto {
     private List<SubRoutineSearchResultDto> subRoutineSearchResultDto; // 서브루틴 목록
     @Schema(example = "false")
     private Boolean modifiedYn; // 수정 여부
+    @Schema(example = "false", description = "true: 완료, false: 미완료 (default는 false)")
+    private Boolean completeYn; // 완료 여부 (true: 완료, false: 미완료)
 }
