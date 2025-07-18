@@ -31,7 +31,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -115,9 +114,6 @@ public class JwtProvider {
 
         // JWT에서 유저 관련 정보 추출 후, UserPk 생성
         UUID userId = UUID.fromString(parseClaims(token).get("userId", String.class));
-        Long historySeq = parseClaims(token).get("userHistorySeq", Long.class);
-
-        HistoryPk userPk = new HistoryPk(userId, historySeq);
 
         return userRepository
             .findByUserPk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(

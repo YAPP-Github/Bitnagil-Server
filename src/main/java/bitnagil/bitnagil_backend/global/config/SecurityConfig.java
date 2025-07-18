@@ -19,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAccessDeniedHandler;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAuthenticationEntryPoint;
 import bitnagil.bitnagil_backend.auth.jwt.JwtAuthenticationFilter;
+import bitnagil.bitnagil_backend.auth.kakao.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -41,6 +42,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -63,6 +65,11 @@ public class SecurityConfig {
                 // USER 권한으로만 접근 가능한 경로(전체)
                 .requestMatchers("/**").hasRole("USER")
                 .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
