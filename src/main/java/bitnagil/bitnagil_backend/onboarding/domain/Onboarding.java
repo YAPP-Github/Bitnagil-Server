@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -17,10 +19,10 @@ public class Onboarding extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long onboardingId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(40)") // mysql의 enum 타입을 사용하지 않도록 설정
+//    @Enumerated(EnumType.STRING)
+//    @Column(columnDefinition = "varchar(40)") // mysql의 enum 타입을 사용하지 않도록 설정
     @NotNull
-    private TimeSlot timeSlot;
+    private LocalTime timeSlot;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(40)")

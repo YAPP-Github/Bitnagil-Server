@@ -7,10 +7,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum RealOutingFrequency implements EnumType {
-    ZERO_PER_WEEK("일주일 0회"),
-    ONE_TO_TWO_PER_WEEK("일주일 1~2회"),
-    THREE_TO_FOUR_PER_WEEK("일주일 3~4회"),
-    MORE_THAN_FIVE_PER_WEEK("일주일 5회 이상"),
+
+    OFTEN("자주 외출해요"),
+    SOMETIMES("가끔 나가요"),
+    NEVER("밖에 나가지 않고 집에만 있어요"),
+    SHORT("잠깐 외출했어요");
     ;
 
     private final String description;
