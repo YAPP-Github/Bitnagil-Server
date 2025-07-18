@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class JwtProvider {
+public class JwtUtil {
     private final AuthRedisService authRedisService;
 
     @Value("${jwt.secret}")
