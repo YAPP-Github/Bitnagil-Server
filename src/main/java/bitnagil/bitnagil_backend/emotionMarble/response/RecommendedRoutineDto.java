@@ -20,7 +20,6 @@ public class RecommendedRoutineDto {
     private String recommendedRoutineName;
     // 추천 루틴 설명
     private String routineDescription;
-    // 추천 루틴 난이도
 
     // 추천 루틴 상세 정보
     List<RecommendedSubRoutineDto> recommendedSubRoutines;
