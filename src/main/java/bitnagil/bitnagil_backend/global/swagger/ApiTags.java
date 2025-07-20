@@ -9,4 +9,5 @@ public class ApiTags {
     public static final String HEALTH_CHECK = "헬스체크 API";
     public static final String ROUTINE = "루틴 API";
     public static final String ONBOARDING = "온보딩 API";
+    public static final String EMOTION_MARBLE = "감정구슬 API";
 }

@@ -3,6 +3,7 @@ package bitnagil.bitnagil_backend.onboarding.domain;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,5 +17,8 @@ public class Case extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long caseId;
 
-    private String caseName; // 케이스 이름
+    @Builder
+    public Case(Long caseId, String caseName) {
+        this.caseId = caseId;
+    }
 }
