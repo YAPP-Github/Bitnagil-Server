@@ -60,7 +60,6 @@ public class EmotionMarbleService {
                 .resultCase( // 감정 구술에 따른 추천 루틴을 찾기 위해 Case 객체를 생성
                         Case.builder()
                                 .caseId(request.getEmotionMarbleType().getCaseId())
-                                .caseName("case "+ request.getEmotionMarbleType().getCaseId()) // caseName을 아예 삭제할까 고민(엔티티상에서 쓸모가 없는것 같아서)
                                 .build()
                 ).build();
 
