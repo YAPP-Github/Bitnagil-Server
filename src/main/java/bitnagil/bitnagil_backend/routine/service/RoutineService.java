@@ -131,12 +131,17 @@ public class RoutineService {
 
         Routine routine = validateRoutineOwnership(routineId, user, now);
 
-        // 기존 루틴, 서브 루틴의 이력 종료일시를 갱신합니다.
+        // 기존 루틴, 서브 루틴의 이력 종료일시 및 deleteAt 갱신
         routine.updateHistoryEndDateTime(now);
+        routine.setDeleteAt(now);
 
-        // 서브 루틴을 순회하면서 이력 종료일시 갱신
+        // 서브 루틴을 순회하면서 이력 종료일시 및 deleteAt 갱신
         subRoutineRepository.findByRoutineId(routineId)
-            .forEach(subRoutine -> subRoutine.updateHistoryEndDateTime(now));
+            .forEach(subRoutine -> {
+                subRoutine.updateHistoryEndDateTime(now);
+                subRoutine.setDeleteAt(now);
+            });
+
     }
 
     /**

@@ -70,4 +70,8 @@ public class SubRoutine extends BaseTimeEntity {
         this.sortOrder = sortOrder;
     }
 
+    // sort delete
+    public void setDeleteAt(LocalDateTime deleteAt) {
+        this.deletedAt = deleteAt;
+    }
 }
