@@ -34,5 +34,5 @@ public class RoutineCompletionInfo {
         example = "false",
         required = true)
     @NotNull
-    private Boolean isCompleted;
+    private Boolean completeYn;
 }

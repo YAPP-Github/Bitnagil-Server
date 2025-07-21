@@ -173,11 +173,11 @@ public class RoutineService {
             // 이미 엔티티가 존재하는 경우 완료여부 갱신
             if (routineCompletion.isPresent()) {
                 RoutineCompletion existingRoutineCompletion = routineCompletion.get();
-                existingRoutineCompletion.updateCompleteYn(routineCompletionInfo.getIsCompleted());
+                existingRoutineCompletion.updateCompleteYn(routineCompletionInfo.getCompleteYn());
             }
             else { // 한번도 체크하지 않아서 엔티티가 생기지 않은 경우 엔티티 생성
                 RoutineCompletion newRoutineCompletion = RoutineCompletion.builder()
-                    .completeYn(routineCompletionInfo.getIsCompleted())
+                    .completeYn(routineCompletionInfo.getCompleteYn())
                     .performedDate(request.getPerformedDate())
                     .routineId(routineCompletionInfo.getRoutineId())
                     .routineHistorySeq(routineCompletionInfo.getHistorySeq())
