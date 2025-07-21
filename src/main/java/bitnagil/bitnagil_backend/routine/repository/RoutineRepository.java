@@ -15,6 +15,7 @@ import java.util.List;
 public interface RoutineRepository extends JpaRepository<Routine, HistoryPk> {
 
     Optional<Routine> findByRoutinePk(HistoryPk routinePk);
+    List<Routine> findByRoutinePk_Id(UUID routinePkId);
 
     // routine_id와 활성 구간(현재 시점) 조건을 모두 만족하는 루틴 조회
     Optional<Routine> findByRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(

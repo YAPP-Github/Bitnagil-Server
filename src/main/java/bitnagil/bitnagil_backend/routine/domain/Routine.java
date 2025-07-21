@@ -73,4 +73,9 @@ public class Routine extends BaseTimeEntity {
     public void updateHistoryEndDateTime(LocalDateTime updateDateTime) {
         this.historyEndDateTime = updateDateTime;
     }
+
+    // sort delete
+    public void setDeleteAt(LocalDateTime deleteAt) {
+        this.deletedAt = deleteAt;
+    }
 }

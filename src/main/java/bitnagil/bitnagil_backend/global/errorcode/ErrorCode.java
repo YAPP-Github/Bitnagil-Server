@@ -58,6 +58,17 @@ public enum ErrorCode {
 
     // 서브 루틴 관련 에러 코드
     NOT_FOUND_SUB_ROUTINE("SR001", HttpStatus.NOT_FOUND, "해당 복합 키에 맞는 서브 루틴이 존재하지 않습니다."),
+    SUB_ROUTINE_USER_NOT_MATCHED("SR002", HttpStatus.FORBIDDEN, "서브루틴의 유저 정보와 로그인 유저 정보가 일치하지 않습니다."),
+
+    // 변경 루틴 관련 에러 코드
+    NOT_FOUND_CHANGED_ROUTINE("CR001", HttpStatus.NOT_FOUND, "존재하지 않는 변경 루틴입니다."),
+    CHANGED_ROUTINE_USER_NOT_MATCHED("CR002", HttpStatus.FORBIDDEN, "변경 루틴의 유저 정보와 로그인 유저 정보가 일치하지 않습니다."),
+
+    // 변경 서브루틴 관련 에러 코드
+    NOT_FOUND_CHANGED_SUB_ROUTINE("CSR001", HttpStatus.NOT_FOUND, "존재하지 않는 변경 서브루틴입니다."),
+    CHANGED_SUB_ROUTINE_USER_NOT_MATCHED("CSR002", HttpStatus.FORBIDDEN, "변경 서브루틴의 유저 정보와 로그인 유저 정보가 일치하지 않습니다."),
+
+    // 루틴 타입 관련 에러 코드
 
     // 온보딩 관련 에러 코드
     NOT_FOUND_RECOMMENDED_ROUTINE("ON000", HttpStatus.NOT_FOUND, "조건에 맞는 추천 루틴을 찾을 수 없습니다."),

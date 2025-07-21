@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,11 @@ import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
+import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
+import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
+import bitnagil.bitnagil_backend.routine.repository.RoutineCompletionRepository;
+import bitnagil.bitnagil_backend.routine.request.RoutineCompletionInfo;
+import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResultDto;
 import bitnagil.bitnagil_backend.routine.response.SubRoutineSearchResultDto;
@@ -33,10 +39,12 @@ import bitnagil.bitnagil_backend.routine.request.SubRoutineInfo;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 루틴, 서브루틴에 관련된 서비스 로직을 담은 클래스입니다.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoutineService {
@@ -45,6 +53,7 @@ public class RoutineService {
     private final SubRoutineRepository subRoutineRepository;
     private final ChangedRoutineRepository changedRoutineRepository;
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
+    private final RoutineCompletionRepository routineCompletionRepository;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
@@ -122,12 +131,17 @@ public class RoutineService {
 
         Routine routine = validateRoutineOwnership(routineId, user, now);
 
-        // 기존 루틴, 서브 루틴의 이력 종료일시를 갱신합니다.
+        // 기존 루틴, 서브 루틴의 이력 종료일시 및 deleteAt 갱신
         routine.updateHistoryEndDateTime(now);
+        routine.setDeleteAt(now);
 
-        // 서브 루틴을 순회하면서 이력 종료일시 갱신
+        // 서브 루틴을 순회하면서 이력 종료일시 및 deleteAt 갱신
         subRoutineRepository.findByRoutineId(routineId)
-            .forEach(subRoutine -> subRoutine.updateHistoryEndDateTime(now));
+            .forEach(subRoutine -> {
+                subRoutine.updateHistoryEndDateTime(now);
+                subRoutine.setDeleteAt(now);
+            });
+
     }
 
     /**
@@ -136,6 +150,92 @@ public class RoutineService {
     @Transactional(readOnly = true)
     public RoutineSearchResponse getRoutines(User user, LocalDate startDate, LocalDate endDate) {
         return queryRoutines(user, startDate, endDate);
+    }
+
+    /**
+     * 루틴의 완료 여부를 갱신하는 메서드입니다.
+     */
+    @Transactional
+    public void updateRoutineCompletionStatus(User user, UpdateRoutineCompletionRequest request) {
+        List<RoutineCompletionInfo> routineCompletionInfos = request.getRoutineCompletionInfos();
+
+        for (RoutineCompletionInfo routineCompletionInfo : routineCompletionInfos) {
+
+            validateRoutineOwnerShip(user, routineCompletionInfo);
+
+            // 기존 완료 여부 엔티티가 존재하는지 조회
+            Optional<RoutineCompletion> routineCompletion = routineCompletionRepository
+                .findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                    routineCompletionInfo.getRoutineId(),
+                    routineCompletionInfo.getHistorySeq(),
+                    routineCompletionInfo.getRoutineType());
+
+            // 이미 엔티티가 존재하는 경우 완료여부 갱신
+            if (routineCompletion.isPresent()) {
+                RoutineCompletion existingRoutineCompletion = routineCompletion.get();
+                existingRoutineCompletion.updateCompleteYn(routineCompletionInfo.getCompleteYn());
+            }
+            else { // 유저가 한번도 체크하지 않아서 엔티티가 생기지 않은 경우 엔티티 생성
+                RoutineCompletion newRoutineCompletion = RoutineCompletion.builder()
+                    .completeYn(routineCompletionInfo.getCompleteYn())
+                    .performedDate(request.getPerformedDate())
+                    .routineId(routineCompletionInfo.getRoutineId())
+                    .routineHistorySeq(routineCompletionInfo.getHistorySeq())
+                    .routineType(routineCompletionInfo.getRoutineType())
+                    .build();
+
+                routineCompletionRepository.save(newRoutineCompletion);
+            }
+        }
+    }
+
+    // 각 타입의 루틴이 실제로 존재하는 루틴인지, 실제로 유저가 가지고 있는 루틴인지 검증하는 메서드
+    private void validateRoutineOwnerShip(User user, RoutineCompletionInfo routineCompletionInfo) {
+        RoutineType routineType = routineCompletionInfo.getRoutineType();
+        HistoryPk historyPk = new HistoryPk(routineCompletionInfo.getRoutineId(), routineCompletionInfo.getHistorySeq());
+
+        switch (routineType) {
+            case ROUTINE:
+                Routine routine = routineRepository.findByRoutinePk(historyPk).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+                if (!user.getUserPk().getId().equals(routine.getUserId())) {
+                    throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
+                }
+                break;
+
+            case SUB_ROUTINE:
+                SubRoutine subRoutine = subRoutineRepository.findBySubRoutinePk(historyPk).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
+
+                List<Routine> routines = routineRepository.findByRoutinePk_Id(subRoutine.getRoutineId());
+
+                if (!user.getUserPk().getId().equals(routines.get(0).getUserId())) {
+                    throw new CustomException(ErrorCode.SUB_ROUTINE_USER_NOT_MATCHED);
+                }
+                break;
+
+            case CHANGED_ROUTINE:
+                ChangedRoutine changedRoutine = changedRoutineRepository.findByChangedRoutinePk(historyPk)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_ROUTINE));
+
+                if (!user.getUserPk().getId().equals(changedRoutine.getUserId())) {
+                    throw new CustomException(ErrorCode.CHANGED_ROUTINE_USER_NOT_MATCHED);
+                }
+                break;
+
+            case CHANGED_SUB_ROUTINE:
+                ChangedSubRoutine changedSubRoutine = changedSubRoutineRepository.findByChangedSubRoutinePk(historyPk)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_SUB_ROUTINE));
+
+                List<ChangedRoutine> changedRoutines = changedRoutineRepository.findByChangedRoutinePk_Id(
+                    changedSubRoutine.getChangedRoutineId());
+
+                if (!user.getUserPk().getId().equals(changedRoutines.get(0).getUserId())) {
+                    throw new CustomException(ErrorCode.CHANGED_SUB_ROUTINE_USER_NOT_MATCHED);
+                }
+                break;
+        }
     }
 
     // 갱신된 서브루틴을 SubRoutine 테이블에 새로운 Row 추가

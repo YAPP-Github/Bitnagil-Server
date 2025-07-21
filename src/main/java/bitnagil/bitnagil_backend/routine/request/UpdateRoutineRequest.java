@@ -40,7 +40,7 @@ public class UpdateRoutineRequest{
     private LocalTime executionTime;
 
     @Schema(
-        description = "세부 루틴 수정에 대한 정보입니다. 각각 기존 루틴 유지, 삭제, 새로운 루틴 추가 예시입니다.",
+        description = "세부 루틴 수정에 대한 정보를 담은 리스트입니다.",
         example = "["
             + "{\"subRoutineId\": \"4fa85f64-5717-4562-b3fc-2c963f66afa6\", \"subRoutineName\": \"손 씻기\", \"sortOrder\": 1},"
             + "{\"subRoutineId\": \"4fa85f64-5717-4562-b3fc-2c963f66afa6\", \"subRoutineName\": null, \"sortOrder\": null},"

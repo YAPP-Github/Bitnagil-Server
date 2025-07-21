@@ -8,8 +8,8 @@ import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
+import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
-import bitnagil.bitnagil_backend.routine.request.RoutineSearchRequest;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,4 +40,8 @@ public interface RoutineSpec {
     @Operation(summary = "루틴 및 서브 루틴을 모두 삭제합니다.")
     @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED})
     CustomResponseDto<Object> deleteRoutine(User user, UUID routineId);
+
+    @Operation(summary = "여러 루틴의 완료 여부를 갱신합니다.")
+    CustomResponseDto<Object> updateRoutineCompletionStatus(User user,
+        UpdateRoutineCompletionRequest updateRoutineCompletionRequest);
 }
