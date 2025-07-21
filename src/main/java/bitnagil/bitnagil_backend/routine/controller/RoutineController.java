@@ -71,7 +71,7 @@ public class RoutineController implements RoutineSpec {
 
     /**
      * 루틴 완료 여부 업데이트
-     * 새 레코드를 생성할 수도, 부분 수정할 수도 있기에 PATCH를 쓰지 않고 POST를 씁니다.
+     * 새 엔티티를 생성할 수도, 부분 수정할 수도 있기에 PATCH를 쓰지 않고 POST를 씁니다.
      */
     @PostMapping("/completions")
     public CustomResponseDto<Object> updateRoutineCompletionStatus(@CurrentUser User user,

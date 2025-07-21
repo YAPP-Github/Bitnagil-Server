@@ -175,7 +175,7 @@ public class RoutineService {
                 RoutineCompletion existingRoutineCompletion = routineCompletion.get();
                 existingRoutineCompletion.updateCompleteYn(routineCompletionInfo.getCompleteYn());
             }
-            else { // 한번도 체크하지 않아서 엔티티가 생기지 않은 경우 엔티티 생성
+            else { // 유저가 한번도 체크하지 않아서 엔티티가 생기지 않은 경우 엔티티 생성
                 RoutineCompletion newRoutineCompletion = RoutineCompletion.builder()
                     .completeYn(routineCompletionInfo.getCompleteYn())
                     .performedDate(request.getPerformedDate())
@@ -189,6 +189,7 @@ public class RoutineService {
         }
     }
 
+    // 각 타입의 루틴이 실제로 존재하는 루틴인지, 실제로 유저가 가지고 있는 루틴인지 검증하는 메서드
     private void validateRoutineOwnerShip(User user, RoutineCompletionInfo routineCompletionInfo) {
         RoutineType routineType = routineCompletionInfo.getRoutineType();
         HistoryPk historyPk = new HistoryPk(routineCompletionInfo.getRoutineId(), routineCompletionInfo.getHistorySeq());
@@ -202,6 +203,7 @@ public class RoutineService {
                     throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
                 }
                 break;
+
             case SUB_ROUTINE:
                 SubRoutine subRoutine = subRoutineRepository.findBySubRoutinePk(historyPk).orElseThrow(
                     () -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
@@ -212,6 +214,7 @@ public class RoutineService {
                     throw new CustomException(ErrorCode.SUB_ROUTINE_USER_NOT_MATCHED);
                 }
                 break;
+
             case CHANGED_ROUTINE:
                 ChangedRoutine changedRoutine = changedRoutineRepository.findByChangedRoutinePk(historyPk)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_ROUTINE));
@@ -220,6 +223,7 @@ public class RoutineService {
                     throw new CustomException(ErrorCode.CHANGED_ROUTINE_USER_NOT_MATCHED);
                 }
                 break;
+
             case CHANGED_SUB_ROUTINE:
                 ChangedSubRoutine changedSubRoutine = changedSubRoutineRepository.findByChangedSubRoutinePk(historyPk)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_SUB_ROUTINE));
