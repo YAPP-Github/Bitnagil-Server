@@ -3,7 +3,11 @@ package bitnagil.bitnagil_backend.routine.controller;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
+import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import jakarta.validation.constraints.NotNull;
+
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,5 +67,17 @@ public class RoutineController implements RoutineSpec {
                                                                 @RequestParam @NotNull LocalDate startDate,
                                                                 @RequestParam @NotNull LocalDate endDate) {
         return CustomResponseDto.from(routineService.getRoutines(user, startDate, endDate));
+    }
+
+    /**
+     * 루틴 완료 여부 업데이트
+     * 새 레코드를 생성할 수도, 부분 수정할 수도 있기에 PATCH를 쓰지 않고 POST를 씁니다.
+     */
+    @PostMapping("/completions")
+    public CustomResponseDto<Object> updateRoutineCompletionStatus(@CurrentUser User user,
+        @RequestBody UpdateRoutineCompletionRequest updateRoutineCompletionRequest) {
+        routineService.updateRoutineCompletionStatus(user, updateRoutineCompletionRequest);
+
+        return CustomResponseDto.from(null);
     }
 }
