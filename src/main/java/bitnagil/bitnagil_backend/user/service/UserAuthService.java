@@ -21,10 +21,11 @@ import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.enums.SocialType;
-import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
+import bitnagil.bitnagil_backend.user.response.UserLoginResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
+import bitnagil.bitnagil_backend.user.response.UserReissueResponse;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -42,7 +43,7 @@ public class UserAuthService {
 
     // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
-    public TokenResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
+    public UserLoginResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
 
         UserAuthInfo userAuthInfo = getUserAuthInfo(socialType, socialAccessToken);
 
@@ -50,12 +51,12 @@ public class UserAuthService {
 
         Token token = jwtUtil.generateToken(user.getUserPk());
 
-        return TokenResponse.of(token, user.getRole());
+        return UserLoginResponse.of(token, user.getRole());
     }
 
     // refreshToken으로 accessToken 재발행
     @Transactional
-    public TokenResponse reissueToken(String refreshToken) {
+    public UserReissueResponse reissueToken(String refreshToken) {
 
         if (!jwtUtil.validateToken(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
@@ -72,7 +73,7 @@ public class UserAuthService {
 
         Token token = jwtUtil.generateToken(user.getUserPk());
 
-        return TokenResponse.of(token);
+        return UserReissueResponse.of(token);
     }
 
     // refreshToken 삭제 및 카카오 토큰 무효화
