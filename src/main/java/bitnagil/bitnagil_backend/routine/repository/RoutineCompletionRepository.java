@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routine.repository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,7 @@ public interface RoutineCompletionRepository extends JpaRepository<RoutineComple
 
     Optional<RoutineCompletion> findByRoutineIdAndRoutineHistorySeqAndRoutineType(
         UUID routineId, Long routineHistorySeq, RoutineType routineType);
+
+    Optional<RoutineCompletion> findByPerformedDateAndRoutineIdAndRoutineHistorySeqAndRoutineType(
+        LocalDate performedDate, UUID routineId, Long routineHistorySeq, RoutineType routineType);
 }

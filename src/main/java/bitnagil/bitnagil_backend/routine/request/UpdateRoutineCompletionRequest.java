@@ -26,13 +26,13 @@ public class UpdateRoutineCompletionRequest {
             "\"routineType\": \"CHANGED_SUB_ROUTINE\", " +
             "\"routineId\": \"4fa85f64-5717-4562-b3fc-2c963f66afa6\", " +
             "\"historySeq\": 2, " +
-            "\"isCompleted\": false" +
+            "\"completeYn\": false" +
             "}, " +
             "{" +
             "\"routineType\": \"ROUTINE\", " +
             "\"routineId\": \"123e4567-e89b-12d3-a456-426614174000\", " +
             "\"historySeq\": 1, " +
-            "\"isCompleted\": true" +
+            "\"completeYn\": true" +
             "}" +
             "]",
         required = true
