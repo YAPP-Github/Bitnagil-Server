@@ -40,7 +40,7 @@ public class UserAuthController implements UserAuthSpec {
     }
 
     @PostMapping("/token/reissue")
-    public CustomResponseDto<UserReissueResponse> refreshToken(@RequestHeader("Refresh-Token") String refreshToken) {
+    public CustomResponseDto<UserReissueResponse> reissueToken(@RequestHeader("Refresh-Token") String refreshToken) {
         UserReissueResponse userReissueResponse = userAuthService.reissueToken(refreshToken);
 
         return CustomResponseDto.from(userReissueResponse);
