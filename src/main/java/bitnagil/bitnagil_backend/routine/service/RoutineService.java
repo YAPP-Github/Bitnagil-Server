@@ -374,6 +374,7 @@ public class RoutineService {
 
                         SubRoutineSearchResultDto subRoutineSearchResultDto = SubRoutineSearchResultDto.builder()
                                 .subRoutineId(subRoutine.getSubRoutinePk().getId())
+                                .historySeq(subRoutine.getSubRoutinePk().getHistorySeq())
                                 .subRoutineName(subRoutine.getName())
                                 .sortOrder(subRoutine.getSortOrder())
                                 .modifiedYn(false) // 서브루틴은 일시적인 수정(당일삭제, 미루기 등)이 아니므로 변경여부를 false로 설정
@@ -392,6 +393,7 @@ public class RoutineService {
 
                     RoutineSearchResultDto routineSearchResultDto = RoutineSearchResultDto.builder()
                             .routineId(routine.getRoutinePk().getId())
+                            .historySeq(routine.getRoutinePk().getHistorySeq())
                             .routineName(routine.getName())
                             .repeatDay(routine.getRepeatDay())
                             .executionTime(routine.getExecutionTime())
@@ -440,6 +442,7 @@ public class RoutineService {
 
                     SubRoutineSearchResultDto changedSubRoutineSearchResultDto = SubRoutineSearchResultDto.builder()
                             .subRoutineId(changedSubRoutine.getChangedSubRoutinePk().getId())
+                            .historySeq(changedSubRoutine.getChangedSubRoutinePk().getHistorySeq())
                             .subRoutineName(changedSubRoutine.getChangedSubRoutineName())
                             .sortOrder(changedSubRoutine.getSortOrder())
                             .modifiedYn(true)
@@ -458,6 +461,7 @@ public class RoutineService {
 
                 RoutineSearchResultDto changedRoutineSearchResultDto = RoutineSearchResultDto.builder()
                         .routineId(changedRoutine.getChangedRoutinePk().getId())
+                        .historySeq(changedRoutine.getChangedRoutinePk().getHistorySeq())
                         .routineName(changedRoutine.getChangedRoutineName())
 //                        .repeatDay(changedRoutine.getRepeatDay()) // 변경 루틴은 반복 요일이 없으므로 주석 처리(추후 2차에서는 이런 변경 루틴에 대해 어떻게 처리할지 고민)
                         .executionTime(changedRoutine.getChangedExecutionTime())

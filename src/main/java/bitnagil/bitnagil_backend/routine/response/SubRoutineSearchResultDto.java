@@ -12,8 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class SubRoutineSearchResultDto {
-    @Schema(example = "1")
+    @Schema(example = "046259d9-352a-4fd3-9855-c4539fb19242")
     private UUID subRoutineId; // 서브 루틴 ID
+    @Schema(example = "1")
+    private Long historySeq;
     @Schema(example = "물 10초만에 마시기")
     private String subRoutineName; // 서브 루틴 이름
     @Schema(example = "false")

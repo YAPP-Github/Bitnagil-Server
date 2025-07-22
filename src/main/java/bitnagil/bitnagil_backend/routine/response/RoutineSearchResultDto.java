@@ -15,8 +15,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class RoutineSearchResultDto {
-    @Schema(example = "1")
+    @Schema(example = "046259d9-352a-4fd3-9855-c4539fb19242")
     private UUID routineId; // 루틴 ID
+    @Schema(example = "1")
+    private Long historySeq; // 루틴 이력 시퀀스
     @Schema(example = "물마시기")
     private String routineName; // 루틴 이름
     @Schema(example = "[MONDAY, WEDNESDAY, FRIDAY]")
