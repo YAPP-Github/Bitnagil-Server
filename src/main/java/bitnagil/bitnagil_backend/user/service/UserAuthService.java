@@ -91,12 +91,17 @@ public class UserAuthService {
     public void withdrawal(User user) {
         LocalDateTime now = LocalDateTime.now();
 
-        invalidateToken(user);
+        // 변경 감지를 위해 영속 상태로 설정
+        User persistentUser = userRepository.findByUserPk(user.getUserPk()).orElseThrow(
+            () -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        // 기존 유저의 이력 종료일시를 갱신
-        user.updateHistoryEndDateTime(now);
+        invalidateToken(persistentUser);
 
-        unlinkFromSocial(user);
+        // 기존 유저의 이력 종료일시를 갱신 및 role 변경
+        persistentUser.updateHistoryEndDateTime(now);
+        persistentUser.changeRoleToWithdrawn();
+
+        unlinkFromSocial(persistentUser);
     }
 
     // 약관 동의 - 회원의 ROLE을 USER로 업데이트

@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 public enum Role implements EnumType {
 
     GUEST("ROLE_GUEST"),
-    USER("ROLE_USER");
+    USER("ROLE_USER"),
+    WITHDRAWN("ROLE_WITHDRAWN");
 
     private final String description;
 
