@@ -3,10 +3,14 @@ package bitnagil.bitnagil_backend.routine.controller.spec;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.RequestBody;
+
+import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
+import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
@@ -42,6 +46,16 @@ public interface RoutineSpec {
     CustomResponseDto<Object> deleteRoutine(User user, UUID routineId);
 
     @Operation(summary = "여러 루틴의 완료 여부를 갱신합니다.")
+    @ApiErrorCodeExamples({
+        ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED,
+        ErrorCode.NOT_FOUND_SUB_ROUTINE, ErrorCode.SUB_ROUTINE_USER_NOT_MATCHED,
+        ErrorCode.NOT_FOUND_CHANGED_ROUTINE, ErrorCode.CHANGED_ROUTINE_USER_NOT_MATCHED,
+        ErrorCode.NOT_FOUND_CHANGED_SUB_ROUTINE, ErrorCode.CHANGED_SUB_ROUTINE_USER_NOT_MATCHED
+    })
     CustomResponseDto<Object> updateRoutineCompletionStatus(User user,
         UpdateRoutineCompletionRequest updateRoutineCompletionRequest);
+
+    @Operation(summary = "선택한 요일(당일)만 루틴을 삭제합니다.")
+    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED})
+    CustomResponseDto<Object> deleteRoutineByDay(User user, DeleteRoutineByDayRequest deleteRoutineByDayRequest);
 }
