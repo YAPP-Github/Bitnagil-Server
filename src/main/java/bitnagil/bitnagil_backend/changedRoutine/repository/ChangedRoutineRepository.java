@@ -21,7 +21,7 @@ public interface ChangedRoutineRepository extends JpaRepository<ChangedRoutine, 
      * 현재 시점을 기준으로 유저의 살아있는 변경루틴 이력을 조회
      * historyStartDateTime < systime <= historyEndDateTime
      */
-    List<ChangedRoutine> findByUserIdAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqualAndChangedRoutineDateBetween(
+    List<ChangedRoutine> findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqualAndChangedRoutineDateBetween(
             UUID userId,
             LocalDateTime now1,
             LocalDateTime now2,

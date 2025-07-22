@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routine.response;
 
+import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +22,6 @@ public class SubRoutineSearchResultDto {
     private Integer sortOrder; // 정렬 순서
     @Schema(example = "false", description = "true: 완료, false: 미완료 (default는 false)")
     private Boolean completeYn; // 완료 여부 (true: 완료, false: 미완료)
+    @Schema(example = "SUB_ROUTINE", description = "루틴 구분을 위한 타입. 추후 루틴 완료 처리시 해당값을 그대로 전달")
+    private RoutineType routineType; // 루틴 타입 (ROUTINE, SUB_ROUTINE, CHANGED_ROUTINE, CHANGED_SUB_ROUTINE)
 }
