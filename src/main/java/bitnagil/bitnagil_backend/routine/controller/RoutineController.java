@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
+import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import jakarta.validation.constraints.NotNull;
 
@@ -55,6 +56,17 @@ public class RoutineController implements RoutineSpec {
     @DeleteMapping("/{routineId}")
     public CustomResponseDto<Object> deleteRoutine(@CurrentUser User user, @PathVariable UUID routineId) {
         routineService.deleteRoutine(user, routineId);
+
+        return CustomResponseDto.from(null);
+    }
+
+    /*
+     * 유저가 선택한 요일(당일)만 삭제하는 API입니다.
+     */
+    @DeleteMapping("/day")
+    public CustomResponseDto<Object> deleteRoutineByDay(@CurrentUser User user,
+        @RequestBody DeleteRoutineByDayRequest deleteRoutineByDayRequest) {
+        routineService.deleteRoutineByDay(user, deleteRoutineByDayRequest);
 
         return CustomResponseDto.from(null);
     }

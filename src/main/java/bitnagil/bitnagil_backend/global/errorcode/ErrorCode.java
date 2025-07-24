@@ -68,7 +68,9 @@ public enum ErrorCode {
     NOT_FOUND_CHANGED_SUB_ROUTINE("CSR001", HttpStatus.NOT_FOUND, "존재하지 않는 변경 서브루틴입니다."),
     CHANGED_SUB_ROUTINE_USER_NOT_MATCHED("CSR002", HttpStatus.FORBIDDEN, "변경 서브루틴의 유저 정보와 로그인 유저 정보가 일치하지 않습니다."),
 
-    // 루틴 타입 관련 에러 코드
+    // 루틴 완료 여부 관련 에러 코드
+    ROUTINE_ID_MISMATCH("RC001", HttpStatus.BAD_REQUEST, "루틴 완료 여부 테이블에서 조회된 routineId와 요청받은 routineId가 다릅니다."),
+    NOT_FOUND_ROUTINE_COMPLETION("RC002", HttpStatus.NOT_FOUND, "루틴 완료 여부 데이터를 찾을 수 없습니다."),
 
     // 온보딩 관련 에러 코드
     NOT_FOUND_RECOMMENDED_ROUTINE("ON000", HttpStatus.NOT_FOUND, "조건에 맞는 추천 루틴을 찾을 수 없습니다."),

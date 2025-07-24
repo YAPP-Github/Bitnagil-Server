@@ -1,5 +1,6 @@
-package bitnagil.bitnagil_backend.auth.jwt;
+package bitnagil.bitnagil_backend.user.response;
 
+import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_backend.enums.Role;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class TokenResponse {
+public class UserLoginResponse {
     @NotEmpty
     private String accessToken;
 
@@ -22,15 +23,8 @@ public class TokenResponse {
     @NotEmpty
     private Role role;
 
-    public static TokenResponse of(Token token) {
-        return TokenResponse.builder()
-            .accessToken(token.getAccessToken())
-            .refreshToken(token.getRefreshToken())
-            .build();
-    }
-
-    public static TokenResponse of(Token token, Role role) {
-        return TokenResponse.builder()
+    public static UserLoginResponse of(Token token, Role role) {
+        return UserLoginResponse.builder()
                 .accessToken(token.getAccessToken())
                 .refreshToken(token.getRefreshToken())
                 .role(role)
