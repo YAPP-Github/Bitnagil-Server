@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.time.LocalTime;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
@@ -20,6 +19,7 @@ import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.repository.RoutineCompletionRepository;
 import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.RoutineCompletionInfo;
+import bitnagil.bitnagil_backend.routine.request.SubRoutineInfoForDelete;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResultDto;
@@ -169,9 +169,7 @@ public class RoutineService {
         changedRoutineRepository.save(changedRoutineForDelete);
 
         // 루틴, performedDate에 해당하는 완료 여부 데이터 삭제
-        routineCompletionRepository.findByPerformedDateAndRoutineIdAndRoutineHistorySeqAndRoutineType(
-            request.getPerformedDate(), request.getRoutineId(), request.getHistorySeq(), RoutineType.ROUTINE)
-            .ifPresent(routineCompletionRepository::delete);
+        deleteRoutineCompletionIfRoutineIdMatches(request.getRoutineCompletionId(), request.getRoutineId());
 
         // 변경 서브루틴으로 전환
         List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
@@ -187,12 +185,11 @@ public class RoutineService {
                 .build();
 
             changedSubRoutineRepository.save(changedSubRoutineForDelete);
+        }
 
-            // 서브루틴, performedDate에 해당하는 완료 여부 데이터 삭제
-            routineCompletionRepository.findByPerformedDateAndRoutineIdAndRoutineHistorySeqAndRoutineType(
-                request.getPerformedDate(), subRoutine.getSubRoutinePk().getId(),
-                subRoutine.getSubRoutinePk().getHistorySeq(), RoutineType.SUB_ROUTINE)
-                .ifPresent(routineCompletionRepository::delete);
+        // 서브루틴, performedDate에 해당하는 완료 여부 데이터 삭제
+        for (SubRoutineInfoForDelete info : request.getSubRoutineInfosForDelete()) {
+            deleteRoutineCompletionIfRoutineIdMatches(info.getRoutineCompletionId(), info.getSubRoutineId());
         }
     }
 
@@ -239,6 +236,25 @@ public class RoutineService {
                 routineCompletionRepository.save(newRoutineCompletion);
             }
         }
+    }
+
+    // 루틴, performedDate에 해당하는 완료 여부 데이터 삭제
+    private void deleteRoutineCompletionIfRoutineIdMatches(Long routineCompletionId, UUID routineId) {
+
+        // 완료 여부가 생성되지 않은 루틴일 경우
+        if (routineCompletionId == null) {
+            return;
+        }
+
+        RoutineCompletion routineCompletion = routineCompletionRepository.findById(routineCompletionId).orElseThrow(
+            () -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE_COMPLETION)
+        );
+
+        if (!routineCompletion.getRoutineId().equals(routineId)) {
+            throw new CustomException(ErrorCode.ROUTINE_ID_MISMATCH);
+        }
+
+        routineCompletionRepository.delete(routineCompletion);
     }
 
     // 각 타입의 루틴이 실제로 존재하는 루틴인지, 실제로 유저가 가지고 있는 루틴인지 검증하는 메서드
