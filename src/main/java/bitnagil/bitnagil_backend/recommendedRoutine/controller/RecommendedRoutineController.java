@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.recommendedRoutine.controller;
 
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
+import bitnagil.bitnagil_backend.recommendedRoutine.controller.spec.RecommendedRoutineSpec;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResponse;
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineService;
 import bitnagil.bitnagil_backend.user.domain.User;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/recommend-routines")
-public class RecommendedRoutineController {
+public class RecommendedRoutineController implements RecommendedRoutineSpec {
     private final RecommendedRoutineService recommendedRoutineService;
 
     @GetMapping("")

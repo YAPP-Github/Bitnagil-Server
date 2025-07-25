@@ -2,6 +2,8 @@ package bitnagil.bitnagil_backend.recommendedRoutine.service;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
+import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
@@ -54,7 +56,7 @@ public class RecommendedRoutineService {
 
         // 영속성 객체에 user를 저장하기 위해 user를 조회
         user = userRepository.findByUserPk(user.getUserPk())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         /**
          * 맞춤 추천(감정구슬 + 온보딩)을 조회한다.
