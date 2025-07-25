@@ -56,6 +56,8 @@ public class RoutineService {
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
     private final RoutineCompletionRepository routineCompletionRepository;
 
+    private final RoutineValidator routineValidator;
+
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
     public void registerRoutine(User user, RegisterRoutineRequest request) {
@@ -69,7 +71,7 @@ public class RoutineService {
     public void updateRoutine(User user, UpdateRoutineRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
-        Routine previousRoutine = validateRoutineOwnership(request.getRoutineId(), user, now);
+        Routine previousRoutine = routineValidator.validateRoutineOwnership(request.getRoutineId(), user, now);
 
         if (hasRoutineChanged(request, previousRoutine))  {
 
@@ -130,7 +132,7 @@ public class RoutineService {
     public void deleteRoutine(User user, UUID routineId) {
         LocalDateTime now = LocalDateTime.now();
 
-        Routine routine = validateRoutineOwnership(routineId, user, now);
+        Routine routine = routineValidator.validateRoutineOwnership(routineId, user, now);
 
         // 기존 루틴, 서브 루틴의 이력 종료일시 및 deleteAt 갱신
         routine.updateHistoryEndDateTime(now);
@@ -150,7 +152,7 @@ public class RoutineService {
     public void deleteRoutineByDay(User user, DeleteRoutineByDayRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
-        Routine routine = validateRoutineOwnership(request.getRoutineId(), user, now);
+        Routine routine = routineValidator.validateRoutineOwnership(request.getRoutineId(), user, now);
 
         // 변경 루틴으로 전환
         ChangedRoutine changedRoutineForDelete = ChangedRoutine.builder()
@@ -210,7 +212,7 @@ public class RoutineService {
 
         for (RoutineCompletionInfo routineCompletionInfo : routineCompletionInfos) {
 
-            validateRoutineOwnerShip(user, routineCompletionInfo);
+            routineValidator.validateRoutineOwnership(user, routineCompletionInfo);
 
             // 기존 완료 여부 엔티티가 존재하는지 조회
             RoutineCompletion routineCompletion = routineCompletionRepository
@@ -255,56 +257,6 @@ public class RoutineService {
         }
 
         routineCompletionRepository.delete(routineCompletion);
-    }
-
-    // 각 타입의 루틴이 실제로 존재하는 루틴인지, 실제로 유저가 가지고 있는 루틴인지 검증하는 메서드
-    private void validateRoutineOwnerShip(User user, RoutineCompletionInfo routineCompletionInfo) {
-        RoutineType routineType = routineCompletionInfo.getRoutineType();
-        HistoryPk historyPk = new HistoryPk(routineCompletionInfo.getRoutineId(), routineCompletionInfo.getHistorySeq());
-
-        switch (routineType) {
-            case ROUTINE:
-                Routine routine = routineRepository.findByRoutinePk(historyPk).orElseThrow(
-                    () -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
-
-                if (!user.getUserPk().getId().equals(routine.getUserId())) {
-                    throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
-                }
-                break;
-
-            case SUB_ROUTINE:
-                SubRoutine subRoutine = subRoutineRepository.findBySubRoutinePk(historyPk).orElseThrow(
-                    () -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
-
-                // 추후 성능 이슈가 발생할 수 있는 부분
-                List<Routine> routines = routineRepository.findByRoutinePk_Id(subRoutine.getRoutineId());
-
-                if (!user.getUserPk().getId().equals(routines.get(0).getUserId())) {
-                    throw new CustomException(ErrorCode.SUB_ROUTINE_USER_NOT_MATCHED);
-                }
-                break;
-
-            case CHANGED_ROUTINE:
-                ChangedRoutine changedRoutine = changedRoutineRepository.findByChangedRoutinePk(historyPk)
-                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_ROUTINE));
-
-                if (!user.getUserPk().getId().equals(changedRoutine.getUserId())) {
-                    throw new CustomException(ErrorCode.CHANGED_ROUTINE_USER_NOT_MATCHED);
-                }
-                break;
-
-            case CHANGED_SUB_ROUTINE:
-                ChangedSubRoutine changedSubRoutine = changedSubRoutineRepository.findByChangedSubRoutinePk(historyPk)
-                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_SUB_ROUTINE));
-
-                List<ChangedRoutine> changedRoutines = changedRoutineRepository.findByChangedRoutinePk_Id(
-                    changedSubRoutine.getChangedRoutineId());
-
-                if (!user.getUserPk().getId().equals(changedRoutines.get(0).getUserId())) {
-                    throw new CustomException(ErrorCode.CHANGED_SUB_ROUTINE_USER_NOT_MATCHED);
-                }
-                break;
-        }
     }
 
     // 갱신된 서브루틴을 SubRoutine 테이블에 새로운 Row 추가
@@ -355,21 +307,6 @@ public class RoutineService {
         return !previousRoutine.getName().equals(request.getRoutineName()) ||
             !previousRoutine.getRepeatDay().equals(request.getRepeatDay()) ||
             !previousRoutine.getExecutionTime().equals(request.getExecutionTime());
-    }
-
-    // 요청 루틴 ID가 유저가 등록한 루틴인지 검증하는 메서드
-    private Routine validateRoutineOwnership(UUID routineId, User user, LocalDateTime now) {
-
-        Routine routine = routineRepository
-            .findByRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
-                routineId, now, now)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
-
-        if (!user.getUserPk().getId().equals(routine.getUserId())) {
-            throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
-        }
-
-        return routine;
     }
 
     // 루틴을 등록할 때, 수정할 때 모두 사용되는 루틴 저장 메서드
