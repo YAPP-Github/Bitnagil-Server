@@ -57,13 +57,21 @@ public class RoutineService {
     private final RoutineCompletionRepository routineCompletionRepository;
 
     private final RoutineValidator routineValidator;
+    private final RoutineFactory routineFactory;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
     public void registerRoutine(User user, RegisterRoutineRequest request) {
         LocalDateTime now = LocalDateTime.now();
-        Routine routine = saveRoutine(user, request, now);
-        saveSubRoutine(request.getSubRoutineName(), routine, now);
+
+        // 루틴 생성 및 저장
+        Routine newRoutine = routineFactory.createNewRoutine(user, request, now);
+        routineRepository.save(newRoutine);
+
+        // 서브 루틴 생성 및 저장
+        List<SubRoutine> newSubRoutines = routineFactory
+            .createNewSubRoutines(request.getSubRoutineName(), newRoutine, now);
+        subRoutineRepository.saveAll(newSubRoutines);
     }
 
     // 루틴, 세부 루틴을 수정하는 메서드
@@ -73,10 +81,11 @@ public class RoutineService {
 
         Routine previousRoutine = routineValidator.validateRoutineOwnership(request.getRoutineId(), user, now);
 
-        if (hasRoutineChanged(request, previousRoutine))  {
-
+        // 루틴에서 변경된 필드가 있는지 검증
+        if (previousRoutine.hasRoutineChanged(request))  {
             previousRoutine.updateHistoryEndDateTime(now);
-            addUpdatedRoutine(user, request, previousRoutine, now);
+            Routine routine = routineFactory.addUpdatedRoutine(user, request, previousRoutine, now);
+            routineRepository.save(routine);
         }
 
         // 서브루틴 갱신
@@ -92,7 +101,10 @@ public class RoutineService {
                     // 기존 서브루틴의 이름을 변경한 경우 (이력 갱신)
                     if (!subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName())) {
                         previousSubRoutine.updateHistoryEndDateTime(now);
-                        addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine, now);
+                        SubRoutine subRoutine = routineFactory.addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine,
+                            now);
+
+                        subRoutineRepository.save(subRoutine);
                     }
                     // 기존 서브루틴의 이름을 유지하고, 정렬 순서가 변경된 경우
                     if (subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName()) &&
@@ -113,15 +125,7 @@ public class RoutineService {
 
             // 새로운 서브루틴 추가
             if (subRoutineInfo.getSubRoutineId() == null && subRoutineInfo.getSubRoutineName() != null) {
-                SubRoutine newSubRoutine = SubRoutine.builder()
-                    .subRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-                    .name(subRoutineInfo.getSubRoutineName())
-                    .sortOrder(subRoutineInfo.getSortOrder())
-                    .historyStartDateTime(now)
-                    .historyEndDateTime(TimeUtils.END_DATE_TIME)
-                    .routineId(previousRoutine.getRoutinePk().getId())
-                    .build();
-
+                SubRoutine newSubRoutine = routineFactory.createUpdatedSubRoutine(subRoutineInfo, previousRoutine, now);
                 subRoutineRepository.save(newSubRoutine);
             }
         }
@@ -154,20 +158,7 @@ public class RoutineService {
 
         Routine routine = routineValidator.validateRoutineOwnership(request.getRoutineId(), user, now);
 
-        // 변경 루틴으로 전환
-        ChangedRoutine changedRoutineForDelete = ChangedRoutine.builder()
-            .changedRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-            .changedRoutineName(routine.getName())
-            .changedExecutionTime(routine.getExecutionTime())
-            .originalRoutineDate(request.getPerformedDate())
-            .changedRoutineDate(request.getPerformedDate())
-            .historyStartDateTime(now)
-            .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .changedDivCode(ChangedDivCode.TODAY_DELETE)
-            .userId(routine.getUserId())
-            .routineId(routine.getRoutinePk().getId())
-            .build();
-
+        ChangedRoutine changedRoutineForDelete = routineFactory.createChangedRoutineForDelete(request, routine, now);
         changedRoutineRepository.save(changedRoutineForDelete);
 
         // 루틴, performedDate에 해당하는 완료 여부 데이터 삭제
@@ -177,15 +168,8 @@ public class RoutineService {
         List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
 
         for (SubRoutine subRoutine : subRoutines) {
-            ChangedSubRoutine changedSubRoutineForDelete = ChangedSubRoutine.builder()
-                .changedSubRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-                .changedSubRoutineName(subRoutine.getName())
-                .historyStartDateTime(now)
-                .historyEndDateTime(TimeUtils.END_DATE_TIME)
-                .changedRoutineId(changedRoutineForDelete.getChangedRoutinePk().getId())
-                .sortOrder(subRoutine.getSortOrder())
-                .build();
-
+            ChangedSubRoutine changedSubRoutineForDelete = routineFactory
+                .createChangedSubRoutineForDelete(subRoutine, now, changedRoutineForDelete);
             changedSubRoutineRepository.save(changedSubRoutineForDelete);
         }
 
@@ -259,87 +243,6 @@ public class RoutineService {
         routineCompletionRepository.delete(routineCompletion);
     }
 
-    // 갱신된 서브루틴을 SubRoutine 테이블에 새로운 Row 추가
-    private void addUpdatedSubRoutine(SubRoutineInfo subRoutineInfo, SubRoutine previousSubRoutine,
-        LocalDateTime now) {
-        // 서브루틴을 갱신하여 새로운 Row 추가
-        HistoryPk subRoutinePk = new HistoryPk(previousSubRoutine.getSubRoutinePk().getId(),
-            previousSubRoutine.getSubRoutinePk().getHistorySeq() + 1);
-
-        SubRoutine updateSubRoutine = SubRoutine.builder()
-            .subRoutinePk(subRoutinePk)
-            .name(subRoutineInfo.getSubRoutineName())
-            .sortOrder(subRoutineInfo.getSortOrder())
-            .historyStartDateTime(now)
-            .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .routineId(previousSubRoutine.getRoutineId())
-            .build();
-
-        subRoutineRepository.save(updateSubRoutine);
-    }
-
-    // 갱신된 루틴을 Routine 테이블에 새로운 Row 추가
-    private void addUpdatedRoutine(User user, UpdateRoutineRequest request, Routine previousRoutine,
-        LocalDateTime now) {
-        // 이전 루틴에 대한 복합 키를 이력 순번만 증가 시켜 생성
-        HistoryPk nextRoutinePk = new HistoryPk(previousRoutine.getRoutinePk().getId(),
-            previousRoutine.getRoutinePk().getHistorySeq() + 1);
-
-        // 갱신된 컬럼을 검증 및 수정하여 새로운 갱신된 루틴 생성
-        Routine updateRoutine = Routine.builder()
-            .routinePk(nextRoutinePk)
-            .name(previousRoutine.getName().equals(request.getRoutineName()) ?
-                previousRoutine.getName() : request.getRoutineName())
-            .repeatDay(previousRoutine.getRepeatDay().equals(request.getRepeatDay()) ?
-                previousRoutine.getRepeatDay() : request.getRepeatDay())
-            .executionTime(previousRoutine.getExecutionTime().equals(request.getExecutionTime()) ?
-                previousRoutine.getExecutionTime() : request.getExecutionTime())
-            .historyStartDateTime(now)
-            .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .userId(user.getUserPk().getId())
-            .build();
-
-        routineRepository.save(updateRoutine);
-    }
-
-    // 서브루틴을 제외한 루틴 필드에서 변경된 필드가 있는지 검증
-    private boolean hasRoutineChanged(UpdateRoutineRequest request, Routine previousRoutine) {
-        return !previousRoutine.getName().equals(request.getRoutineName()) ||
-            !previousRoutine.getRepeatDay().equals(request.getRepeatDay()) ||
-            !previousRoutine.getExecutionTime().equals(request.getExecutionTime());
-    }
-
-    // 루틴을 등록할 때, 수정할 때 모두 사용되는 루틴 저장 메서드
-    private Routine saveRoutine(User user, RegisterRoutineRequest request, LocalDateTime now) {
-
-        Routine routine = Routine.builder()
-            .routinePk(new HistoryPk(UUID.randomUUID(), 1L))
-            .name(request.getRoutineName())
-            .repeatDay(request.getRepeatDay())
-            .executionTime(request.getExecutionTime())
-            .historyStartDateTime(now)
-            .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .userId(user.getUserPk().getId())
-            .build();
-
-        return routineRepository.save(routine);
-    }
-
-    private void saveSubRoutine(List<String> subRoutineNames, Routine routine, LocalDateTime now) {
-        int sortOrder = 1;
-        for (String subRoutineName : subRoutineNames) {
-            SubRoutine subRoutine = SubRoutine.builder()
-                .subRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-                .name(subRoutineName)
-                .sortOrder(sortOrder++)
-                .historyStartDateTime(now)
-                .historyEndDateTime(TimeUtils.END_DATE_TIME)
-                .routineId(routine.getRoutinePk().getId())
-                .build();
-
-            subRoutineRepository.save(subRoutine);
-        }
-    }
 
     /**
      * 특정 기간(startDate ~ endDate)의 루틴을 조회하는 메서드
