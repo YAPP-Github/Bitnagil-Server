@@ -43,12 +43,14 @@ public class EmotionMarbleService {
         return EmotionMarbleTypeResponse.builder().emotionMarbleTypes(values).build();
     }
 
-    // 감정 구술 등록
+    // 감정 구슬 등록(1일 1회)
     @Transactional
     public RegisterEmotionMarbleResponse registryEmotionMarble(User user, RegisterEmotionMarbleRequest request) {
         LocalDate nowDate = LocalDate.now();
         LocalDateTime nowDateTime = LocalDateTime.now();
         LocalDateTime endDateTime = LocalDateTime.of(nowDate, LocalTime.of(23, 59, 59));
+
+        // 이미 등록된 감정구슬이 있는지 체크
 
         EmotionMarble emotionMarble = EmotionMarble.builder()
                 .emotionMarblePk(new HistoryPk(UUID.randomUUID(), 1L))
@@ -57,7 +59,7 @@ public class EmotionMarbleService {
                 .userId(user.getUserPk().getId())
                 .historyStartDateTime(nowDateTime)
                 .historyEndDateTime(endDateTime) // historyEndDateTime은 당일 11시 59분 59초로 설정(하루씩 설정되기 때문. 이러면 매일 감정 갱신이 불필요함)
-                .resultCase( // 감정 구술에 따른 추천 루틴을 찾기 위해 Case 객체를 생성
+                .resultCase( // 감정 구슬에 따른 추천 루틴을 찾기 위해 Case 객체를 생성
                         Case.builder()
                                 .caseId(request.getEmotionMarbleType().getCaseId())
                                 .build()
@@ -65,7 +67,7 @@ public class EmotionMarbleService {
 
         emotionMarbleRepository.save(emotionMarble);
 
-        // 감정 구술에 따른 추천 루틴 응답
+        // 감정 구슬에 따른 추천 루틴 응답
         List<RecommendedRoutine> recommendedRoutines = recommendRoutineRepository.findByResultCase(emotionMarble.getResultCase());
         if (recommendedRoutines.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE);
