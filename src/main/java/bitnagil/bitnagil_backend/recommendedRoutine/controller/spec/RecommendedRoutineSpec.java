@@ -1,7 +1,5 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.controller.spec;
 
-import bitnagil.bitnagil_backend.auth.jwt.TokenResponse;
-import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
