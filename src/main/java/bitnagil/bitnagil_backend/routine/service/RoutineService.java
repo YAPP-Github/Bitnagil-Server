@@ -14,6 +14,8 @@ import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
+import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
+import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.repository.RoutineCompletionRepository;
@@ -55,6 +57,7 @@ public class RoutineService {
     private final ChangedRoutineRepository changedRoutineRepository;
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
     private final RoutineCompletionRepository routineCompletionRepository;
+    private final EmotionMarbleRepository emotionMarbleRepository;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
@@ -552,7 +555,14 @@ public class RoutineService {
             routinesByDateResponse.get(key).sort((a, b)
                     -> a.getExecutionTime().compareTo(b.getExecutionTime()));
         }
-        return RoutineSearchResponse.builder().routines(routinesByDateResponse).build();
+
+        // 감정구슬 조회
+        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), LocalDate.now());
+        return RoutineSearchResponse.builder()
+                .routines(routinesByDateResponse)
+                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType())
+                .nickname(user.getNickname())
+                .build();
     }
 }
 
