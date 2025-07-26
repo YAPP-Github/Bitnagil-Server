@@ -15,16 +15,17 @@ import bitnagil.bitnagil_backend.onboarding.repository.OnboardingRepository;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
 import bitnagil.bitnagil_backend.onboarding.request.RegistrationRoutinesRequest;
 import bitnagil.bitnagil_backend.onboarding.response.OnboardingResponse;
-import bitnagil.bitnagil_backend.onboarding.response.RecommendedSubRoutineDto;
-import bitnagil.bitnagil_backend.onboarding.response.RecommendedRoutineDto;
+import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRoutineRepository;
+import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineService;
 import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -47,6 +47,7 @@ public class OnboardingService {
     private final ChangedRoutineRepository changedRoutineRepository;
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
     private final SubRoutineRepository subRoutineRepository;
+    private final RecommendedRoutineService recommendedRoutineService;
 
     /**
      * 유저와 매칭되는 온보딩 결과를 설정하고, 리턴하는 메서드
@@ -67,36 +68,8 @@ public class OnboardingService {
         user.updateOnboarding(onboarding);
 
         // 온보딩의 CASE를 통해 추천루틴을 조회한다.
-        List<RecommendedRoutine> recommendedRoutines = recommendRoutineRepository.findByResultCase(onboarding.getResultCase());
-        if (recommendedRoutines.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE);
-        }
-
-        // 응답 생성
-        List<RecommendedRoutineDto> recommendedRoutineDtoList = new ArrayList<>();
-        for (RecommendedRoutine recommendedRoutine : recommendedRoutines) {
-            List<RecommendedSubRoutineDto> recommendedRoutineDetailDtoList = new ArrayList<>();
-
-            List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
-
-            // 추천 루틴의 세부 루틴을 dto로 변환한다.
-            for (RecommendedSubRoutine recommendedSubRoutine : recommendedSubRoutines) {
-                RecommendedSubRoutineDto recommendedRoutineDetailDto = RecommendedSubRoutineDto.builder()
-                        .recommendedSubRoutineId(recommendedSubRoutine.getRecommendedSubRoutineId())
-                        .recommendedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
-                        .build();
-                recommendedRoutineDetailDtoList.add(recommendedRoutineDetailDto);
-            }
-
-            // 추천 루틴을 dto로 변환한다.
-            RecommendedRoutineDto recommendedRoutineDto = RecommendedRoutineDto.builder()
-                    .recommendedRoutineId(recommendedRoutine.getRecommendedRoutineId())
-                    .recommendedRoutineName(recommendedRoutine.getRecommendedRoutineName())
-                    .routineDescription(recommendedRoutine.getRecommendedRoutineDescription())
-                    .recommendedSubRoutines(recommendedRoutineDetailDtoList) // 세부 루틴은 나중에 추가
-                    .build();
-            recommendedRoutineDtoList.add(recommendedRoutineDto);
-        }
+        List<RecommendedRoutineDto> recommendedRoutineDtoList =
+            recommendedRoutineService.recommendRoutinesByEmotionMarble(onboarding.getResultCase());
 
         OnboardingResponse response = OnboardingResponse.builder()
                 .recommendedRoutines(recommendedRoutineDtoList)

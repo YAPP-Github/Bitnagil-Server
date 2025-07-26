@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.emotionMarble.response;
+package bitnagil.bitnagil_backend.recommendedRoutine.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

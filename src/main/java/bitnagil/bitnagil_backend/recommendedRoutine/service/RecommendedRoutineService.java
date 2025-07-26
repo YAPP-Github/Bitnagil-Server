@@ -2,6 +2,8 @@ package bitnagil.bitnagil_backend.recommendedRoutine.service;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
+import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
+import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineDto;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
@@ -101,6 +103,41 @@ public class RecommendedRoutineService {
                 .recommendedRoutines(response)
                 .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
                 .build();
+    }
+
+    // 감정 구슬에 따른 추천 루틴 응답
+    public List<RecommendedRoutineDto> recommendRoutinesByEmotionMarble(Case routineCase) {
+        List<RecommendedRoutine> recommendedRoutines = recommendedRoutineRepository.findByResultCase(routineCase);
+        if (recommendedRoutines.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE);
+        }
+
+        // 응답 생성
+        List<RecommendedRoutineDto> recommendedRoutineDtoList = new ArrayList<>();
+        for (RecommendedRoutine recommendedRoutine : recommendedRoutines) {
+            List<RecommendedSubRoutineDto> recommendedRoutineDetailDtoList = new ArrayList<>();
+
+            List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+
+            // 추천 루틴의 세부 루틴을 dto로 변환한다.
+            for (RecommendedSubRoutine recommendedSubRoutine : recommendedSubRoutines) {
+                RecommendedSubRoutineDto recommendedRoutineDetailDto = RecommendedSubRoutineDto.builder()
+                    .recommendedSubRoutineId(recommendedSubRoutine.getRecommendedSubRoutineId())
+                    .recommendedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
+                    .build();
+                recommendedRoutineDetailDtoList.add(recommendedRoutineDetailDto);
+            }
+
+            // 추천 루틴을 dto로 변환한다.
+            RecommendedRoutineDto recommendedRoutineDto = RecommendedRoutineDto.builder()
+                .recommendedRoutineId(recommendedRoutine.getRecommendedRoutineId())
+                .recommendedRoutineName(recommendedRoutine.getRecommendedRoutineName())
+                .routineDescription(recommendedRoutine.getRecommendedRoutineDescription())
+                .recommendedSubRoutines(recommendedRoutineDetailDtoList)
+                .build();
+            recommendedRoutineDtoList.add(recommendedRoutineDto);
+        }
+        return recommendedRoutineDtoList;
     }
 
     // 추천루틴을 응답 객체에 추가하는 메서드
