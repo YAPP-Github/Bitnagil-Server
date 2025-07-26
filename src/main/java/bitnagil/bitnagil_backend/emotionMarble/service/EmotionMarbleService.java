@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 감정 구슬에 대한 로직을 관리하는 클래스입니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class EmotionMarbleService {
@@ -36,6 +39,8 @@ public class EmotionMarbleService {
     private final EmotionMarbleRepository emotionMarbleRepository;
     private final RecommendedRoutineRepository recommendRoutineRepository;
     private final RecommendedSubRoutineRepository recommendedSubRoutineRepository;
+
+    private final EmotionMarbleFactory emotionMarbleFactory;
 
     // 감정 구술 조회(enum의 value를 가져온다.)
     public EmotionMarbleTypeResponse getEmotionMarbles() {
@@ -55,18 +60,8 @@ public class EmotionMarbleService {
             throw new CustomException(ErrorCode.ALREADY_REGISTERED_EMOTION_MARBLE);
         }
 
-        EmotionMarble emotionMarble = EmotionMarble.builder()
-                .emotionMarblePk(new HistoryPk(UUID.randomUUID(), 1L))
-                .emotionMarbleType(request.getEmotionMarbleType())
-                .date(nowDate)
-                .userId(user.getUserPk().getId())
-                .historyStartDateTime(nowDateTime)
-                .historyEndDateTime(endDateTime) // historyEndDateTime은 당일 11시 59분 59초로 설정(하루씩 설정되기 때문. 이러면 매일 감정 갱신이 불필요함)
-                .resultCase( // 감정 구슬에 따른 추천 루틴을 찾기 위해 Case 객체를 생성
-                        Case.builder()
-                                .caseId(request.getEmotionMarbleType().getCaseId())
-                                .build()
-                ).build();
+        EmotionMarble emotionMarble = emotionMarbleFactory.createTodayEmotionMarble(
+            user, request, nowDate, nowDateTime, endDateTime);
 
         emotionMarbleRepository.save(emotionMarble);
 
