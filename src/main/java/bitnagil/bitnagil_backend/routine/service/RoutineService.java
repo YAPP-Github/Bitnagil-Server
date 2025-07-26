@@ -26,6 +26,8 @@ import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResultDto;
 import bitnagil.bitnagil_backend.routine.response.SubRoutineSearchResultDto;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -250,53 +252,36 @@ public class RoutineService {
             .findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
                 user.getUserPk().getId(), now, now);
 
-        // 루틴을 날짜별로 묶어서 반환할 Map을 날짜별로 초기화 해놓는다.
-        Map<LocalDate, List<RoutineSearchResultDto>> routinesByDateResponse = new HashMap<>();
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            routinesByDateResponse.put(date, new ArrayList<>()); // 현재 날짜의 Map을 초기화
-            DayOfWeek currentDayOfWeek = date.getDayOfWeek(); // 현재 날짜의 요일(ex: 2025-07-22 -> TUESDAY)
-
-            // 조회해온 루틴을 순회하면서 현재 날짜의 요일과 루틴의 반복요일이 일치하는 경우 Map에 해당 루틴을 담는다.
-            for (Routine routine : routines) {
-                // 루틴의 반복요일이 현재 날짜의 요일과 일치하는지 확인
-                if (routine.getRepeatDay().contains(currentDayOfWeek)) {
-                    // 현재 루틴의 ID를 FK로 가지는 서브루틴 조회
-                    List<SubRoutine> subRoutines = subRoutineRepository
-                        .findByRoutineIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
-                            routine.getRoutinePk().getId(), now, now);
-
-                    // 서브루틴 List DTO 생성
-                    List<SubRoutineSearchResultDto> subRoutineSearchResultList = new ArrayList<>();
-                    for (SubRoutine subRoutine : subRoutines) {
-
-                        // 서브 루틴 완료 여부 조회
-                        RoutineCompletion subRoutineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
-                                subRoutine.getSubRoutinePk().getId(), subRoutine.getSubRoutinePk().getHistorySeq(), RoutineType.SUB_ROUTINE);
-
-                        SubRoutineSearchResultDto subRoutineSearchResultDto =
-                            routineMapper.toSubRoutineSearchResultDto(subRoutine, subRoutineCompletion);
-                        subRoutineSearchResultList.add(subRoutineSearchResultDto);
-                    }
-
-                    // 서브루틴을 sortOrder 순으로 정렬
-                    subRoutineSearchResultList.sort((a, b) -> a.getSortOrder().compareTo(b.getSortOrder()));
-
-                    // 루틴 완료 여부 조회
-                    RoutineCompletion routineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
-                            routine.getRoutinePk().getId(), routine.getRoutinePk().getHistorySeq(), RoutineType.ROUTINE);
-
-                    RoutineSearchResultDto routineSearchResultDto =
-                        routineMapper.toRoutineSearchResultDto(routine, subRoutineSearchResultList, routineCompletion);
-                    routinesByDateResponse.get(date).add(routineSearchResultDto); // map에 현재날짜에 해당하는 루틴을 담는다.
-                }
-            }
-        }
+        // 날짜별 루틴 그룹핑 및 DTO 변환 (요일 필터링 포함)
+        Map<LocalDate, List<RoutineSearchResultDto>> routinesByDateResponse =
+            filterAndGroupRoutinesByDate(startDate, endDate, routines, now);
 
         // 변경 루틴 테이블의 변경된 루틴 날짜가 startDate ~ endDate인 이력을 모두 조회한다.
         List<ChangedRoutine> changedRoutines = changedRoutineRepository
             .findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqualAndChangedRoutineDateBetween(
                 user.getUserPk().getId(), now, now, startDate, endDate);
 
+        // 변경 루틴 적용 (원본 루틴 교체 및 추가)
+        applyChangedRoutines(changedRoutines, routinesByDateResponse, now);
+
+        // 루틴(대분류)는 실행 시간순으로 정렬한다. 만약 실행시간이 동일하면 어떻게 정렬할까?
+        for(LocalDate key: routinesByDateResponse.keySet()) {
+            routinesByDateResponse.get(key).sort((a, b)
+                    -> a.getExecutionTime().compareTo(b.getExecutionTime()));
+        }
+
+        // 감정구슬 조회
+        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), LocalDate.now());
+
+        return RoutineSearchResponse.builder()
+                .routines(routinesByDateResponse)
+                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType())
+                .nickname(user.getNickname())
+                .build();
+    }
+
+    private void applyChangedRoutines(List<ChangedRoutine> changedRoutines,
+        Map<LocalDate, List<RoutineSearchResultDto>> routinesByDateResponse, LocalDateTime now) {
         // 변경 루틴을 하나씩 순회하면서 원본 루틴과 겹치는 날짜가 있다면, 원본 루틴을 Map에서 제거하고, 변경 루틴을 넣는다.(삭제는 제외)
         for (ChangedRoutine changedRoutine : changedRoutines) {
             LocalDate originalRoutineDate = changedRoutine.getOriginalRoutineDate(); // 원본 루틴 수행 날짜
@@ -347,20 +332,52 @@ public class RoutineService {
                 routinesByDateResponse.get(changedRoutine.getChangedRoutineDate()).add(changedRoutineSearchResultDto);
             }
         }
-        // 루틴(대분류)는 실행 시간순으로 정렬한다. 만약 실행시간이 동일하면 어떻게 정렬할까?
-        for(LocalDate key: routinesByDateResponse.keySet()) {
-            routinesByDateResponse.get(key).sort((a, b)
-                    -> a.getExecutionTime().compareTo(b.getExecutionTime()));
+    }
+
+    private Map<LocalDate, List<RoutineSearchResultDto>> filterAndGroupRoutinesByDate(LocalDate startDate,
+        LocalDate endDate, List<Routine> routines, LocalDateTime now) {
+        // 루틴을 날짜별로 묶어서 반환할 Map을 날짜별로 초기화 해놓는다.
+        Map<LocalDate, List<RoutineSearchResultDto>> routinesByDateResponse = new HashMap<>();
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            routinesByDateResponse.put(date, new ArrayList<>()); // 현재 날짜의 Map을 초기화
+            DayOfWeek currentDayOfWeek = date.getDayOfWeek(); // 현재 날짜의 요일(ex: 2025-07-22 -> TUESDAY)
+
+            // 조회해온 루틴을 순회하면서 현재 날짜의 요일과 루틴의 반복요일이 일치하는 경우 Map에 해당 루틴을 담는다.
+            for (Routine routine : routines) {
+                // 루틴의 반복요일이 현재 날짜의 요일과 일치하는지 확인
+                if (routine.getRepeatDay().contains(currentDayOfWeek)) {
+                    // 현재 루틴의 ID를 FK로 가지는 서브루틴 조회
+                    List<SubRoutine> subRoutines = subRoutineRepository
+                        .findByRoutineIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
+                            routine.getRoutinePk().getId(), now, now);
+
+                    // 서브루틴 List DTO 생성
+                    List<SubRoutineSearchResultDto> subRoutineSearchResultList = new ArrayList<>();
+                    for (SubRoutine subRoutine : subRoutines) {
+
+                        // 서브 루틴 완료 여부 조회
+                        RoutineCompletion subRoutineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                                subRoutine.getSubRoutinePk().getId(), subRoutine.getSubRoutinePk().getHistorySeq(), RoutineType.SUB_ROUTINE);
+
+                        SubRoutineSearchResultDto subRoutineSearchResultDto =
+                            routineMapper.toSubRoutineSearchResultDto(subRoutine, subRoutineCompletion);
+                        subRoutineSearchResultList.add(subRoutineSearchResultDto);
+                    }
+
+                    // 서브루틴을 sortOrder 순으로 정렬
+                    subRoutineSearchResultList.sort((a, b) -> a.getSortOrder().compareTo(b.getSortOrder()));
+
+                    // 루틴 완료 여부 조회
+                    RoutineCompletion routineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                            routine.getRoutinePk().getId(), routine.getRoutinePk().getHistorySeq(), RoutineType.ROUTINE);
+
+                    RoutineSearchResultDto routineSearchResultDto =
+                        routineMapper.toRoutineSearchResultDto(routine, subRoutineSearchResultList, routineCompletion);
+                    routinesByDateResponse.get(date).add(routineSearchResultDto); // map에 현재날짜에 해당하는 루틴을 담는다.
+                }
+            }
         }
-
-        // 감정구슬 조회
-        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), LocalDate.now());
-
-        return RoutineSearchResponse.builder()
-                .routines(routinesByDateResponse)
-                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType())
-                .nickname(user.getNickname())
-                .build();
+        return routinesByDateResponse;
     }
 }
 
