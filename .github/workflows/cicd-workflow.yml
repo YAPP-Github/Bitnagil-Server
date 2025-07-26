@@ -47,15 +47,7 @@ jobs:
           echo "Current Directory: $(pwd)"
           ls -al
 
-      # 3. Gradle 실행 권한 부여
-      - name: Grant execute permission for Gradle
-        run: chmod +x ./gradlew
-
-      # 4. Gradle로 빌드
-      - name: Build with Gradle
-        run: ./gradlew clean build
-
-      # 5. AWS 자격 증명 구성
+      # 3. AWS 자격 증명 구성
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -63,12 +55,89 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      # 6. Amazon ECR에 로그인
+#      # 4. AWS CLI 설치 (사전 설치되어 있지 않은 경우)
+#      - name: Install AWS CLI (if not pre-installed)
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y awscli
+
+      # AWS SSM으로 현재 redis의 포트 확인 커멘드 설정
+      - name: Get Redis port from AWS SSM
+        if: github.ref == 'refs/heads/develop'
+        id: send_cmd
+        run: |
+          cmd_id=$(aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=instanceIds,Values=${{ secrets.EC2_INSTANCE_ID }}" \
+            --comment "Deploy script via CI" \
+            --parameters 'commands=[
+              "if netstat -tuln | grep -q \":6379 \"; then echo 6379; \
+              elif netstat -tuln | grep -q \":6380 \"; then echo 6380; \
+              else echo none; fi"
+            ]' \
+            --region ap-northeast-2 \
+            --query "Command.CommandId" --output text)
+          echo "cmd_id=$cmd_id" >> $GITHUB_OUTPUT    
+
+      # AWS SSM 커멘드를 실행하여 현재 redis의 포트 확인 및 교체할 port 저장
+      - name: Get Redis port command result
+        if: github.ref == 'refs/heads/develop'
+        id: get_cmd_result
+        run: |
+          redis_port=$(aws ssm get-command-invocation \
+            --command-id ${{ steps.send_cmd.outputs.cmd_id }} \
+            --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
+            --region ap-northeast-2 \
+            --query 'StandardOutputContent' \
+            --output text | tr -d '\n')
+          echo "현재 열려있는 Redis 포트: $redis_port"
+          if [ "$redis_port" = "6379" ]; then
+          next_port="6380"
+          elif [ "$redis_port" = "6380" ]; then
+          next_port="6379"
+          else
+          next_port="6379"
+          echo "Redis를 신규로 띄웁니다"
+          fi
+          echo "next_redis_port=$next_port" >> $GITHUB_OUTPUT
+
+      # 호스트 포트 수정
+      - name: Update Redis hostPort in task-definition-dev.json
+        if: github.ref == 'refs/heads/develop'
+        run: | 
+          jq --arg port "${{ steps.get_cmd_result.outputs.next_redis_port }}" \
+            '(.containerDefinitions[] | select(.name == "redis-dev").portMappings[] | select(.containerPort == 6379)).hostPort = ($port | tonumber)' \
+            task-definition-dev.json > tmp.json && mv tmp.json task-definition-dev.json
+          
+          echo "수정된 task-definition.json의 Redis portMappings:"
+          jq '.containerDefinitions[] | select(.name == "redis-dev") | .portMappings[].hostPort' task-definition-dev.json    
+
+#      - name: Update spring.data.redis.port in application.yml
+#        if: github.ref == 'refs/heads/develop'
+#        run: |
+#          echo "Before modification:"
+#          grep "spring.data.redis.port" config/dev/application-dev.yml
+#
+#          sed -i "s/\(spring.data.redis.port:\).*/\1 ${{ steps.get_cmd_result.outputs.redis_port }}/" config/dev/application-dev.yml
+#
+#          echo "After modification:"
+#          grep "spring.data.redis.port" config/dev/application-dev.yml
+
+
+      # 5. Gradle 실행 권한 부여
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      # 6. Gradle로 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      # 7. Amazon ECR에 로그인
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 7. Docker 이미지 빌드 및 태그, Amazon ECR에 이미지 푸시
+      # 8. Docker 이미지 빌드 및 태그, Amazon ECR에 이미지 푸시
       - name: Build Docker image and tag, push image to Amazon ECR - release
         if: github.ref == 'refs/heads/release'
         id: build-image-release
@@ -87,7 +156,7 @@ jobs:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest  # 이미지를 ECR에 푸시합니다.
           echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest" >> $GITHUB_OUTPUT          
 
-      # 8. Amazon ECS 태스크 정의에 새 이미지 ID 채우기
+      # 9. Amazon ECS 태스크 정의에 새 이미지 ID 채우기
       - name: Fill in the new image ID in the Amazon ECS task definition - release
         if: github.ref == 'refs/heads/release'
         id: task-def-release
@@ -96,6 +165,13 @@ jobs:
           task-definition: task-definition-prod.json
           container-name: ${{ secrets.ECS_CONTAINER_NAME_PROD }}
           image: ${{ steps.build-image-release.outputs.image }}
+
+      - name: Mask ECS container name secret - release
+        if: github.ref == 'refs/heads/release'
+        run: |
+          echo "ECS_CONTAINER_NAME_PROD is ${{ secrets.ECS_CONTAINER_NAME_PROD }}"
+          echo "Container Names in task-definition-prod.json:"
+          cat task-definition-prod.json | jq -r '.containerDefinitions[].name'
 
       - name: Fill in the new image ID in the Amazon ECS task definition - develop
         if: github.ref == 'refs/heads/develop'
@@ -106,7 +182,7 @@ jobs:
           container-name: ${{ secrets.ECS_CONTAINER_NAME_DEV }}
           image: ${{ steps.build-image-develop.outputs.image }}
 
-      # 9. ECS에 배포
+      # 10. ECS에 배포
       - name: Deploy to ECS - release
         if: github.ref == 'refs/heads/release'
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -124,3 +200,12 @@ jobs:
           service: ${{ secrets.ECS_SERVICE_NAME_DEV }}
           cluster: ${{ secrets.ECS_CLUSTER_NAME }}
           wait-for-service-stability: true  # 서비스가 안정화될 때까지 대기합니다.
+
+      # 11. release 브랜치에 배포 시 release 태그 생성 자동화
+      - name: update release tag
+        if: github.ref == 'refs/heads/release'
+        uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter-config.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}

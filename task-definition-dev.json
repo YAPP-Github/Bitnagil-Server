@@ -14,6 +14,9 @@
         }
       ],
       "essential": true,
+      "links": [
+        "redis-dev"
+      ],
       "environment": [
         {
           "name": "SPRING_PROFILES_ACTIVE",
@@ -41,6 +44,25 @@
         "secretOptions": []
       },
       "systemControls": []
+    },
+    {
+      "name": "redis-dev",
+      "image": "redis:7-alpine",
+      "cpu": 1,
+      "portMappings": [
+        {
+          "name": "redis-dev-6379-tcp",
+          "containerPort": 6379,
+          "hostPort": 6379,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": false,
+      "environment": [],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "systemControls": []
     }
   ],
   "taskRoleArn": "arn:aws:iam::750819668269:role/ecsTaskExecutionRole",
@@ -49,7 +71,7 @@
     "EC2"
   ],
   "cpu": "512",
-  "memory": "256",
+  "memory": "512",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
