@@ -28,6 +28,8 @@ public class RoutineSearchResultDto {
     private List<SubRoutineSearchResultDto> subRoutineSearchResultDto; // 서브루틴 목록
     @Schema(example = "false")
     private Boolean modifiedYn; // 수정 여부
+    @Schema(example = "1")
+    private Long routineCompletionId; // 루틴 완료 ID
     @Schema(example = "false", description = "true: 완료, false: 미완료 (default는 false)")
     private Boolean completeYn; // 완료 여부 (true: 완료, false: 미완료)
     @Schema(example = "ROUTINE", description = "루틴 구분을 위한 타입. 추후 루틴 완료 처리시 해당값을 그대로 전달")
