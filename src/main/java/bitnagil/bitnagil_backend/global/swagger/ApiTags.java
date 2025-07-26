@@ -10,4 +10,5 @@ public class ApiTags {
     public static final String ROUTINE = "루틴 API";
     public static final String ONBOARDING = "온보딩 API";
     public static final String EMOTION_MARBLE = "감정구슬 API";
+    public static final String RECOMMENDED_ROUTINE = "추천 루틴 API";
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum RecommendedRoutineType implements EnumType {
+    PERSONALIZED("맞춤 추천"),
     OUTING("나가봐요"),
     OUTING_REPORT("나가봐요-제보"),
     GROW("성장해요"),

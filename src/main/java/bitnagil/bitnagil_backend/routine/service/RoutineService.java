@@ -14,6 +14,8 @@ import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
+import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
+import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.repository.RoutineCompletionRepository;
@@ -55,6 +57,7 @@ public class RoutineService {
     private final ChangedRoutineRepository changedRoutineRepository;
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
     private final RoutineCompletionRepository routineCompletionRepository;
+    private final EmotionMarbleRepository emotionMarbleRepository;
 
     private final RoutineValidator routineValidator;
     private final RoutineFactory routineFactory;
@@ -287,6 +290,7 @@ public class RoutineService {
                                 .subRoutineName(subRoutine.getName())
                                 .sortOrder(subRoutine.getSortOrder())
                                 .modifiedYn(false) // 서브루틴은 일시적인 수정(당일삭제, 미루기 등)이 아니므로 변경여부를 false로 설정
+                                .routineCompletionId(subRoutineCompletion == null ? null : subRoutineCompletion.getRoutineCompletionId())
                                 .completeYn(subRoutineCompletion == null ? false : subRoutineCompletion.getCompleteYn())
                                 .routineType(RoutineType.SUB_ROUTINE)
                                 .build();
@@ -308,6 +312,7 @@ public class RoutineService {
                             .executionTime(routine.getExecutionTime())
                             .subRoutineSearchResultDto(subRoutineSearchResultList)
                             .modifiedYn(false) // 루틴은 일시적인 수정(당일삭제, 미루기 등)이 아니므로 변경여부를 false로 설정
+                            .routineCompletionId(routineCompletion == null ? null : routineCompletion.getRoutineCompletionId())
                             .completeYn(routineCompletion == null ? false : routineCompletion.getCompleteYn())
                             .routineType(RoutineType.ROUTINE)
                             .build();
@@ -355,6 +360,7 @@ public class RoutineService {
                             .subRoutineName(changedSubRoutine.getChangedSubRoutineName())
                             .sortOrder(changedSubRoutine.getSortOrder())
                             .modifiedYn(true)
+                            .routineCompletionId(changedSubRoutineCompletion == null ? null : changedSubRoutineCompletion.getRoutineCompletionId())
                             .completeYn(changedSubRoutineCompletion == null ? false : changedSubRoutineCompletion.getCompleteYn())
                             .routineType(RoutineType.CHANGED_SUB_ROUTINE)
                             .build();
@@ -376,6 +382,7 @@ public class RoutineService {
                         .executionTime(changedRoutine.getChangedExecutionTime())
                         .subRoutineSearchResultDto(changedSubRoutineSearchResultList)
                         .modifiedYn(true) // 변경 루틴은 수정 여부가 true
+                        .routineCompletionId(changedRoutineCompletion == null ? null : changedRoutineCompletion.getRoutineCompletionId())
                         .completeYn(changedRoutineCompletion == null ? false : changedRoutineCompletion.getCompleteYn())
                         .routineType(RoutineType.CHANGED_ROUTINE)
                         .build();
@@ -388,7 +395,14 @@ public class RoutineService {
             routinesByDateResponse.get(key).sort((a, b)
                     -> a.getExecutionTime().compareTo(b.getExecutionTime()));
         }
-        return RoutineSearchResponse.builder().routines(routinesByDateResponse).build();
+
+        // 감정구슬 조회
+        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), LocalDate.now());
+        return RoutineSearchResponse.builder()
+                .routines(routinesByDateResponse)
+                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType())
+                .nickname(user.getNickname())
+                .build();
     }
 }
 

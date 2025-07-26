@@ -22,6 +22,8 @@ public class SubRoutineSearchResultDto {
     private Boolean modifiedYn; // 수정 여부
     @Schema(example = "1")
     private Integer sortOrder; // 정렬 순서
+    @Schema(example = "1")
+    private Long routineCompletionId;
     @Schema(example = "false", description = "true: 완료, false: 미완료 (default는 false)")
     private Boolean completeYn; // 완료 여부 (true: 완료, false: 미완료)
     @Schema(example = "SUB_ROUTINE", description = "루틴 구분을 위한 타입. 추후 루틴 완료 처리시 해당값을 그대로 전달")
