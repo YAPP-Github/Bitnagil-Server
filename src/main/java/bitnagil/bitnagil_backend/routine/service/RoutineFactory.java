@@ -13,10 +13,13 @@ import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
+import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
+import bitnagil.bitnagil_backend.routine.request.RoutineCompletionInfo;
 import bitnagil.bitnagil_backend.routine.request.SubRoutineInfo;
+import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -140,6 +143,18 @@ public class RoutineFactory {
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
             .changedRoutineId(changedRoutineForDelete.getChangedRoutinePk().getId())
             .sortOrder(subRoutine.getSortOrder())
+            .build();
+    }
+
+    public RoutineCompletion createRoutineCompletion(UpdateRoutineCompletionRequest request,
+        RoutineCompletionInfo routineCompletionInfo) {
+
+        return RoutineCompletion.builder()
+            .completeYn(routineCompletionInfo.getCompleteYn())
+            .performedDate(request.getPerformedDate())
+            .routineId(routineCompletionInfo.getRoutineId())
+            .routineHistorySeq(routineCompletionInfo.getHistorySeq())
+            .routineType(routineCompletionInfo.getRoutineType())
             .build();
     }
 }

@@ -29,10 +29,8 @@ import bitnagil.bitnagil_backend.routine.response.SubRoutineSearchResultDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
-import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;
@@ -61,6 +59,7 @@ public class RoutineService {
 
     private final RoutineValidator routineValidator;
     private final RoutineFactory routineFactory;
+    private final RoutineMapper routineMapper;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
@@ -96,6 +95,7 @@ public class RoutineService {
 
             // 기존 서브루틴 변경 및 유지
             if (subRoutineInfo.getSubRoutineId() != null && subRoutineInfo.getSubRoutineName() != null) {
+
                 SubRoutine previousSubRoutine = subRoutineRepository
                     .findBySubRoutinePk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
                         subRoutineInfo.getSubRoutineId(), now, now)
@@ -104,8 +104,8 @@ public class RoutineService {
                     // 기존 서브루틴의 이름을 변경한 경우 (이력 갱신)
                     if (!subRoutineInfo.getSubRoutineName().equals(previousSubRoutine.getName())) {
                         previousSubRoutine.updateHistoryEndDateTime(now);
-                        SubRoutine subRoutine = routineFactory.addUpdatedSubRoutine(subRoutineInfo, previousSubRoutine,
-                            now);
+                        SubRoutine subRoutine = routineFactory.addUpdatedSubRoutine(
+                            subRoutineInfo, previousSubRoutine, now);
 
                         subRoutineRepository.save(subRoutine);
                     }
@@ -171,8 +171,8 @@ public class RoutineService {
         List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
 
         for (SubRoutine subRoutine : subRoutines) {
-            ChangedSubRoutine changedSubRoutineForDelete = routineFactory
-                .createChangedSubRoutineForDelete(subRoutine, now, changedRoutineForDelete);
+            ChangedSubRoutine changedSubRoutineForDelete =
+                routineFactory.createChangedSubRoutineForDelete(subRoutine, now, changedRoutineForDelete);
             changedSubRoutineRepository.save(changedSubRoutineForDelete);
         }
 
@@ -182,17 +182,13 @@ public class RoutineService {
         }
     }
 
-    /**
-     * 회원이 보유한 특정 기간(start_date, end_date)의 루틴을 조회하는 메서드입니다.
-     */
+    // 회원이 보유한 특정 기간(start_date, end_date)의 루틴을 조회하는 메서드입니다.
     @Transactional(readOnly = true)
     public RoutineSearchResponse getRoutines(User user, LocalDate startDate, LocalDate endDate) {
         return queryRoutines(user, startDate, endDate);
     }
 
-    /**
-     * 루틴의 완료 여부를 갱신하는 메서드입니다.
-     */
+    // 루틴의 완료 여부를 갱신하는 메서드입니다.
     @Transactional
     public void updateRoutineCompletionStatus(User user, UpdateRoutineCompletionRequest request) {
         List<RoutineCompletionInfo> routineCompletionInfos = request.getRoutineCompletionInfos();
@@ -202,25 +198,19 @@ public class RoutineService {
             routineValidator.validateRoutineOwnership(user, routineCompletionInfo);
 
             // 기존 완료 여부 엔티티가 존재하는지 조회
-            RoutineCompletion routineCompletion = routineCompletionRepository
+            RoutineCompletion existingRoutineCompletion = routineCompletionRepository
                 .findByRoutineIdAndRoutineHistorySeqAndRoutineType(
                     routineCompletionInfo.getRoutineId(),
                     routineCompletionInfo.getHistorySeq(),
                     routineCompletionInfo.getRoutineType());
 
             // 이미 엔티티가 존재하는 경우 완료여부 갱신
-            if (routineCompletion != null) {
-                RoutineCompletion existingRoutineCompletion = routineCompletion;
+            if (existingRoutineCompletion != null) {
                 existingRoutineCompletion.updateCompleteYn(routineCompletionInfo.getCompleteYn());
             }
             else { // 유저가 한번도 체크하지 않아서 엔티티가 생기지 않은 경우 엔티티 생성
-                RoutineCompletion newRoutineCompletion = RoutineCompletion.builder()
-                    .completeYn(routineCompletionInfo.getCompleteYn())
-                    .performedDate(request.getPerformedDate())
-                    .routineId(routineCompletionInfo.getRoutineId())
-                    .routineHistorySeq(routineCompletionInfo.getHistorySeq())
-                    .routineType(routineCompletionInfo.getRoutineType())
-                    .build();
+                RoutineCompletion newRoutineCompletion =
+                    routineFactory.createRoutineCompletion(request, routineCompletionInfo);
 
                 routineCompletionRepository.save(newRoutineCompletion);
             }
@@ -256,26 +246,25 @@ public class RoutineService {
 
         // 루틴 테이블의 살아있는 이력을 모두 조회한다.
         // todo: 추후 루틴 시작일시와 종료일시가 추가되면 조회 기간안에 루틴 종료일시 혹은 시작일시가 존재하는지를 파악하여 해당 기간내에 존재하는 루틴만 조회하도록 수정이 필요하다.
-        List<Routine> routines = routineRepository.findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
-                user.getUserPk().getId(), now, now
-        );
+        List<Routine> routines = routineRepository
+            .findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
+                user.getUserPk().getId(), now, now);
 
         // 루틴을 날짜별로 묶어서 반환할 Map을 날짜별로 초기화 해놓는다.
         Map<LocalDate, List<RoutineSearchResultDto>> routinesByDateResponse = new HashMap<>();
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             routinesByDateResponse.put(date, new ArrayList<>()); // 현재 날짜의 Map을 초기화
-
             DayOfWeek currentDayOfWeek = date.getDayOfWeek(); // 현재 날짜의 요일(ex: 2025-07-22 -> TUESDAY)
+
             // 조회해온 루틴을 순회하면서 현재 날짜의 요일과 루틴의 반복요일이 일치하는 경우 Map에 해당 루틴을 담는다.
             for (Routine routine : routines) {
-                List<DayOfWeek> repeatDays = routine.getRepeatDay();
-
                 // 루틴의 반복요일이 현재 날짜의 요일과 일치하는지 확인
-                if (repeatDays.contains(currentDayOfWeek)) {
+                if (routine.getRepeatDay().contains(currentDayOfWeek)) {
                     // 현재 루틴의 ID를 FK로 가지는 서브루틴 조회
-                    List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
-                            routine.getRoutinePk().getId(), now, now
-                    );
+                    List<SubRoutine> subRoutines = subRoutineRepository
+                        .findByRoutineIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
+                            routine.getRoutinePk().getId(), now, now);
+
                     // 서브루틴 List DTO 생성
                     List<SubRoutineSearchResultDto> subRoutineSearchResultList = new ArrayList<>();
                     for (SubRoutine subRoutine : subRoutines) {
@@ -284,16 +273,8 @@ public class RoutineService {
                         RoutineCompletion subRoutineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
                                 subRoutine.getSubRoutinePk().getId(), subRoutine.getSubRoutinePk().getHistorySeq(), RoutineType.SUB_ROUTINE);
 
-                        SubRoutineSearchResultDto subRoutineSearchResultDto = SubRoutineSearchResultDto.builder()
-                                .subRoutineId(subRoutine.getSubRoutinePk().getId())
-                                .historySeq(subRoutine.getSubRoutinePk().getHistorySeq())
-                                .subRoutineName(subRoutine.getName())
-                                .sortOrder(subRoutine.getSortOrder())
-                                .modifiedYn(false) // 서브루틴은 일시적인 수정(당일삭제, 미루기 등)이 아니므로 변경여부를 false로 설정
-                                .routineCompletionId(subRoutineCompletion == null ? null : subRoutineCompletion.getRoutineCompletionId())
-                                .completeYn(subRoutineCompletion == null ? false : subRoutineCompletion.getCompleteYn())
-                                .routineType(RoutineType.SUB_ROUTINE)
-                                .build();
+                        SubRoutineSearchResultDto subRoutineSearchResultDto =
+                            routineMapper.toSubRoutineSearchResultDto(subRoutine, subRoutineCompletion);
                         subRoutineSearchResultList.add(subRoutineSearchResultDto);
                     }
 
@@ -304,27 +285,17 @@ public class RoutineService {
                     RoutineCompletion routineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
                             routine.getRoutinePk().getId(), routine.getRoutinePk().getHistorySeq(), RoutineType.ROUTINE);
 
-                    RoutineSearchResultDto routineSearchResultDto = RoutineSearchResultDto.builder()
-                            .routineId(routine.getRoutinePk().getId())
-                            .historySeq(routine.getRoutinePk().getHistorySeq())
-                            .routineName(routine.getName())
-                            .repeatDay(routine.getRepeatDay())
-                            .executionTime(routine.getExecutionTime())
-                            .subRoutineSearchResultDto(subRoutineSearchResultList)
-                            .modifiedYn(false) // 루틴은 일시적인 수정(당일삭제, 미루기 등)이 아니므로 변경여부를 false로 설정
-                            .routineCompletionId(routineCompletion == null ? null : routineCompletion.getRoutineCompletionId())
-                            .completeYn(routineCompletion == null ? false : routineCompletion.getCompleteYn())
-                            .routineType(RoutineType.ROUTINE)
-                            .build();
+                    RoutineSearchResultDto routineSearchResultDto =
+                        routineMapper.toRoutineSearchResultDto(routine, subRoutineSearchResultList, routineCompletion);
                     routinesByDateResponse.get(date).add(routineSearchResultDto); // map에 현재날짜에 해당하는 루틴을 담는다.
                 }
             }
         }
 
         // 변경 루틴 테이블의 변경된 루틴 날짜가 startDate ~ endDate인 이력을 모두 조회한다.
-        List<ChangedRoutine> changedRoutines = changedRoutineRepository.findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqualAndChangedRoutineDateBetween(
-                user.getUserPk().getId(), now, now, startDate, endDate
-        );
+        List<ChangedRoutine> changedRoutines = changedRoutineRepository
+            .findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqualAndChangedRoutineDateBetween(
+                user.getUserPk().getId(), now, now, startDate, endDate);
 
         // 변경 루틴을 하나씩 순회하면서 원본 루틴과 겹치는 날짜가 있다면, 원본 루틴을 Map에서 제거하고, 변경 루틴을 넣는다.(삭제는 제외)
         for (ChangedRoutine changedRoutine : changedRoutines) {
@@ -342,28 +313,22 @@ public class RoutineService {
             if (changedRoutine.getChangedDivCode() != ChangedDivCode.TODAY_DELETE) {
 
                 // 현재 변경루틴의 ID를 FK로 가지는 변경서브루틴 조회
-                List<ChangedSubRoutine> changedSubRoutines = changedSubRoutineRepository.findByChangedRoutineIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
-                        changedRoutine.getChangedRoutinePk().getId(), now, now
-                );
+                List<ChangedSubRoutine> changedSubRoutines = changedSubRoutineRepository
+                    .findByChangedRoutineIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
+                        changedRoutine.getChangedRoutinePk().getId(), now, now);
 
                 // 변경 서브루틴 List DTO 생성
                 List<SubRoutineSearchResultDto> changedSubRoutineSearchResultList = new ArrayList<>();
                 for (ChangedSubRoutine changedSubRoutine : changedSubRoutines) {
 
                     // 변경 서브 루틴완료 여부를 파악
-                    RoutineCompletion changedSubRoutineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
-                            changedSubRoutine.getChangedSubRoutinePk().getId(), changedSubRoutine.getChangedSubRoutinePk().getHistorySeq(), RoutineType.CHANGED_SUB_ROUTINE);
+                    RoutineCompletion changedSubRoutineCompletion =
+                        routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                            changedSubRoutine.getChangedSubRoutinePk().getId(),
+                            changedSubRoutine.getChangedSubRoutinePk().getHistorySeq(), RoutineType.CHANGED_SUB_ROUTINE);
 
-                    SubRoutineSearchResultDto changedSubRoutineSearchResultDto = SubRoutineSearchResultDto.builder()
-                            .subRoutineId(changedSubRoutine.getChangedSubRoutinePk().getId())
-                            .historySeq(changedSubRoutine.getChangedSubRoutinePk().getHistorySeq())
-                            .subRoutineName(changedSubRoutine.getChangedSubRoutineName())
-                            .sortOrder(changedSubRoutine.getSortOrder())
-                            .modifiedYn(true)
-                            .routineCompletionId(changedSubRoutineCompletion == null ? null : changedSubRoutineCompletion.getRoutineCompletionId())
-                            .completeYn(changedSubRoutineCompletion == null ? false : changedSubRoutineCompletion.getCompleteYn())
-                            .routineType(RoutineType.CHANGED_SUB_ROUTINE)
-                            .build();
+                    SubRoutineSearchResultDto changedSubRoutineSearchResultDto =
+                        routineMapper.toChangedSubRoutineSearchResultDto(changedSubRoutine, changedSubRoutineCompletion);
                     changedSubRoutineSearchResultList.add(changedSubRoutineSearchResultDto);
                 }
 
@@ -371,21 +336,13 @@ public class RoutineService {
                 changedSubRoutineSearchResultList.sort((a, b) -> a.getSortOrder().compareTo(b.getSortOrder()));
 
                 // 변경루틴 완료여부 조회
-                RoutineCompletion changedRoutineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
-                        changedRoutine.getChangedRoutinePk().getId(), changedRoutine.getChangedRoutinePk().getHistorySeq(), RoutineType.CHANGED_ROUTINE);
+                RoutineCompletion changedRoutineCompletion =
+                    routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                        changedRoutine.getChangedRoutinePk().getId(),
+                        changedRoutine.getChangedRoutinePk().getHistorySeq(), RoutineType.CHANGED_ROUTINE);
 
-                RoutineSearchResultDto changedRoutineSearchResultDto = RoutineSearchResultDto.builder()
-                        .routineId(changedRoutine.getChangedRoutinePk().getId())
-                        .historySeq(changedRoutine.getChangedRoutinePk().getHistorySeq())
-                        .routineName(changedRoutine.getChangedRoutineName())
-//                        .repeatDay(changedRoutine.getRepeatDay()) // 변경 루틴은 반복 요일이 없으므로 주석 처리(추후 2차에서는 이런 변경 루틴에 대해 어떻게 처리할지 고민)
-                        .executionTime(changedRoutine.getChangedExecutionTime())
-                        .subRoutineSearchResultDto(changedSubRoutineSearchResultList)
-                        .modifiedYn(true) // 변경 루틴은 수정 여부가 true
-                        .routineCompletionId(changedRoutineCompletion == null ? null : changedRoutineCompletion.getRoutineCompletionId())
-                        .completeYn(changedRoutineCompletion == null ? false : changedRoutineCompletion.getCompleteYn())
-                        .routineType(RoutineType.CHANGED_ROUTINE)
-                        .build();
+                RoutineSearchResultDto changedRoutineSearchResultDto = routineMapper.toChangedRoutineSearchResultDto(
+                    changedRoutine, changedSubRoutineSearchResultList, changedRoutineCompletion);
 
                 routinesByDateResponse.get(changedRoutine.getChangedRoutineDate()).add(changedRoutineSearchResultDto);
             }
@@ -398,6 +355,7 @@ public class RoutineService {
 
         // 감정구슬 조회
         EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), LocalDate.now());
+
         return RoutineSearchResponse.builder()
                 .routines(routinesByDateResponse)
                 .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType())
