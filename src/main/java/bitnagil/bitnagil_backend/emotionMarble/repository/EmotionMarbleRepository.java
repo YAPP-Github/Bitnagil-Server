@@ -13,4 +13,6 @@ public interface EmotionMarbleRepository extends JpaRepository<EmotionMarble, Hi
     EmotionMarble findByUserId(UUID id);
 
     EmotionMarble findByUserIdAndDateIs(UUID userId, LocalDate now);
+
+    boolean existsByUserIdAndDate(UUID userId, LocalDate nowDate);
 }

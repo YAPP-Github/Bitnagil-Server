@@ -72,7 +72,9 @@ public enum ErrorCode {
 
     // 온보딩 관련 에러 코드
     NOT_FOUND_RECOMMENDED_ROUTINE("ON000", HttpStatus.NOT_FOUND, "조건에 맞는 추천 루틴을 찾을 수 없습니다."),
-    ;
+
+    // 감정구슬 관련 에러코드
+    ALREADY_REGISTERED_EMOTION_MARBLE("EM000", HttpStatus.CONFLICT, "감정구슬은 하루에 한번만 등록할 수 있습니다.");
 
 
 

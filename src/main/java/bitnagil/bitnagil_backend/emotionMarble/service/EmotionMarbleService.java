@@ -50,7 +50,10 @@ public class EmotionMarbleService {
         LocalDateTime nowDateTime = LocalDateTime.now();
         LocalDateTime endDateTime = LocalDateTime.of(nowDate, LocalTime.of(23, 59, 59));
 
-        // 이미 등록된 감정구슬이 있는지 체크
+        // 감정구슬은 1일 1회만 선택할 수 있으므로, 존재 여부를 확인한다.
+        if (emotionMarbleRepository.existsByUserIdAndDate(user.getUserPk().getId(), nowDate)) {
+            throw new CustomException(ErrorCode.ALREADY_REGISTERED_EMOTION_MARBLE);
+        }
 
         EmotionMarble emotionMarble = EmotionMarble.builder()
                 .emotionMarblePk(new HistoryPk(UUID.randomUUID(), 1L))
