@@ -16,6 +16,7 @@ import java.util.List;
 @Schema(description = "감정 구슬 등록 응답 DTO")
 public class RegisterEmotionMarbleResponse {
 
+    @Schema(description = "추천 루틴 목록")
     private List<RecommendedRoutineDto> recommendedRoutines;
 
 }
