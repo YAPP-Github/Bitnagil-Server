@@ -99,6 +99,7 @@ public class RecommendedRoutineService {
         }
         return RecommendedRoutineSearchResponse.builder()
                 .recommendedRoutines(response)
+                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
                 .build();
     }
 
