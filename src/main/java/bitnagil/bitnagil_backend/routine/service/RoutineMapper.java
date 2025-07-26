@@ -12,13 +12,11 @@ import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResultDto;
 import bitnagil.bitnagil_backend.routine.response.SubRoutineSearchResultDto;
-import lombok.RequiredArgsConstructor;
 
 /**
  * DTO로 변환하는 Mapper 클래스입니다.
  */
 @Service
-@RequiredArgsConstructor
 public class RoutineMapper {
 
     public RoutineSearchResultDto toRoutineSearchResultDto(Routine routine,
