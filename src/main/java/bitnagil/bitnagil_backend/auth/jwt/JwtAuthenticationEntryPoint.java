@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
+import bitnagil.bitnagil_backend.global.response.ErrorResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +38,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        CustomResponseDto<String> errorResponse = CustomResponseDto.from(ErrorCode.UNAUTHENTICATED_USER,
-            authException.getMessage());
+        ErrorResponseDto errorResponse = ErrorResponseDto.from(ErrorCode.UNAUTHENTICATED_USER);
         objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 }

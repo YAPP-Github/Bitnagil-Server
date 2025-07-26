@@ -91,4 +91,8 @@ public class User extends BaseTimeEntity {
     public void updateHistoryEndDateTime(LocalDateTime endDateTime) {
         this.historyEndDateTime = endDateTime;
     }
+
+    public void changeRoleToWithdrawn() {
+        this.role = Role.WITHDRAWN;
+    }
 }
