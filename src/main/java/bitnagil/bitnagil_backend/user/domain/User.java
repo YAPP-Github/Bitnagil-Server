@@ -59,7 +59,7 @@ public class User extends BaseTimeEntity {
     private Boolean agreedToPrivacyPolicy; // 개인정보 수집 동의
     private Boolean isOverFourteen; // 14세 이상 여부
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "onboarding_id")
     private Onboarding onboarding;
 

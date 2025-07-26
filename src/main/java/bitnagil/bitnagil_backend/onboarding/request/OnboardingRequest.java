@@ -18,13 +18,13 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class OnboardingRequest {
 
-    @Schema(description = "시간대", required = true, example = "08:00:00")
+    @Schema(description = "어떤 시간대를 더 잘 보내고 싶나요?", required = true, example = "08:00:00")
     private LocalTime timeSlot;
-    @Schema(description = "서비스 이용약관 동의", required = true)
+    @Schema(description = "요즘 어떤 회복이 필요하신가요?", required = true)
     private EmotionType emotionType;
-    @Schema(description = "서비스 이용약관 동의", required = true)
+    @Schema(description = "최근 얼마나 자주 바깥바람을 쐬시나요?", required = true)
     private RealOutingFrequency realOutingFrequency;
-    @Schema(description = "서비스 이용약관 동의",  required = true)
+    @Schema(description = "일주일에 몇번 외출하고 싶으신가요?",  required = true)
     private TargetOutingFrequency targetOutingFrequency;
 
 }
