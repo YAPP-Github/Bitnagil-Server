@@ -18,6 +18,7 @@ import bitnagil.bitnagil_backend.user.domain.User;
 @Service
 public class ChangedRoutineFactory {
 
+    // 유저 초기 온보딩 시 추천 루틴을 등록할 때 변경 루틴에 저장
     public ChangedRoutine createChangedRoutineForOnboarding(
         User user, RecommendedRoutine recommendedRoutine, LocalDate today, LocalDateTime now) {
 
@@ -34,6 +35,7 @@ public class ChangedRoutineFactory {
             .build();
     }
 
+    // 유저 초기 온보딩 시 추천 루틴을 등록할 때 변경 서브루틴에 저장
     public ChangedSubRoutine createChangedSubRoutineForOnboarding(
         int sortOrder, RecommendedSubRoutine recommendedSubRoutine, LocalDateTime now, ChangedRoutine changedRoutine) {
 
