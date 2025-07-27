@@ -19,8 +19,8 @@ public class RecommendedRoutineDto {
     // 추천 루틴 이름
     private String recommendedRoutineName;
     // 추천 루틴 설명
-    private String routineDescription;
+    private String recommendedRoutineDescription;
 
     // 추천 루틴 상세 정보
-    List<RecommendedSubRoutineDto> recommendedSubRoutines;
+    List<RecommendedSubRoutineSearchResult> recommendedSubRoutineDetailSearchResult;
 }

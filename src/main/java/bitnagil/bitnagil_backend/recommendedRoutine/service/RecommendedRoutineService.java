@@ -3,7 +3,6 @@ package bitnagil.bitnagil_backend.recommendedRoutine.service;
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineDto;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
@@ -89,10 +88,10 @@ public class RecommendedRoutineService {
 
     private RecommendedRoutineDto toRecommendedRoutineDtoWithDetails(RecommendedRoutine recommendedRoutine) {
 
-        List<RecommendedSubRoutineDto> recommendedRoutineDetailDtoList = recommendedSubRoutineRepository.findByRecommendedRoutine(
+        List<RecommendedSubRoutineSearchResult> recommendedRoutineDetailDtoList = recommendedSubRoutineRepository.findByRecommendedRoutine(
                 recommendedRoutine)
             .stream()
-            .map(recommendedRoutineMapper::toRecommendedSubRoutineDto)
+            .map(recommendedRoutineMapper::toRecommendedSubRoutineSearchResult)
             .toList();
 
         // 추천 루틴을 dto로 변환한다.

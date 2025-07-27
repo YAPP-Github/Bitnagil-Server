@@ -8,7 +8,6 @@ import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineDto;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineSearchResult;
 
 /**
@@ -19,22 +18,13 @@ public class RecommendedRoutineMapper {
 
     // 추천 루틴을 DTO로 변환
     public RecommendedRoutineDto toRecommendedRoutineDto(RecommendedRoutine recommendedRoutine,
-        List<RecommendedSubRoutineDto> recommendedRoutineDetailDtoList) {
+        List<RecommendedSubRoutineSearchResult> recommendedRoutineDetailDtoList) {
 
         return RecommendedRoutineDto.builder()
             .recommendedRoutineId(recommendedRoutine.getRecommendedRoutineId())
             .recommendedRoutineName(recommendedRoutine.getRecommendedRoutineName())
-            .routineDescription(recommendedRoutine.getRecommendedRoutineDescription())
-            .recommendedSubRoutines(recommendedRoutineDetailDtoList)
-            .build();
-    }
-
-    // 추천 서브 루틴을 DTO로 변환
-    public RecommendedSubRoutineDto toRecommendedSubRoutineDto(RecommendedSubRoutine recommendedSubRoutine) {
-
-        return RecommendedSubRoutineDto.builder()
-            .recommendedSubRoutineId(recommendedSubRoutine.getRecommendedSubRoutineId())
-            .recommendedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
+            .recommendedRoutineDescription(recommendedRoutine.getRecommendedRoutineDescription())
+            .recommendedSubRoutineDetailSearchResult(recommendedRoutineDetailDtoList)
             .build();
     }
 
