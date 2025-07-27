@@ -20,6 +20,8 @@ import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +51,6 @@ public class RecommendedRoutineService {
     public RecommendedRoutineSearchResponse searchRecommendedRoutines(User user) {
 
         LocalDate nowDate = LocalDate.now();
-        LocalDateTime startDateTime = nowDate.atStartOfDay();
-        LocalDateTime endDateTime = nowDate.atTime(LocalTime.MAX);
 
         // response 객체 생성
         Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response = new HashMap<>();
@@ -86,16 +86,8 @@ public class RecommendedRoutineService {
             }
             // 추천 루틴 조회(상위 4개만 조회)
             List<RecommendedRoutine> recommendedRoutines = recommendedRoutineRepository.findTop4ByRecommendedRoutineTypeOrderByRecommendedRoutineIdAsc(value);
-            List<RecommendedRoutineSearchResult> recommendedRoutineResults = new ArrayList<>(); // 추천 루틴 응답 객체
-            // 추천 서브루틴 조회
-            for (RecommendedRoutine recommendedRoutine : recommendedRoutines) {
-                List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
-                List<RecommendedSubRoutineSearchResult> recommendedSubRoutineResults = new ArrayList<>();
-                // 추천 서브루틴 응답 객체 생성
-                addRecommendedSubRoutineToResponse(recommendedSubRoutines, recommendedSubRoutineResults);
-                // 추천 루틴 응답 객체 생성
-                addRecommendedRoutineToResponse(recommendedRoutine, recommendedSubRoutineResults, recommendedRoutineResults);
-            }
+            List<RecommendedRoutineSearchResult> recommendedRoutineResults = buildRecommendedRoutineSearchResult(
+                recommendedRoutines);
             // Map에 값을 저장
             response.put(value, recommendedRoutineResults);
         }
@@ -140,6 +132,21 @@ public class RecommendedRoutineService {
         return recommendedRoutineDtoList;
     }
 
+    private List<RecommendedRoutineSearchResult> buildRecommendedRoutineSearchResult(
+        List<RecommendedRoutine> recommendedRoutines) {
+        List<RecommendedRoutineSearchResult> recommendedRoutineResults = new ArrayList<>(); // 추천 루틴 응답 객체
+        // 추천 서브루틴 조회
+        for (RecommendedRoutine recommendedRoutine : recommendedRoutines) {
+            List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+            List<RecommendedSubRoutineSearchResult> recommendedSubRoutineResults = new ArrayList<>();
+            // 추천 서브루틴 응답 객체 생성
+            addRecommendedSubRoutineToResponse(recommendedSubRoutines, recommendedSubRoutineResults);
+            // 추천 루틴 응답 객체 생성
+            addRecommendedRoutineToResponse(recommendedRoutine, recommendedSubRoutineResults, recommendedRoutineResults);
+        }
+        return recommendedRoutineResults;
+    }
+
     // 추천루틴을 응답 객체에 추가하는 메서드
     private void addRecommendedRoutineToResponse(RecommendedRoutine recommendedRoutine,
                                                  List<RecommendedSubRoutineSearchResult> recommendedSubRoutineResults,
@@ -171,15 +178,8 @@ public class RecommendedRoutineService {
                                            Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {
         Case resultCase = emotionMarble.getResultCase();
         List<RecommendedRoutine> recommendedRoutines = recommendedRoutineRepository.findByResultCase(resultCase);
-        List<RecommendedRoutineSearchResult> recommendedRoutineResults = new ArrayList<>();
-        for (RecommendedRoutine recommendedRoutine : recommendedRoutines) {
-            List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
-            List<RecommendedSubRoutineSearchResult> recommendedSubRoutineResults = new ArrayList<>(); // 서브루틴 응답 객체
-            // 추천 서브루틴 응답 객체 생성
-            addRecommendedSubRoutineToResponse(recommendedSubRoutines, recommendedSubRoutineResults);
-            // 추천 루틴 응답 객체 생성
-            addRecommendedRoutineToResponse(recommendedRoutine, recommendedSubRoutineResults, recommendedRoutineResults);
-        }
+        List<RecommendedRoutineSearchResult> recommendedRoutineResults = buildRecommendedRoutineSearchResult(
+            recommendedRoutines);
         // 감정구슬에 따른 추천 루틴을 Map에 저장
         response.get(RecommendedRoutineType.PERSONALIZED).addAll(recommendedRoutineResults);
     }
@@ -189,15 +189,8 @@ public class RecommendedRoutineService {
                                         Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {
         Case resultCase = onboarding.getResultCase();
         List<RecommendedRoutine> recommendedRoutines = recommendedRoutineRepository.findByResultCase(resultCase);
-        List<RecommendedRoutineSearchResult> recommendedRoutineResults = new ArrayList<>();
-        for (RecommendedRoutine recommendedRoutine : recommendedRoutines) {
-            List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
-            List<RecommendedSubRoutineSearchResult> recommendedSubRoutineResults = new ArrayList<>(); // 서브루틴 응답 객체
-            // 추천 서브루틴 응답 객체 생성
-            addRecommendedSubRoutineToResponse(recommendedSubRoutines, recommendedSubRoutineResults);
-            // 추천 루틴 응답 객체 생성
-            addRecommendedRoutineToResponse(recommendedRoutine, recommendedSubRoutineResults, recommendedRoutineResults);
-        }
+        List<RecommendedRoutineSearchResult> recommendedRoutineResults = buildRecommendedRoutineSearchResult(
+            recommendedRoutines);
         // 감정구슬에 따른 추천 루틴을 Map에 저장
         response.get(RecommendedRoutineType.PERSONALIZED).addAll(recommendedRoutineResults);
     }
