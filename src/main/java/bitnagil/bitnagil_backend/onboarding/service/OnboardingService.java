@@ -126,7 +126,7 @@ public class OnboardingService {
             ChangedRoutine changedRoutine = ChangedRoutine.builder()
                     .changedRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
                     .changedRoutineName(recommendedRoutine.getRecommendedRoutineName())
-                    .changedExecutionTime(recommendedRoutine.getTime())
+                    .changedExecutionTime(recommendedRoutine.getExecutionTime())
                     .originalRoutineDate(today) // 원본 루틴 날짜는 현재 날짜로 설정
                     .changedRoutineDate(today) // 변경된 루틴 날짜도 현재 날짜로 설정
                     .historyStartDateTime(now)

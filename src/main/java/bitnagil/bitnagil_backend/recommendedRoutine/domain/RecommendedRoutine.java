@@ -27,7 +27,7 @@ public class RecommendedRoutine extends BaseTimeEntity {
     @Column(columnDefinition = "varchar(40)")
     private RecommendedRoutineType recommendedRoutineType; // 추천 루틴 타입 (분류에 해당)
 
-    private LocalTime time; // 시간
+    private LocalTime executionTime; // 추천 루틴 실행시간
 
     /**
      * 추천 루틴의 반복 요일은 코드레벨에서 설정한다.
