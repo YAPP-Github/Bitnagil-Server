@@ -82,8 +82,8 @@ public class RoutineFactory {
             .build();
     }
 
-    /// 갱신용 SubRoutine 엔티티 생성 (이력 순번 증가 포함)
-    public SubRoutine addUpdatedSubRoutine(SubRoutineInfo subRoutineInfo, SubRoutine previousSubRoutine,
+    // 기존 subRoutineId는 유지하고 이력 순번만 증가한 새로운 엔티티 생성
+    public SubRoutine createNextHistorySubRoutine(SubRoutineInfo subRoutineInfo, SubRoutine previousSubRoutine,
         LocalDateTime now) {
         // 서브루틴을 갱신하여 새로운 Row 추가
         HistoryPk subRoutinePk = new HistoryPk(previousSubRoutine.getSubRoutinePk().getId(),
@@ -99,8 +99,8 @@ public class RoutineFactory {
             .build();
     }
 
-    // 기존 Routine 엔티티와 연관관계를 유지하는 갱신용 SubRoutine 엔티티 생성
-    public SubRoutine createUpdatedSubRoutine(SubRoutineInfo subRoutineInfo, Routine previousRoutine, LocalDateTime now) {
+    // 루틴을 수정하면서 새로운 서브 루틴을 추가할 때 사용하는 메서드 (수정하는 과정에서 유저가 설정한 순서를 기반으로 sortOrder 주입)
+    public SubRoutine createSubRoutineForRoutineUpdate(SubRoutineInfo subRoutineInfo, Routine previousRoutine, LocalDateTime now) {
 
         return SubRoutine.builder()
             .subRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
@@ -144,6 +144,7 @@ public class RoutineFactory {
             .build();
     }
 
+    // // 유저가 한번도 체크하지 않아서 RoutineCompletion 엔티티가 없는 경우 엔티티 생성
     public RoutineCompletion createRoutineCompletion(UpdateRoutineCompletionRequest request,
         RoutineCompletionInfo routineCompletionInfo) {
 
