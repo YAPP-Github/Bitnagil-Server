@@ -11,9 +11,7 @@ import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRoutineRepository;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResponse;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineSearchResult;
+import bitnagil.bitnagil_backend.recommendedRoutine.response.*;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -100,6 +95,33 @@ public class RecommendedRoutineService {
         return RecommendedRoutineSearchResponse.builder()
                 .recommendedRoutines(response)
                 .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
+                .build();
+    }
+
+    /**
+     * 추천 루틴 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public RecommendedRoutineSingleResponse searchRecommendedRoutine(Long recommendedRoutineId) {
+        RecommendedRoutine recommendedRoutine = recommendedRoutineRepository.findById(recommendedRoutineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
+
+        List<RecommendedSubRoutineSingleResponse> recommendedSubRoutineResponse = new ArrayList<>();
+        // 추천 루틴에 해당하는 서브루틴 조회
+        List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+        for (RecommendedSubRoutine recommendedSubRoutine : recommendedSubRoutines) {
+            RecommendedSubRoutineSingleResponse recommendedSubRoutineSingleResponse = RecommendedSubRoutineSingleResponse.builder()
+                    .recommendedSubRoutineId(recommendedSubRoutine.getRecommendedSubRoutineId())
+                    .recommendedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
+                    .build();
+            recommendedSubRoutineResponse.add(recommendedSubRoutineSingleResponse);
+        }
+
+        return RecommendedRoutineSingleResponse.builder()
+                .recommendedRoutineId(recommendedRoutine.getRecommendedRoutineId())
+                .recommendedRoutineName(recommendedRoutine.getRecommendedRoutineName())
+                .recommendedRoutineExecutionTime(recommendedRoutine.getExecutionTime())
+                .recommendedSubRoutineSingleResponse(recommendedSubRoutineResponse)
                 .build();
     }
 
