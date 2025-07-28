@@ -3,7 +3,6 @@ package bitnagil.bitnagil_backend.recommendedRoutine.service;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
@@ -19,13 +18,13 @@ public class RecommendedRoutineMapper {
 
     // 추천 루틴을 DTO로 변환
     public RecommendedRoutineDto toRecommendedRoutineDto(RecommendedRoutine recommendedRoutine,
-        List<RecommendedSubRoutineSearchResult> recommendedRoutineDetailDtoList) {
+        List<RecommendedSubRoutineSearchResult> recommendedSubRoutineResults) {
 
         return RecommendedRoutineDto.builder()
             .recommendedRoutineId(recommendedRoutine.getRecommendedRoutineId())
             .recommendedRoutineName(recommendedRoutine.getRecommendedRoutineName())
             .recommendedRoutineDescription(recommendedRoutine.getRecommendedRoutineDescription())
-            .recommendedSubRoutineDetailSearchResult(recommendedRoutineDetailDtoList)
+            .recommendedSubRoutineSearchResult(recommendedSubRoutineResults)
             .build();
     }
 
@@ -38,7 +37,7 @@ public class RecommendedRoutineMapper {
             .recommendedRoutineName(recommendedRoutine.getRecommendedRoutineName())
             .recommendedRoutineDescription(recommendedRoutine.getRecommendedRoutineDescription())
             .recommendedRoutineLevel(recommendedRoutine.getRecommendedRoutineLevel())
-            .recommendedSubRoutineDetailSearchResult(recommendedSubRoutineResults)
+            .recommendedSubRoutineSearchResult(recommendedSubRoutineResults)
             .build();
     }
 

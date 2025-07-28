@@ -22,5 +22,5 @@ public class RecommendedRoutineDto {
     private String recommendedRoutineDescription;
 
     // 추천 루틴 상세 정보
-    List<RecommendedSubRoutineSearchResult> recommendedSubRoutineDetailSearchResult;
+    List<RecommendedSubRoutineSearchResult> recommendedSubRoutineSearchResult;
 }

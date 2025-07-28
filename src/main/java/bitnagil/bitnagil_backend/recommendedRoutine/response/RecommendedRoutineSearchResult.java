@@ -20,5 +20,5 @@ public class RecommendedRoutineSearchResult {
     // 추천 루틴 난이도
     private RecommendedRoutineLevel recommendedRoutineLevel;
     // 추천 서브 루틴 리스트
-    private List<RecommendedSubRoutineSearchResult> recommendedSubRoutineDetailSearchResult;
+    private List<RecommendedSubRoutineSearchResult> recommendedSubRoutineSearchResult;
 }
