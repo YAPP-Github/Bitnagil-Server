@@ -269,13 +269,8 @@ public class RoutineService {
                     -> a.getExecutionTime().compareTo(b.getExecutionTime()));
         }
 
-        // 감정구슬 조회
-        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), LocalDate.now());
-
         return RoutineSearchResponse.builder()
                 .routines(routinesByDateResponse)
-                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType())
-                .nickname(user.getNickname())
                 .build();
     }
 
