@@ -1,5 +1,6 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
+commitish: release # release 브랜치를 기준으로 설정(default: main)
 categories:
   - title: '🎁 새로운 기능이 추가되었어요'
     label: '🎁 feature'
@@ -12,7 +13,8 @@ categories:
       - '🪄 chore'
       - '🎫 test'
       - '❌ remove'
-change-template: '- $TITLE #$NUMBER @$AUTHOR '
+change-template: '- $TITLE @$AUTHOR (#$NUMBER) '
+change-title-escapes: '\<*_&'
 template: |
   ## 이번 버전의 변경사항은 아래와 같아요
   ---
