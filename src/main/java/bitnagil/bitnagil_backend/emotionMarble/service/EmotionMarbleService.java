@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 감정 구슬에 대한 로직을 관리하는 클래스입니다.
@@ -35,9 +37,14 @@ public class EmotionMarbleService {
     private final EmotionMarbleFactory emotionMarbleFactory;
 
     // 감정 구술 조회(enum의 value를 가져온다.)
-    public EmotionMarbleTypeResponse getEmotionMarbles() {
-        EmotionMarbleType[] values = EmotionMarbleType.values();
-        return EmotionMarbleTypeResponse.builder().emotionMarbleTypes(values).build();
+    public List<EmotionMarbleTypeResponse> getEmotionMarbles() {
+        return Arrays.stream(EmotionMarbleType.values())
+                .map(emotionMarbleType -> EmotionMarbleTypeResponse.builder()
+                        .emotionMarbleName(emotionMarbleType.getDescription())
+                        .emotionMarbleType(emotionMarbleType)
+                        .imageUrl(emotionMarbleType.getMarbleImageUrl())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // 감정 구슬 등록(1일 1회)

@@ -11,11 +11,13 @@ import bitnagil.bitnagil_backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.List;
+
 @Tag(name = ApiTags.EMOTION_MARBLE)
 public interface EmotionMarbleSpec {
 
     @Operation(summary = "감정 구슬을 조회합니다")
-    public CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbles();
+    public CustomResponseDto<List<EmotionMarbleTypeResponse>> getEmotionMarbles();
 
     @Operation(summary = "감정 구슬을 등록합니다. 감정 구슬에 따른 추천 루틴을 응답합니다.")
     @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE})
