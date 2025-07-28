@@ -11,10 +11,12 @@ import lombok.Getter;
 @Builder
 @Schema(description = "감정 구슬 조회 DTO")
 public class EmotionMarbleTypeResponse {
-    @Schema(
-            description = "감정 구슬 enum 배열",
-            type = "array",
-            example = "[\"CALM\", \"VITALITY\", \"LETHARGY\", \"ANXIETY\", \"SATISFACTION\", \"FATIGUE\"]"
-    )
-    private EmotionMarbleType[] emotionMarbleTypes;
+    @Schema(description = "감정 구슬 타입", example = "CALM")
+    private EmotionMarbleType emotionMarbleType;
+
+    @Schema(description = "감정 구슬 명칭", example = "평온함")
+    private String emotionMarbleName;
+
+    @Schema(description = "감정 구슬 이미지 URL", example = "https://example.com/image/calm.png")
+    private String imageUrl;
 }

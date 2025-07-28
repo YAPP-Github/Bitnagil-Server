@@ -1,8 +1,6 @@
 package bitnagil.bitnagil_backend.emotionMarble.controller;
 
 import bitnagil.bitnagil_backend.emotionMarble.controller.spec.EmotionMarbleSpec;
-import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
-import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
 import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
 import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
@@ -13,6 +11,8 @@ import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/emotion-marbles")
@@ -21,7 +21,7 @@ public class EmotionMarbleController implements EmotionMarbleSpec {
 
     // 감정구슬 조회 API
     @GetMapping("")
-    public CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbles() {
+    public CustomResponseDto<List<EmotionMarbleTypeResponse>> getEmotionMarbles() {
         return CustomResponseDto.from(emotionMarbleService.getEmotionMarbles());
     }
 
