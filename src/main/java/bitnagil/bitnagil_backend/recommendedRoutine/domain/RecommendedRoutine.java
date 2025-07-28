@@ -51,11 +51,11 @@ public class RecommendedRoutine extends BaseTimeEntity {
 
     // RecommendedRoutineDetail과 양방향 연관관계 설정
 //    @OneToMany(mappedBy = "recommendedRoutine") // todo: cascade 옵션 추가 필요
-//    private List<RecommendedSubRoutine> recommendedSubRoutines = new ArrayList<>();
+//    private List<RecommendedSubRoutine> recommendedSubRoutineDetailSearchResult = new ArrayList<>();
 
     // 양방향 연관관계 편의 메서드
 //    public void addRecommendedSubRoutine(RecommendedSubRoutine detail) {
-//        this.recommendedSubRoutines.add(detail);
+//        this.recommendedSubRoutineDetailSearchResult.add(detail);
 //        if(detail.getRecommendedRoutine() != this){
 //            detail.setRecommendedRoutine(this);
 //        }
