@@ -35,15 +35,12 @@ public class EmotionMarbleService {
 
     private final RecommendedRoutineManager recommendedRoutineManager;
     private final EmotionMarbleFactory emotionMarbleFactory;
+    private final EmotionMarbleMapper emotionMarbleMapper;
 
     // 감정 구술 조회(enum의 value를 가져온다.)
     public List<EmotionMarbleTypeResponse> getEmotionMarbles() {
         return Arrays.stream(EmotionMarbleType.values())
-                .map(emotionMarbleType -> EmotionMarbleTypeResponse.builder()
-                        .emotionMarbleName(emotionMarbleType.getDescription())
-                        .emotionMarbleType(emotionMarbleType)
-                        .imageUrl(emotionMarbleType.getMarbleImageUrl())
-                        .build())
+                .map(emotionMarbleType -> emotionMarbleMapper.toEmotionMarbleTypeResponse(emotionMarbleType))
                 .collect(Collectors.toList());
     }
 
