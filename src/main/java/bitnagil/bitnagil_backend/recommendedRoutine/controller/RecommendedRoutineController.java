@@ -4,7 +4,7 @@ import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.recommendedRoutine.controller.spec.RecommendedRoutineSpec;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResponse;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSingleResponse;
+import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineService;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class RecommendedRoutineController implements RecommendedRoutineSpec {
 
     // 추천 루틴 단건 조회
     @GetMapping("/{recommendedRoutineId}")
-    public CustomResponseDto<RecommendedRoutineSingleResponse> searchRecommendedRoutine(@PathVariable Long recommendedRoutineId) {
+    public CustomResponseDto<RecommendedRoutineSearchResult> searchRecommendedRoutine(@PathVariable Long recommendedRoutineId) {
         return CustomResponseDto.from(recommendedRoutineService.searchRecommendedRoutine(recommendedRoutineId));
     }
 }

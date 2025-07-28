@@ -71,6 +71,25 @@ public class RecommendedRoutineService {
                 .build();
     }
 
+    /**
+     * 추천 루틴 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public RecommendedRoutineSearchResult searchRecommendedRoutine(Long recommendedRoutineId) {
+        RecommendedRoutine recommendedRoutine = recommendedRoutineRepository.findById(recommendedRoutineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
+
+        List<RecommendedSubRoutineSearchResult> recommendedSubRoutineSearchResults = new ArrayList<>();
+        // 추천 루틴에 해당하는 서브루틴 조회
+        List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+        for (RecommendedSubRoutine recommendedSubRoutine : recommendedSubRoutines) {
+            RecommendedSubRoutineSearchResult recommendedSubRoutineSearchResult = recommendedRoutineMapper.toRecommendedSubRoutineSearchResult(recommendedSubRoutine);
+            recommendedSubRoutineSearchResults.add(recommendedSubRoutineSearchResult);
+        }
+
+        return recommendedRoutineMapper.toRecommendedRoutineSearchResult(recommendedRoutine, recommendedSubRoutineSearchResults);
+    }
+
     private void addCategoryRecommendedRoutines(Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {
         RecommendedRoutineType[] values = RecommendedRoutineType.values();
 
@@ -118,33 +137,6 @@ public class RecommendedRoutineService {
             addRecommendedRoutineToResponse(recommendedRoutine, recommendedSubRoutineResults, recommendedRoutineResults);
         }
         return recommendedRoutineResults;
-    }
-
-    /**
-     * 추천 루틴 단건 조회
-     */
-    @Transactional(readOnly = true)
-    public RecommendedRoutineSingleResponse searchRecommendedRoutine(Long recommendedRoutineId) {
-        RecommendedRoutine recommendedRoutine = recommendedRoutineRepository.findById(recommendedRoutineId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
-
-        List<RecommendedSubRoutineSingleResponse> recommendedSubRoutineResponse = new ArrayList<>();
-        // 추천 루틴에 해당하는 서브루틴 조회
-        List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
-        for (RecommendedSubRoutine recommendedSubRoutine : recommendedSubRoutines) {
-            RecommendedSubRoutineSingleResponse recommendedSubRoutineSingleResponse = RecommendedSubRoutineSingleResponse.builder()
-                    .recommendedSubRoutineId(recommendedSubRoutine.getRecommendedSubRoutineId())
-                    .recommendedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
-                    .build();
-            recommendedSubRoutineResponse.add(recommendedSubRoutineSingleResponse);
-        }
-
-        return RecommendedRoutineSingleResponse.builder()
-                .recommendedRoutineId(recommendedRoutine.getRecommendedRoutineId())
-                .recommendedRoutineName(recommendedRoutine.getRecommendedRoutineName())
-                .recommendedRoutineExecutionTime(recommendedRoutine.getExecutionTime())
-                .recommendedSubRoutineSingleResponse(recommendedSubRoutineResponse)
-                .build();
     }
 
     // 추천루틴을 응답 객체에 추가하는 메서드
