@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.routine.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
@@ -16,7 +17,7 @@ import bitnagil.bitnagil_backend.routine.response.SubRoutineSearchResultDto;
 /**
  * 루틴 관련해서 DB에서 조회해오거나 가공된 데이터를 DTO로 변환하는 Mapper 클래스입니다.
  */
-@Service
+@Component
 public class RoutineMapper {
 
     public RoutineSearchResultDto toRoutineSearchResultDto(Routine routine,

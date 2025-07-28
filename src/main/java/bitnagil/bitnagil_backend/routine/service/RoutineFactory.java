@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
@@ -26,7 +27,7 @@ import bitnagil.bitnagil_backend.user.domain.User;
 /**
  * 루틴 관련 엔티티 생성, 초기화 책임을 담당하는 클래스입니다.
  */
-@Service
+@Component
 public class RoutineFactory {
 
     // 신규 Routine 엔티티 생성 및 초기화

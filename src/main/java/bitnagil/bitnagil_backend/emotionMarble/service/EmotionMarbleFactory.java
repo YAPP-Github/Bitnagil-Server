@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
@@ -15,7 +16,7 @@ import bitnagil.bitnagil_backend.user.domain.User;
 /**
  * 감정 구슬 관련 엔티티 생성 책임을 담당하는 클래스입니다.
  */
-@Service
+@Component
 public class EmotionMarbleFactory {
 
     // 당일의 감정 구슬을 생성
