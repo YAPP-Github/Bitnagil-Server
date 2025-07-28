@@ -10,7 +10,7 @@ import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleRes
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 
-import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineService;
+import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineManager;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ public class EmotionMarbleService {
 
     private final EmotionMarbleRepository emotionMarbleRepository;
 
-    private final RecommendedRoutineService recommendedRoutineService;
+    private final RecommendedRoutineManager recommendedRoutineManager;
     private final EmotionMarbleFactory emotionMarbleFactory;
 
     // 감정 구술 조회(enum의 value를 가져온다.)
@@ -59,7 +59,7 @@ public class EmotionMarbleService {
 
         // 감정 구슬에 따른 추천 루틴 응답
         List<RecommendedRoutineDto> recommendedRoutineDtoList =
-            recommendedRoutineService.recommendRoutinesByEmotionMarble(emotionMarble.getResultCase());
+            recommendedRoutineManager.recommendRoutinesByEmotionMarble(emotionMarble.getResultCase());
 
         return RegisterEmotionMarbleResponse.builder()
                 .recommendedRoutines(recommendedRoutineDtoList)

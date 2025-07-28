@@ -2,7 +2,6 @@ package bitnagil.bitnagil_backend.recommendedRoutine.service;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
@@ -20,7 +19,7 @@ import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.jetbrains.annotations.Nullable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -71,31 +70,6 @@ public class RecommendedRoutineService {
                 .recommendedRoutines(response)
                 .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
                 .build();
-    }
-
-    // 감정 구슬에 따른 추천 루틴 응답
-    public List<RecommendedRoutineDto> recommendRoutinesByEmotionMarble(Case routineCase) {
-        List<RecommendedRoutine> recommendedRoutines = recommendedRoutineRepository.findByResultCase(routineCase);
-        if (recommendedRoutines.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE);
-        }
-
-        // 응답 생성
-        return recommendedRoutines.stream()
-            .map(this::toRecommendedRoutineDtoWithDetails)
-            .collect(Collectors.toList());
-    }
-
-    private RecommendedRoutineDto toRecommendedRoutineDtoWithDetails(RecommendedRoutine recommendedRoutine) {
-
-        List<RecommendedSubRoutineSearchResult> recommendedRoutineDetailDtoList = recommendedSubRoutineRepository.findByRecommendedRoutine(
-                recommendedRoutine)
-            .stream()
-            .map(recommendedRoutineMapper::toRecommendedSubRoutineSearchResult)
-            .toList();
-
-        // 추천 루틴을 dto로 변환한다.
-        return recommendedRoutineMapper.toRecommendedRoutineDto(recommendedRoutine, recommendedRoutineDetailDtoList);
     }
 
     private void addCategoryRecommendedRoutines(Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {

@@ -18,8 +18,7 @@ import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRoutineRepository;
-import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineService;
-import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
+import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineManager;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +42,9 @@ public class OnboardingService {
     private final RecommendedSubRoutineRepository recommendedSubRoutineRepository;
     private final ChangedRoutineRepository changedRoutineRepository;
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
-    private final SubRoutineRepository subRoutineRepository;
 
-    private final RecommendedRoutineService recommendedRoutineService;
+
+    private final RecommendedRoutineManager recommendedRoutineManager;
     private final ChangedRoutineFactory changedRoutineFactory;
 
     /**
@@ -69,7 +68,7 @@ public class OnboardingService {
 
         // 온보딩의 CASE를 통해 추천루틴을 조회한다.
         List<RecommendedRoutineDto> recommendedRoutineDtoList =
-            recommendedRoutineService.recommendRoutinesByEmotionMarble(onboarding.getResultCase());
+            recommendedRoutineManager.recommendRoutinesByEmotionMarble(onboarding.getResultCase());
 
         OnboardingResponse response = OnboardingResponse.builder()
                 .recommendedRoutines(recommendedRoutineDtoList)
