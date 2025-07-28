@@ -757,7 +757,7 @@ VALUES
 
 
 -- recommended routine
-INSERT INTO recommended_routine (recommended_routine_type, time, recommended_routine_name, recommended_routine_description, recommended_routine_level, emotion, case_id, thumbnail_url, created_at, updated_at, deleted_at)
+INSERT INTO recommended_routine (recommended_routine_type, execution_time, recommended_routine_name, recommended_routine_description, recommended_routine_level, emotion, case_id, thumbnail_url, created_at, updated_at, deleted_at)
 VALUES
     ('OUTING', '20:00:00', '저녁 산책하기', '하루를 정리하며 차분한 시간을 가질 수 있어요.', 'LEVEL3', 'VITALITY', 10, NULL, NOW(), NOW(), NULL),
     ('REST', '08:00:00', '기지개 펴기', '굳은 몸을 풀어주면 기분 전환이 돼요.', ' LEVEL1', 'FATIGUE', 1, NULL, NOW(), NOW(), NULL),

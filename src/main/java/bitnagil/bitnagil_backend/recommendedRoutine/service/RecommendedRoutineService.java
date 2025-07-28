@@ -56,7 +56,6 @@ public class RecommendedRoutineService {
         response.put(RecommendedRoutineType.PERSONALIZED, new ArrayList<>()); // 맞춤 루틴은 미리 초기화 한다.(감정구슬, 온보딩 결과를 넣기 위해)
 
         // 영속성 객체에 user를 저장하기 위해 user를 조회
-        
         user = userRepository.findByUserPk(user.getUserPk())
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -70,6 +69,25 @@ public class RecommendedRoutineService {
                 .recommendedRoutines(response)
                 .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
                 .build();
+    }
+
+    /**
+     * 추천 루틴 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public RecommendedRoutineSearchResult searchRecommendedRoutine(Long recommendedRoutineId) {
+        RecommendedRoutine recommendedRoutine = recommendedRoutineRepository.findById(recommendedRoutineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
+
+        List<RecommendedSubRoutineSearchResult> recommendedSubRoutineSearchResults = new ArrayList<>();
+        // 추천 루틴에 해당하는 서브루틴 조회
+        List<RecommendedSubRoutine> recommendedSubRoutines = recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+        for (RecommendedSubRoutine recommendedSubRoutine : recommendedSubRoutines) {
+            RecommendedSubRoutineSearchResult recommendedSubRoutineSearchResult = recommendedRoutineMapper.toRecommendedSubRoutineSearchResult(recommendedSubRoutine);
+            recommendedSubRoutineSearchResults.add(recommendedSubRoutineSearchResult);
+        }
+
+        return recommendedRoutineMapper.toRecommendedRoutineSearchResult(recommendedRoutine, recommendedSubRoutineSearchResults);
     }
 
     private void addCategoryRecommendedRoutines(Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {
