@@ -15,7 +15,7 @@ import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineS
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineSearchResult;
 import bitnagil.bitnagil_backend.user.domain.User;
-import bitnagil.bitnagil_backend.user.repository.UserRepository;
+import bitnagil.bitnagil_backend.user.service.UserManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,9 +38,9 @@ public class RecommendedRoutineService {
     private final RecommendedRoutineRepository recommendedRoutineRepository;
     private final RecommendedSubRoutineRepository recommendedSubRoutineRepository;
     private final EmotionMarbleRepository emotionMarbleRepository;
-    private final UserRepository userRepository;
 
     private final RecommendedRoutineMapper recommendedRoutineMapper;
+    private final UserManager userManager;
 
     /**
      * 추천 카테고리별 루틴, 서브루틴을 조회
@@ -56,19 +56,15 @@ public class RecommendedRoutineService {
         response.put(RecommendedRoutineType.PERSONALIZED, new ArrayList<>()); // 맞춤 루틴은 미리 초기화 한다.(감정구슬, 온보딩 결과를 넣기 위해)
 
         // 영속성 객체에 user를 저장하기 위해 user를 조회
-        user = userRepository.findByUserPk(user.getUserPk())
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        User persistedUser = userManager.getPersistedUser(user);
 
         // 맞춤 추천(감정구슬 + 온보딩)을 조회하고 response에 추가
-        EmotionMarble emotionMarble = addPersonalizedRecommendedRoutine(user, nowDate, response);
+        EmotionMarble emotionMarble = addPersonalizedRecommendedRoutine(persistedUser, nowDate, response);
 
         // 맞춤추천 이외의 카테고리에 대한 추천 루틴을 response 추가
         addCategoryRecommendedRoutines(response);
 
-        return RecommendedRoutineSearchResponse.builder()
-                .recommendedRoutines(response)
-                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
-                .build();
+        return recommendedRoutineMapper.toRecommendedRoutineSearchResponse(response, emotionMarble);
     }
 
     /**
@@ -108,7 +104,7 @@ public class RecommendedRoutineService {
         }
     }
 
-    private  EmotionMarble addPersonalizedRecommendedRoutine(User user, LocalDate nowDate,
+    private EmotionMarble addPersonalizedRecommendedRoutine(User user, LocalDate nowDate,
         Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {
         // 감정구슬(당일에 감정구슬을 선택한 경우만 조회)
         EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), nowDate);

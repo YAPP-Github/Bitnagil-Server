@@ -21,6 +21,7 @@ import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRou
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineManager;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
+import bitnagil.bitnagil_backend.user.service.UserManager;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class OnboardingService {
 
     private final RecommendedRoutineManager recommendedRoutineManager;
     private final ChangedRoutineFactory changedRoutineFactory;
+    private final UserManager userManager;
 
     /**
      * 유저와 매칭되는 온보딩 결과를 설정하고, 리턴하는 메서드
@@ -62,9 +64,8 @@ public class OnboardingService {
         );
 
         // 회원은 온보딩과의 연관관계를 설정한다.
-        user = userRepository.findByUserPk(user.getUserPk()).orElseThrow(
-            () -> new CustomException(ErrorCode.NOT_FOUND_USER));
-        user.updateOnboarding(onboarding);
+        User persistedUser = userManager.getPersistedUser(user);
+        persistedUser.updateOnboarding(onboarding);
 
         // 온보딩의 CASE를 통해 추천루틴을 조회한다.
         List<RecommendedRoutineDto> recommendedRoutineDtoList =

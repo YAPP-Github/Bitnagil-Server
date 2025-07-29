@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
@@ -15,7 +16,10 @@ import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineD
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineSearchResult;
 import lombok.RequiredArgsConstructor;
 
-@Component
+/**
+ * 외부에서 사용되는 추천 루틴에 대한 공통 로직을 관리하는 클래스입니다.
+ */
+@Service
 @RequiredArgsConstructor
 public class RecommendedRoutineManager {
 

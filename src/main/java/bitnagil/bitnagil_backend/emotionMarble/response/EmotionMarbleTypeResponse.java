@@ -17,6 +17,6 @@ public class EmotionMarbleTypeResponse {
     @Schema(description = "감정 구슬 명칭", example = "평온함")
     private String emotionMarbleName;
 
-    @Schema(description = "감정 구슬 이미지 URL", example = "https://example.com/image/calm.png")
+    @Schema(description = "감정 구슬 이미지 URL (홈/구슬 선택 화면 이미지 다름)", example = "https://example.com/image/calm.png")
     private String imageUrl;
 }

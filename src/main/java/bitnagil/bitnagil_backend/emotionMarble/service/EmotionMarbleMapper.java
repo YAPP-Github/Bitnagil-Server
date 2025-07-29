@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.emotionMarble.service;
 
+import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
 import org.springframework.stereotype.Component;
@@ -18,5 +19,13 @@ public class EmotionMarbleMapper {
                 .emotionMarbleType(emotionMarbleType)
                 .imageUrl(emotionMarbleType.getMarbleImageUrl())
                 .build();
+    }
+
+    public EmotionMarbleTypeResponse toEmotionMarbleTypeResponse(EmotionMarble emotionMarble) {
+        return EmotionMarbleTypeResponse.builder()
+            .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType())
+            .emotionMarbleName(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType().getDescription())
+            .imageUrl(emotionMarble == null ? null :emotionMarble.getEmotionMarbleType().getHomeMarbleImageUrl())
+            .build();
     }
 }

@@ -1,12 +1,16 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
+import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
+import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResponse;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineSearchResult;
 
@@ -49,6 +53,16 @@ public class RecommendedRoutineMapper {
         return RecommendedSubRoutineSearchResult.builder()
             .recommendedSubRoutineId(recommendedSubRoutine.getRecommendedSubRoutineId())
             .recommendedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
+            .build();
+    }
+
+    // 추천 카테고리 별 루틴, 서브루틴을 반환하는 DTO로 변환
+    public RecommendedRoutineSearchResponse toRecommendedRoutineSearchResponse(
+        Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response, EmotionMarble emotionMarble) {
+
+        return RecommendedRoutineSearchResponse.builder()
+            .recommendedRoutines(response)
+            .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
             .build();
     }
 }
