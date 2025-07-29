@@ -70,5 +70,14 @@ public class EmotionMarbleService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public EmotionMarbleTypeResponse getEmotionMarbleForHome(User user, LocalDate searchDate) {
+        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(
+            user.getUserPk().getId(), searchDate);
+
+        return emotionMarbleMapper.toEmotionMarbleTypeResponse(emotionMarble);
+    }
+
+
 
 }

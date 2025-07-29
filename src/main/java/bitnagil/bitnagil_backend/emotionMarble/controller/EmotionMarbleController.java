@@ -8,9 +8,12 @@ import bitnagil.bitnagil_backend.emotionMarble.service.EmotionMarbleService;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.user.domain.User;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,7 +30,19 @@ public class EmotionMarbleController implements EmotionMarbleSpec {
 
     // 감정구슬 등록 API
     @PostMapping("")
-    public CustomResponseDto<RegisterEmotionMarbleResponse> registryEmotionMarble(@CurrentUser User user, @RequestBody RegisterEmotionMarbleRequest request) {
+    public CustomResponseDto<RegisterEmotionMarbleResponse> registryEmotionMarble(
+        @CurrentUser User user,
+        @RequestBody RegisterEmotionMarbleRequest request) {
+
         return CustomResponseDto.from(emotionMarbleService.registryEmotionMarble(user, request));
+    }
+
+    // 당일의 유저가 선택한 감정 구슬 조회 API
+    @GetMapping("/me")
+    public CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbleForHome(
+        @CurrentUser User user,
+        @RequestParam @NotNull LocalDate searchDate) {
+
+        return CustomResponseDto.from(emotionMarbleService.getEmotionMarbleForHome(user, searchDate));
     }
 }
