@@ -65,10 +65,7 @@ public class RecommendedRoutineService {
         // 맞춤추천 이외의 카테고리에 대한 추천 루틴을 response 추가
         addCategoryRecommendedRoutines(response);
 
-        return RecommendedRoutineSearchResponse.builder()
-                .recommendedRoutines(response)
-                .emotionMarbleType(emotionMarble == null ? null : emotionMarble.getEmotionMarbleType()) // 감정 구슬 타입 설정
-                .build();
+        return recommendedRoutineMapper.toRecommendedRoutineSearchResponse(response, emotionMarble);
     }
 
     /**
@@ -108,7 +105,7 @@ public class RecommendedRoutineService {
         }
     }
 
-    private  EmotionMarble addPersonalizedRecommendedRoutine(User user, LocalDate nowDate,
+    private EmotionMarble addPersonalizedRecommendedRoutine(User user, LocalDate nowDate,
         Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {
         // 감정구슬(당일에 감정구슬을 선택한 경우만 조회)
         EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), nowDate);
