@@ -6,6 +6,7 @@ import java.util.UUID;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
+import bitnagil.bitnagil_backend.routine.response.RoutineSearchResultDto;
 import jakarta.validation.constraints.NotNull;
 
 import org.springframework.security.core.parameters.P;
@@ -28,6 +29,7 @@ import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.routine.service.RoutineService;
 import bitnagil.bitnagil_backend.user.domain.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -91,5 +93,12 @@ public class RoutineController implements RoutineSpec {
         routineService.updateRoutineCompletionStatus(user, updateRoutineCompletionRequest);
 
         return CustomResponseDto.from(null);
+    }
+
+    // 루틴 수정 페이지에서 사용되는 루틴 단건 조회 API
+    @GetMapping("{routineId}")
+    public CustomResponseDto<RoutineSearchResultDto> getRoutine(@CurrentUser User user, @PathVariable UUID routineId) {
+
+        return CustomResponseDto.from(routineService.getRoutine(user, routineId));
     }
 }
