@@ -16,7 +16,6 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    @Transactional(readOnly = true)
     public UserInfoResponse getUserInfo(User user) {
         return userMapper.toUserInfoResponse(user);
     }
