@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
@@ -16,6 +17,7 @@ import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineReposit
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
+import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.repository.RoutineCompletionRepository;
@@ -188,6 +190,25 @@ public class RoutineService {
     @Transactional(readOnly = true)
     public RoutineSearchResponse getRoutines(User user, LocalDate startDate, LocalDate endDate) {
         return queryRoutines(user, startDate, endDate);
+    }
+
+    // routineId에 대한 단일 루틴 조회하는 메서드입니다.
+    @Transactional(readOnly = true)
+    public RoutineSearchResultDto getRoutine(User user, UUID routineId) {
+        LocalDateTime now = LocalDateTime.now();
+
+        Routine routine = routineValidator.validateRoutineOwnership(routineId, user, now);
+
+        List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
+
+        // 서브 루틴 목록 Dto로 변환
+        List<SubRoutineSearchResultDto> subRoutineSearchResultDtos =
+            subRoutines.stream()
+            .map(subRoutine -> routineMapper.toSubRoutineSearchResultDto(subRoutine, null))
+            .toList();
+
+        // 루틴 관련 정보 Dto로 변환
+        return routineMapper.toRoutineSearchResultDto(routine, subRoutineSearchResultDtos, null);
     }
 
     // 루틴의 완료 여부를 갱신하는 메서드입니다.
