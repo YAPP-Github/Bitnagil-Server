@@ -71,7 +71,7 @@ public class EmotionMarbleService {
     }
 
     @Transactional(readOnly = true)
-    public EmotionMarbleTypeResponse getEmotionMarbleForHome(User user, LocalDate searchDate) {
+    public EmotionMarbleTypeResponse getEmotionMarbleBySearchDate(User user, LocalDate searchDate) {
         EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(
             user.getUserPk().getId(), searchDate);
 

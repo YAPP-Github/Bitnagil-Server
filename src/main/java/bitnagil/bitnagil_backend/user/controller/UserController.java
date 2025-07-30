@@ -19,7 +19,7 @@ public class UserController implements UserSpec {
 
     private final UserService userService;
 
-    @GetMapping("/nickname")
+    @GetMapping("/infos")
     public CustomResponseDto<UserInfoResponse> getUserInfo(@CurrentUser User user) {
         UserInfoResponse userInfoResponse = userService.getUserInfo(user);
 

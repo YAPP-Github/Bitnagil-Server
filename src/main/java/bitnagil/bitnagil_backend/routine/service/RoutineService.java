@@ -192,6 +192,7 @@ public class RoutineService {
         return queryRoutines(user, startDate, endDate);
     }
 
+    // TODO: 추후에 어떤 루틴인지 식별이 필요할 때 RoutineType 추가 요망
     // routineId에 대한 단일 루틴 조회하는 메서드입니다.
     @Transactional(readOnly = true)
     public RoutineSearchResultDto getRoutine(User user, UUID routineId) {
@@ -199,7 +200,9 @@ public class RoutineService {
 
         Routine routine = routineValidator.validateRoutineOwnership(routineId, user, now);
 
-        List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
+        List<SubRoutine> subRoutines = subRoutineRepository
+            .findByRoutineIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
+                routineId, now, now);
 
         // 서브 루틴 목록 Dto로 변환
         List<SubRoutineSearchResultDto> subRoutineSearchResultDtos =
