@@ -12,6 +12,7 @@ import bitnagil.bitnagil_backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = ApiTags.EMOTION_MARBLE)
@@ -34,9 +36,9 @@ public interface EmotionMarbleSpec {
 
     @Operation(summary = "검색 날짜 기준으로 대한 유저의 감정구슬 정보를 조회합니다.")
     @Parameters({
-        @Parameter(name = "searchDate", description = "감정 구슬 조회 날짜", required = true, example = "2025-07-01")
+        @Parameter(name = "searchDate", description = "감정 구슬 조회 날짜", required = true, example = "2025-07-01",
+            in = ParameterIn.PATH)
     })
-    CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbleForHome(
-        @CurrentUser User user,
-        @RequestParam @NotNull LocalDate searchDate);
+    CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbleBySearchDate(
+        User user, @PathVariable LocalDate searchDate);
 }
