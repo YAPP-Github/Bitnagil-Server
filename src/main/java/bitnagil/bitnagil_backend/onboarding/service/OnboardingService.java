@@ -63,6 +63,10 @@ public class OnboardingService {
                 request.getTargetOutingFrequency()
         );
 
+        if(onboarding == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE);
+        }
+
         // 회원은 온보딩과의 연관관계를 설정한다.
         User persistedUser = userManager.getPersistedUser(user);
         persistedUser.updateOnboarding(onboarding);
