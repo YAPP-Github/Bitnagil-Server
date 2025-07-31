@@ -245,7 +245,7 @@ jobs:
                     },
                     {
                       "title": "커밋 메시지",
-                      "value": "${{ github.event.head_commit.message }}",
+                      "value": "${{ toJson(github.event.head_commit.message) }}",
                       "short": false
                     }
                   ]
@@ -266,7 +266,7 @@ jobs:
               "channel": "#server-deploy",
               "attachments": [
                 {
-                  "color": "#ff0000",  # 실패는 빨간색
+                  "color": "#ff0000",
                   "title": "🚨 배포 실패: ${{ github.repository }}",
                   "title_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
                   "text": "${{ github.ref_name }} 브랜치에 배포 실패 ❌",
@@ -278,7 +278,7 @@ jobs:
                     },
                     {
                       "title": "커밋 메시지",
-                      "value": "${{ github.event.head_commit.message }}",
+                      "value": "${{ toJson(github.event.head_commit.message) }}",
                       "short": false
                     }
                   ]
