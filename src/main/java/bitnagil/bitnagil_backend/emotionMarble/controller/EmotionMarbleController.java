@@ -1,8 +1,6 @@
 package bitnagil.bitnagil_backend.emotionMarble.controller;
 
 import bitnagil.bitnagil_backend.emotionMarble.controller.spec.EmotionMarbleSpec;
-import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
-import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
 import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
 import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
@@ -11,7 +9,12 @@ import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,13 +24,25 @@ public class EmotionMarbleController implements EmotionMarbleSpec {
 
     // 감정구슬 조회 API
     @GetMapping("")
-    public CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbles() {
+    public CustomResponseDto<List<EmotionMarbleTypeResponse>> getEmotionMarbles() {
         return CustomResponseDto.from(emotionMarbleService.getEmotionMarbles());
     }
 
     // 감정구슬 등록 API
     @PostMapping("")
-    public CustomResponseDto<RegisterEmotionMarbleResponse> registryEmotionMarble(@CurrentUser User user, @RequestBody RegisterEmotionMarbleRequest request) {
+    public CustomResponseDto<RegisterEmotionMarbleResponse> registryEmotionMarble(
+        @CurrentUser User user,
+        @RequestBody RegisterEmotionMarbleRequest request) {
+
         return CustomResponseDto.from(emotionMarbleService.registryEmotionMarble(user, request));
+    }
+
+    // 당일의 유저가 선택한 감정 구슬 조회 API
+    @GetMapping("/{searchDate}")
+    public CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbleBySearchDate(
+        @CurrentUser User user,
+        @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate searchDate) {
+
+        return CustomResponseDto.from(emotionMarbleService.getEmotionMarbleBySearchDate(user, searchDate));
     }
 }

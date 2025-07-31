@@ -41,6 +41,8 @@ public class UserAuthService {
     private final AppleUserInfoService appleUserInfoService;
     private final KakaoUserInfoService kakaoUserInfoService;
 
+    private final UserManager userManager;
+
     // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
     public UserLoginResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
@@ -92,24 +94,22 @@ public class UserAuthService {
         LocalDateTime now = LocalDateTime.now();
 
         // 변경 감지를 위해 영속 상태로 설정
-        User persistentUser = userRepository.findByUserPk(user.getUserPk()).orElseThrow(
-            () -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        User persistedUser = userManager.getPersistedUser(user);
 
-        invalidateToken(persistentUser);
+        invalidateToken(persistedUser);
 
         // 기존 유저의 이력 종료일시를 갱신 및 role 변경
-        persistentUser.updateHistoryEndDateTime(now);
-        persistentUser.changeRoleToWithdrawn();
+        persistedUser.updateHistoryEndDateTime(now);
+        persistedUser.changeRoleToWithdrawn();
 
-        unlinkFromSocial(persistentUser);
+        unlinkFromSocial(persistedUser);
     }
 
     // 약관 동의 - 회원의 ROLE을 USER로 업데이트
     @Transactional
     public void agreements(UserAgreementsRequest userAgreeMentsRequest, User user) {
         // 약관 동의 시 ROLE을 USER로 변경 및 동의 여부 업데이트
-        User findUser = userRepository.findByUserPk(user.getUserPk()).orElseThrow(() ->
-            new CustomException(ErrorCode.NOT_FOUND_USER));
+        User persistedUser = userManager.getPersistedUser(user);
 
         if(userAgreeMentsRequest.getAgreedToTermsOfService() == false ||
             userAgreeMentsRequest.getAgreedToPrivacyPolicy() == false ||
@@ -117,7 +117,7 @@ public class UserAuthService {
             throw new CustomException(ErrorCode.AGREEMENT_NOT_ACCEPTED);
         }
 
-        findUser.updateAgreements(userAgreeMentsRequest.getAgreedToTermsOfService(),
+        persistedUser.updateAgreements(userAgreeMentsRequest.getAgreedToTermsOfService(),
                                   userAgreeMentsRequest.getAgreedToPrivacyPolicy(),
                                   userAgreeMentsRequest.getIsOverFourteen());
     }

@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.emotionMarble.response;
 
+import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

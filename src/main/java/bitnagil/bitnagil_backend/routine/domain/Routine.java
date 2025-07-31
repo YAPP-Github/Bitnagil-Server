@@ -9,6 +9,7 @@ import java.util.UUID;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
+import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -77,5 +78,12 @@ public class Routine extends BaseTimeEntity {
     // sort delete
     public void setDeleteAt(LocalDateTime deleteAt) {
         this.deletedAt = deleteAt;
+    }
+
+    // 서브루틴을 제외한 루틴 필드에서 변경된 필드가 있는지 검증
+    public boolean hasRoutineChanged(UpdateRoutineRequest request) {
+        return !this.getName().equals(request.getRoutineName()) ||
+            !this.getRepeatDay().equals(request.getRepeatDay()) ||
+            !this.getExecutionTime().equals(request.getExecutionTime());
     }
 }

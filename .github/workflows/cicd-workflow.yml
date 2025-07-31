@@ -201,11 +201,86 @@ jobs:
           cluster: ${{ secrets.ECS_CLUSTER_NAME }}
           wait-for-service-stability: true  # 서비스가 안정화될 때까지 대기합니다.
 
-      # 11. release 브랜치에 배포 시 release 태그 생성 자동화
-      - name: update release tag
-        if: github.ref == 'refs/heads/release'
-        uses: release-drafter/release-drafter@v5
+      # 11. 배포 알림 메세지 설정
+      - name: Set Slack message based on branch
+        id: set-slack-message
+        run: |
+          if [[ "${{ github.ref_name }}" == "develop" ]]; then
+            echo "SLACK_MESSAGE=✅ 개발계(develop) 배포 완료 🎉" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "release" ]]; then
+            echo "SLACK_MESSAGE=🚀 운영계(release) 배포 완료!" >> $GITHUB_ENV
+          else
+            echo "SLACK_MESSAGE=⚙️ '${{ github.ref_name }}' 브랜치로 배포되었습니다." >> $GITHUB_ENV
+          fi
+
+      # 12. Slack 배포 성공 알림(개발, 운영 서버)
+      - name: Notify Slack - release
+        if: success()
+        id: slack-success
+        uses: slackapi/slack-github-action@v1.24.0
         with:
-          config-name: release-drafter-config.yml
+          payload: |
+            {
+              "channel": "#server-deploy",
+              "attachments": [
+                {
+                  "color": "#36a64f",
+                  "title": "🔔 ${{ github.repository }} 배포 알림",
+                  "title_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                  "text": "${{ env.SLACK_MESSAGE }}",
+                  "fields": [
+                    {
+                      "title": "브랜치",
+                      "value": "${{ github.ref_name }}",
+                      "short": true
+                    },
+                    {
+                      "title": "배포자",
+                      "value": "${{ github.actor }}",
+                      "short": true
+                    },
+                    {
+                      "title": "커밋 메시지",
+                      "value": "${{ github.event.head_commit.message }}",
+                      "short": false
+                    }
+                  ]
+                }
+              ]
+            }
         env:
-          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_BOT_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      # 13. Slack 배포 실패 알림(개발, 운영 서버)
+      - name: Notify Slack - failure
+        if: failure() # 이 스텝은 job 실패 시에만 실행됨
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "channel": "#server-deploy",
+              "attachments": [
+                {
+                  "color": "#ff0000",  # 실패는 빨간색
+                  "title": "🚨 배포 실패: ${{ github.repository }}",
+                  "title_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                  "text": "${{ github.ref_name }} 브랜치에 배포 실패 ❌",
+                  "fields": [
+                    {
+                      "title": "브랜치",
+                      "value": "${{ github.ref_name }}",
+                      "short": true
+                    },
+                    {
+                      "title": "커밋 메시지",
+                      "value": "${{ github.event.head_commit.message }}",
+                      "short": false
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_BOT_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
