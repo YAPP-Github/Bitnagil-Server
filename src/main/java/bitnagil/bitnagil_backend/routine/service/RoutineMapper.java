@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routine.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -59,7 +60,7 @@ public class RoutineMapper {
             .routineId(changedRoutine.getChangedRoutinePk().getId())
             .historySeq(changedRoutine.getChangedRoutinePk().getHistorySeq())
             .routineName(changedRoutine.getChangedRoutineName())
-            //.repeatDay(changedRoutine.getRepeatDay()) // 변경 루틴은 반복 요일이 없으므로 주석 처리(추후 2차에서는 이런 변경 루틴에 대해 어떻게 처리할지 고민)
+            .repeatDay(new ArrayList<>())
             .executionTime(changedRoutine.getChangedExecutionTime())
             .subRoutineSearchResultDto(changedSubRoutineSearchResultList)
             .modifiedYn(true) // 변경 루틴은 수정 여부가 true
