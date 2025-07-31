@@ -245,7 +245,7 @@ jobs:
                     },
                     {
                       "title": "커밋 메시지",
-                      "value": "${{ toJson(github.event.head_commit.message) }}",
+                      "value": ${{ toJSON(github.event.head_commit.message) }},
                       "short": false
                     }
                   ]
@@ -278,7 +278,7 @@ jobs:
                     },
                     {
                       "title": "커밋 메시지",
-                      "value": "${{ toJson(github.event.head_commit.message) }}",
+                      "value": ${{ toJSON(github.event.head_commit.message) }},
                       "short": false
                     }
                   ]
