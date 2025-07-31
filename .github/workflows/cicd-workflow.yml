@@ -7,6 +7,10 @@ on:
       - "release"
       - "develop"
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -284,3 +288,12 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_BOT_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      # 14. Release Drafter 설정
+      - name: Release
+        if: github.ref == 'refs/heads/release'
+        uses: release-drafter/release-drafter@v6
+        with:
+          config-name: release-drafter-config.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
