@@ -1,14 +1,10 @@
 package bitnagil.bitnagil_backend.user.domain;
 
-import java.time.LocalDateTime;
-
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,37 +19,28 @@ import lombok.NoArgsConstructor;
 @Entity
 public class User extends BaseTimeEntity {
 
-    @EmbeddedId
-    @AttributeOverrides({
-        @AttributeOverride(name = "id", column = @Column(name = "user_id")),
-        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
-    })
-    private HistoryPk userPk;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId; // 회원 ID
 
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(40)")
-    private SocialType socialType;
+    private SocialType socialType; // 소셜 타입
 
     @Column(nullable = false)
-    private String socialId;
+    private String socialId; // 소셜 ID
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(40)", nullable = false)
-    private Role role;
+    private Role role; // 역할
 
     @Column(nullable = false)
-    private String email;
+    private String email; // 이메일
 
     @Column(nullable = false)
-    private String nickname;
+    private String nickname; // 닉네임
 
     private String refreshToken; // 애플의 경우 탈퇴를 위한 필수값
-
-    @NotNull
-    private LocalDateTime historyStartDateTime;
-
-    @NotNull
-    private LocalDateTime historyEndDateTime;
 
     private Boolean agreedToTermsOfService; // 서비스 이용약관 동의
     private Boolean agreedToPrivacyPolicy; // 개인정보 수집 동의
@@ -64,17 +51,14 @@ public class User extends BaseTimeEntity {
     private Onboarding onboarding;
 
     @Builder
-    public User(HistoryPk userPk, SocialType socialType, String socialId, Role role, String email, String nickname,
-        String refreshToken, LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime) {
-        this.userPk = userPk;
+    public User(Long userId, SocialType socialType, String socialId, Role role, String email, String nickname,
+        String refreshToken) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.role = role;
         this.email = email;
         this.nickname = nickname;
         this.refreshToken = refreshToken;
-        this.historyStartDateTime = historyStartDateTime;
-        this.historyEndDateTime = historyEndDateTime;
     }
 
     public void updateAgreements(Boolean agreedToTermsOfService, Boolean agreedToPrivacyPolicy, Boolean isOverFourteen) {
@@ -86,10 +70,6 @@ public class User extends BaseTimeEntity {
 
     public void updateOnboarding(Onboarding onboarding) {
         this.onboarding = onboarding;
-    }
-
-    public void updateHistoryEndDateTime(LocalDateTime endDateTime) {
-        this.historyEndDateTime = endDateTime;
     }
 
     public void changeRoleToWithdrawn() {

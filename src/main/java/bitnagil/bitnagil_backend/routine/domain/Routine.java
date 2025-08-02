@@ -1,21 +1,15 @@
 package bitnagil.bitnagil_backend.routine.domain;
 
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import bitnagil.bitnagil_backend.user.domain.User;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,52 +26,59 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Routine extends BaseTimeEntity {
 
-    @EmbeddedId
-    @AttributeOverrides({
-        @AttributeOverride(name = "id", column = @Column(name = "routine_id")),
-        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
-    })
-    private HistoryPk routinePk;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long routineId; // 루틴 ID
 
     @NotNull
-    private String name;
+    private Long businessId; // 비즈니스 ID
+
+    @NotNull
+    private String name; // 루틴이름
 
     @NotNull
     @Convert(converter = DayOfWeekConverter.class)
-    private List<DayOfWeek> repeatDay;
+    private List<DayOfWeek> repeatDay; // 루틴 반복요일
 
     @NotNull
-    private LocalTime executionTime;
+    private LocalDate routineDate; // 루틴 일자
 
     @NotNull
-    private LocalDateTime historyStartDateTime;
+    private LocalTime executionTime; // 루틴 실행시간
 
     @NotNull
-    private LocalDateTime historyEndDateTime;
+    private LocalDate routineStartDate; // 루틴 시작일자
 
     @NotNull
-    private UUID userId;
+    private LocalDate routineEndDate; // 루틴 종료일자
+
+    @NotNull
+    private boolean routineCompleteYn; // 루틴 완료여부
+
+    private List<String> subRoutineNames; // 서브루틴명 목록
+
+    private List<Boolean> subRoutineCompleteYn; // 서브루틴 완료 여부 목록
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Builder
-    public Routine(HistoryPk routinePk, String name, List<DayOfWeek> repeatDay, LocalTime executionTime,
-        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, UUID userId) {
-        this.routinePk = routinePk;
+    public Routine(Long routineId, Long businessId, String name, List<DayOfWeek> repeatDay,
+                   LocalDate routineDate, LocalTime executionTime, LocalDate routineStartDate, LocalDate routineEndDate,
+                   boolean routineCompleteYn, List<String> subRoutineNames, List<Boolean> subRoutineCompleteYn, User user) {
+        this.routineId = routineId;
+        this.businessId = businessId;
         this.name = name;
         this.repeatDay = repeatDay;
+        this.routineDate = routineDate;
         this.executionTime = executionTime;
-        this.historyStartDateTime = historyStartDateTime;
-        this.historyEndDateTime = historyEndDateTime;
-        this.userId = userId;
-    }
-
-    // 이전 루틴의 이력 종료일시를 갱신
-    public void updateHistoryEndDateTime(LocalDateTime updateDateTime) {
-        this.historyEndDateTime = updateDateTime;
-    }
-
-    // sort delete
-    public void setDeleteAt(LocalDateTime deleteAt) {
-        this.deletedAt = deleteAt;
+        this.routineStartDate = routineStartDate;
+        this.routineEndDate = routineEndDate;
+        this.routineCompleteYn = routineCompleteYn;
+        this.subRoutineNames = subRoutineNames;
+        this.subRoutineCompleteYn = subRoutineCompleteYn;
+        this.user = user;
     }
 
     // 서브루틴을 제외한 루틴 필드에서 변경된 필드가 있는지 검증

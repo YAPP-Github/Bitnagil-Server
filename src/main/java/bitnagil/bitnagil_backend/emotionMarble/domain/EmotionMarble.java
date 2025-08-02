@@ -2,8 +2,8 @@ package bitnagil.bitnagil_backend.emotionMarble.domain;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
+import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -12,51 +12,37 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class EmotionMarble extends BaseTimeEntity {
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "emotion_marble_id")),
-            @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
-    })
-    private HistoryPk emotionMarblePk;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long emotionMarbleId; // 감정구슬 ID
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(40)")
-    private EmotionMarbleType emotionMarbleType;
+    private EmotionMarbleType emotionMarbleType; // 감정구슬 타입
 
     @NotNull
-    private LocalDate date;
+    private LocalDate date; // 감정구슬 선택 날짜
 
-    @NotNull
-    private UUID userId;
-
-    @NotNull
-    private LocalDateTime historyStartDateTime;
-
-    @NotNull
-    private LocalDateTime historyEndDateTime;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id", nullable = false)
     private Case resultCase;
 
     @Builder
-    public EmotionMarble(HistoryPk emotionMarblePk, EmotionMarbleType emotionMarbleType, LocalDate date, UUID userId,
-                         LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, Case resultCase) {
-        this.emotionMarblePk = emotionMarblePk;
+    public EmotionMarble(Long emotionMarbleId, EmotionMarbleType emotionMarbleType, LocalDate date, User user, Case resultCase) {
         this.emotionMarbleType = emotionMarbleType;
         this.date = date;
-        this.userId = userId;
-        this.historyStartDateTime = historyStartDateTime;
-        this.historyEndDateTime = historyEndDateTime;
+        this.user = user;
         this.resultCase = resultCase;
     }
 }
