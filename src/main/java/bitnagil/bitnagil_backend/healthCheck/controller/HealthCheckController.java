@@ -19,7 +19,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping(value = "/api/v1/health-check")
-public class HealthCheckController implements HealthCheckSpec {
+public class HealthCheckController {
 
     @Value("${server.port}")
     private String port; // 서버 포트 정보
