@@ -10,11 +10,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE emotion_marble SET deleted_at = CURRENT_TIMESTAMP WHERE emotion_marble_id = ?")
+@Where(clause = "deleted_at IS NULL")
 @Entity
 public class EmotionMarble extends BaseTimeEntity {
 

@@ -15,6 +15,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * 루틴에 관련된 정보들을 관리하는 클래스입니다.
@@ -24,6 +26,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SQLDelete(sql = "UPDATE routine SET deleted_at = CURRENT_TIMESTAMP WHERE routine_id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class Routine extends BaseTimeEntity {
 
     @Id
@@ -55,10 +59,6 @@ public class Routine extends BaseTimeEntity {
     @NotNull
     private boolean routineCompleteYn; // 루틴 완료여부
 
-    private List<String> subRoutineNames; // 서브루틴명 목록
-
-    private List<Boolean> subRoutineCompleteYn; // 서브루틴 완료 여부 목록
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -66,7 +66,7 @@ public class Routine extends BaseTimeEntity {
     @Builder
     public Routine(Long routineId, Long businessId, String name, List<DayOfWeek> repeatDay,
                    LocalDate routineDate, LocalTime executionTime, LocalDate routineStartDate, LocalDate routineEndDate,
-                   boolean routineCompleteYn, List<String> subRoutineNames, List<Boolean> subRoutineCompleteYn, User user) {
+                   boolean routineCompleteYn, User user) {
         this.routineId = routineId;
         this.businessId = businessId;
         this.name = name;
@@ -76,8 +76,6 @@ public class Routine extends BaseTimeEntity {
         this.routineStartDate = routineStartDate;
         this.routineEndDate = routineEndDate;
         this.routineCompleteYn = routineCompleteYn;
-        this.subRoutineNames = subRoutineNames;
-        this.subRoutineCompleteYn = subRoutineCompleteYn;
         this.user = user;
     }
 

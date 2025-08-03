@@ -24,5 +24,6 @@ public class BaseTimeEntity {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    @Column(columnDefinition = "TIMESTAMP")
     protected LocalDateTime deletedAt;
 }

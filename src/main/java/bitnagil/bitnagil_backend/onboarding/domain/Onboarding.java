@@ -7,12 +7,16 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SQLDelete(sql = "UPDATE onboarding SET deleted_at = CURRENT_TIMESTAMP WHERE onboarding_id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class Onboarding extends BaseTimeEntity {
 
     @Id

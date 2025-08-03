@@ -9,12 +9,16 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SQLDelete(sql = "UPDATE recommended_routine SET deleted_at = CURRENT_TIMESTAMP WHERE recommended_routine_id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class RecommendedRoutine extends BaseTimeEntity {
 
     @Id
