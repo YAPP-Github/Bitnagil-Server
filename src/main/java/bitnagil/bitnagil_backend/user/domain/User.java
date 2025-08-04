@@ -23,12 +23,9 @@ import lombok.NoArgsConstructor;
 @Entity
 public class User extends BaseTimeEntity {
 
-    @EmbeddedId
-    @AttributeOverrides({
-        @AttributeOverride(name = "id", column = @Column(name = "user_id")),
-        @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
-    })
-    private HistoryPk userPk;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
 
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(40)")
@@ -49,12 +46,6 @@ public class User extends BaseTimeEntity {
 
     private String refreshToken; // 애플의 경우 탈퇴를 위한 필수값
 
-    @NotNull
-    private LocalDateTime historyStartDateTime;
-
-    @NotNull
-    private LocalDateTime historyEndDateTime;
-
     private Boolean agreedToTermsOfService; // 서비스 이용약관 동의
     private Boolean agreedToPrivacyPolicy; // 개인정보 수집 동의
     private Boolean isOverFourteen; // 14세 이상 여부
@@ -64,17 +55,13 @@ public class User extends BaseTimeEntity {
     private Onboarding onboarding;
 
     @Builder
-    public User(HistoryPk userPk, SocialType socialType, String socialId, Role role, String email, String nickname,
-        String refreshToken, LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime) {
-        this.userPk = userPk;
+    public User(SocialType socialType, String socialId, Role role, String email, String nickname, String refreshToken) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.role = role;
         this.email = email;
         this.nickname = nickname;
         this.refreshToken = refreshToken;
-        this.historyStartDateTime = historyStartDateTime;
-        this.historyEndDateTime = historyEndDateTime;
     }
 
     public void updateAgreements(Boolean agreedToTermsOfService, Boolean agreedToPrivacyPolicy, Boolean isOverFourteen) {
@@ -86,10 +73,6 @@ public class User extends BaseTimeEntity {
 
     public void updateOnboarding(Onboarding onboarding) {
         this.onboarding = onboarding;
-    }
-
-    public void updateHistoryEndDateTime(LocalDateTime endDateTime) {
-        this.historyEndDateTime = endDateTime;
     }
 
     public void changeRoleToWithdrawn() {

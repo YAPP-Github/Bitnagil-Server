@@ -36,7 +36,7 @@ public class EmotionMarble extends BaseTimeEntity {
     private LocalDate date;
 
     @NotNull
-    private UUID userId;
+    private Long userId;
 
     @NotNull
     private LocalDateTime historyStartDateTime;
@@ -49,7 +49,7 @@ public class EmotionMarble extends BaseTimeEntity {
     private Case resultCase;
 
     @Builder
-    public EmotionMarble(HistoryPk emotionMarblePk, EmotionMarbleType emotionMarbleType, LocalDate date, UUID userId,
+    public EmotionMarble(HistoryPk emotionMarblePk, EmotionMarbleType emotionMarbleType, LocalDate date, Long userId,
                          LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, Case resultCase) {
         this.emotionMarblePk = emotionMarblePk;
         this.emotionMarbleType = emotionMarbleType;

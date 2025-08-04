@@ -107,7 +107,7 @@ public class RecommendedRoutineService {
     private EmotionMarble addPersonalizedRecommendedRoutine(User user, LocalDate nowDate,
         Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response) {
         // 감정구슬(당일에 감정구슬을 선택한 경우만 조회)
-        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserPk().getId(), nowDate);
+        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserId(), nowDate);
         if(emotionMarble != null) { // 조회 결과가 존재하는 경우
             makeEmotionMarbleResponse(emotionMarble, response);
         }

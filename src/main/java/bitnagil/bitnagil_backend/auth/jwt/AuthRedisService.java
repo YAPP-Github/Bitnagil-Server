@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -16,11 +15,9 @@ public class AuthRedisService {
     private final StringRedisTemplate stringRedisTemplate;
 
     // 저장
-    public void saveRefreshToken(HistoryPk userPk, String token) {
-        String redisKey = buildRefreshTokenKey(userPk);
-
+    public void saveRefreshToken(Long userId, String token) {
         RefreshToken refreshToken = RefreshToken.builder()
-            .userId(redisKey)  // 복합키를 문자열 ID로 저장
+            .userId(String.valueOf(userId))  // 복합키를 문자열 ID로 저장
             .refreshToken(token)
             .build();
 
@@ -28,9 +25,8 @@ public class AuthRedisService {
     }
 
     // 조회 by 복합키
-    public Optional<RefreshToken> getRefreshTokenByUserPk(HistoryPk userPk) {
-        String redisKey = buildRefreshTokenKey(userPk);
-        return refreshTokenRedisRepository.findById(redisKey);
+    public Optional<RefreshToken> getRefreshTokenByUserId(Long userId) {
+        return refreshTokenRedisRepository.findById(String.valueOf(userId));
     }
 
     // 조회 by refreshToken
@@ -39,15 +35,9 @@ public class AuthRedisService {
     }
 
     // 삭제
-    public void deleteRefreshToken(HistoryPk userPk) {
-        String redisKey = buildRefreshTokenKey(userPk);
-        refreshTokenRedisRepository.deleteById(redisKey);
+    public void deleteRefreshToken(Long userId) {
+        refreshTokenRedisRepository.deleteById(String.valueOf(userId));
     }
-
-    private String buildRefreshTokenKey(HistoryPk userPk) {
-        return userPk.getId().toString() + ":" + userPk.getHistorySeq();
-    }
-
 
     // Access Token 블랙리스트 등록
     public void addAccessTokenToBlacklist(String accessToken, long expirationMillis) {

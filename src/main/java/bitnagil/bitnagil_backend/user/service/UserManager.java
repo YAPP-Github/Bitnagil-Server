@@ -19,7 +19,7 @@ public class UserManager {
 
     // User 엔티티를 영속 상태로 변경하여 user 정보를 업데이트를 하기 위한 메서드
     public User getPersistedUser(User user) {
-        return userRepository.findByUserPk(user.getUserPk()).orElseThrow(
+        return userRepository.findByUserId(user.getUserId()).orElseThrow(
             () -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 }

@@ -19,13 +19,13 @@ import lombok.Getter;
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
 
-    private final HistoryPk userPk;
+    private final Long userId;
     private final Role userRole;
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
-        Map<String, Object> attributes, String nameAttributeKey, HistoryPk userPk, Role userRole) {
+        Map<String, Object> attributes, String nameAttributeKey, Long userId, Role userRole) {
         super(authorities, attributes, nameAttributeKey);
-        this.userPk = userPk;
+        this.userId = userId;
         this.userRole = userRole;
     }
 }
