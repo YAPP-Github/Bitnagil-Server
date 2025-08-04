@@ -1,12 +1,12 @@
 package bitnagil.bitnagil_backend.routineV2.domain;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_backend.global.utils.SubRoutineCompletionConverter;
+import bitnagil.bitnagil_backend.global.utils.SubRoutineConverter;
+import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,39 +25,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class RoutineV2 {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long routineId;
+    private Long routineInfoId;
 
     @NotNull
-    private String routineName;
+    private LocalDate routineDate;
 
     @NotNull
-    @Convert(converter = DayOfWeekConverter.class)
-    private List<DayOfWeek> routineRepeatDay;
+    private Boolean routineCompleteYn;
 
     @NotNull
-    private LocalTime routineExecutionTime;
+    @Convert(converter = SubRoutineConverter.class)
+    List<String> subRoutineNames;
 
     @NotNull
-    private LocalDate routineStartDate; // 루틴 시작일자
-
-    @NotNull
-    private LocalDate routineEndDate; // 루틴 종료일자
+    @Convert(converter = SubRoutineCompletionConverter.class)
+    List<Boolean> subRoutineCompleteYn;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "routine_info_id")
+    private RoutineInfoV2 routineInfo;
 
     @Builder
-    public RoutineV2(String routineName, List<DayOfWeek> routineRepeatDay, LocalTime routineExecutionTime,
-        LocalDate routineStartDate, LocalDate routineEndDate, User user) {
-        this.routineName = routineName;
-        this.routineRepeatDay = routineRepeatDay;
-        this.routineExecutionTime = routineExecutionTime;
-        this.routineStartDate = routineStartDate;
-        this.routineEndDate = routineEndDate;
-        this.user = user;
+    public RoutineV2(LocalDate routineDate, Boolean routineCompleteYn, List<String> subRoutineNames,
+        List<Boolean> subRoutineCompleteYn, RoutineInfoV2 routineInfo) {
+        this.routineDate = routineDate;
+        this.routineCompleteYn = routineCompleteYn;
+        this.subRoutineNames = subRoutineNames;
+        this.subRoutineCompleteYn = subRoutineCompleteYn;
+        this.routineInfo = routineInfo;
     }
 }
