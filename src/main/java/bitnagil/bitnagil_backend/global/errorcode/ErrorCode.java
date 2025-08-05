@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -76,7 +77,12 @@ public enum ErrorCode {
     NOT_FOUND_RECOMMENDED_ROUTINE("ON000", HttpStatus.NOT_FOUND, "조건에 맞는 추천 루틴을 찾을 수 없습니다."),
 
     // 감정구슬 관련 에러코드
-    ALREADY_REGISTERED_EMOTION_MARBLE("EM000", HttpStatus.CONFLICT, "감정구슬은 하루에 한번만 등록할 수 있습니다.");
+    ALREADY_REGISTERED_EMOTION_MARBLE("EM000", HttpStatus.CONFLICT, "감정구슬은 하루에 한번만 등록할 수 있습니다."),
+
+    // 기타 에러 코드
+    JSON_CONVERT_ERROR("ETC001", HttpStatus.INTERNAL_SERVER_ERROR, "List를 JSON 문자열로 변환하는 데 실패했습니다."),
+    JSON_PARSE_ERROR("ETC001", HttpStatus.INTERNAL_SERVER_ERROR, "JSON 문자열을 List<String> 으로 변환하는 데 실패했습니다.");
+
 
 
 

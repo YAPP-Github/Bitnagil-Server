@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Repository
 public interface EmotionMarbleRepository extends JpaRepository<EmotionMarble, HistoryPk> {
-    EmotionMarble findByUserId(UUID id);
+    EmotionMarble findByUserId(Long userId);
 
-    EmotionMarble findByUserIdAndDateIs(UUID userId, LocalDate now);
+    EmotionMarble findByUserIdAndDateIs(Long userId, LocalDate now);
 
-    boolean existsByUserIdAndDate(UUID userId, LocalDate nowDate);
+    boolean existsByUserIdAndDate(Long userId, LocalDate nowDate);
 }

@@ -54,14 +54,14 @@ public class ChangedRoutine extends BaseTimeEntity {
     private ChangedDivCode changedDivCode; // 변경 구분 코드 (시간 변경, 내일 미루기, 오늘만 루틴 삭제 등)
 
     @NotNull
-    private UUID userId;
+    private Long userId;
 
     private UUID routineId;
 
     @Builder
     public ChangedRoutine(HistoryPk changedRoutinePk, String changedRoutineName, LocalTime changedExecutionTime,
         LocalDate originalRoutineDate, LocalDate changedRoutineDate, LocalDateTime historyStartDateTime,
-        LocalDateTime historyEndDateTime, UUID userId, UUID routineId, ChangedDivCode changedDivCode) {
+        LocalDateTime historyEndDateTime, Long userId, UUID routineId, ChangedDivCode changedDivCode) {
         this.changedRoutinePk = changedRoutinePk;
         this.changedRoutineName = changedRoutineName;
         this.changedExecutionTime = changedExecutionTime;
@@ -72,6 +72,10 @@ public class ChangedRoutine extends BaseTimeEntity {
         this.changedDivCode = changedDivCode;
         this.userId = userId;
         this.routineId = routineId;
+    }
+
+    public void updateChangedDivCode(ChangedDivCode changedDivCode) {
+        this.changedDivCode = changedDivCode;
     }
 
 }

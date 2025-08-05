@@ -39,7 +39,7 @@ public class RoutineFactory {
             .executionTime(request.getExecutionTime())
             .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .userId(user.getUserPk().getId())
+            .userId(user.getUserId())
             .build();
     }
 
@@ -79,7 +79,7 @@ public class RoutineFactory {
                 previousRoutine.getExecutionTime() : request.getExecutionTime())
             .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .userId(user.getUserPk().getId())
+            .userId(user.getUserId())
             .build();
     }
 

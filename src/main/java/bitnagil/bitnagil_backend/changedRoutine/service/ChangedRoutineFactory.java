@@ -30,7 +30,7 @@ public class ChangedRoutineFactory {
             .changedRoutineDate(today) // 변경된 루틴 날짜도 현재 날짜로 설정
             .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
-            .userId(user.getUserPk().getId())
+            .userId(user.getUserId())
             .changedDivCode(ChangedDivCode.ONBOARDING)
             .build();
     }

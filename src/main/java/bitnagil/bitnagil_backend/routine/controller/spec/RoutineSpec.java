@@ -58,7 +58,8 @@ public interface RoutineSpec {
         UpdateRoutineCompletionRequest updateRoutineCompletionRequest);
 
     @Operation(summary = "선택한 요일(당일)만 루틴을 삭제합니다.")
-    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED})
+    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED,
+        ErrorCode.NOT_FOUND_CHANGED_ROUTINE, ErrorCode.CHANGED_ROUTINE_USER_NOT_MATCHED})
     CustomResponseDto<Object> deleteRoutineByDay(User user, DeleteRoutineByDayRequest deleteRoutineByDayRequest);
 
     @Operation(summary = "루틴 수정 페이지에서 사용되는 루틴 단건을 조회합니다.")

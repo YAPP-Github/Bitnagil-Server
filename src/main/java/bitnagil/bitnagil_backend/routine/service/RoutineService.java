@@ -163,22 +163,32 @@ public class RoutineService {
     public void deleteRoutineByDay(User user, DeleteRoutineByDayRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
-        Routine routine = routineValidator.validateRoutineOwnership(request.getRoutineId(), user, now);
+        if (request.getRoutineType() == RoutineType.ROUTINE) {
+            Routine routine = routineValidator.validateRoutine(user, request.getRoutineId(), request.getHistorySeq());
 
-        ChangedRoutine changedRoutineForDelete = routineFactory.createChangedRoutineForDelete(request, routine, now);
-        changedRoutineRepository.save(changedRoutineForDelete);
+            // 변경 루틴으로 전환
+            ChangedRoutine changedRoutineForDelete = routineFactory.createChangedRoutineForDelete(request, routine, now);
+            changedRoutineRepository.save(changedRoutineForDelete);
+
+            List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
+
+            // 변경 서브루틴으로 전환
+            for (SubRoutine subRoutine : subRoutines) {
+                ChangedSubRoutine changedSubRoutineForDelete =
+                    routineFactory.createChangedSubRoutineForDelete(subRoutine, now, changedRoutineForDelete);
+                changedSubRoutineRepository.save(changedSubRoutineForDelete);
+            }
+        }
+        else if (request.getRoutineType() == RoutineType.CHANGED_ROUTINE) {
+            ChangedRoutine changedRoutine = routineValidator.validateChangedRoutine(user, request.getRoutineId(),
+                request.getHistorySeq());
+
+            // 기존 변경 루틴의 결정 코드를 "오늘만 루틴 삭제"로 변경
+            changedRoutine.updateChangedDivCode(ChangedDivCode.TODAY_DELETE);
+        }
 
         // routineCompletionId에 해당하는 완료 여부 데이터 삭제
         deleteRoutineCompletionIfRoutineIdMatches(request.getRoutineCompletionId(), request.getRoutineId());
-
-        // 변경 서브루틴으로 전환
-        List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
-
-        for (SubRoutine subRoutine : subRoutines) {
-            ChangedSubRoutine changedSubRoutineForDelete =
-                routineFactory.createChangedSubRoutineForDelete(subRoutine, now, changedRoutineForDelete);
-            changedSubRoutineRepository.save(changedSubRoutineForDelete);
-        }
 
         // routineCompletionId에 해당하는 완료 여부 데이터 삭제
         for (SubRoutineInfoForDelete info : request.getSubRoutineInfosForDelete()) {
@@ -273,7 +283,7 @@ public class RoutineService {
         // todo: 추후 루틴 시작일시와 종료일시가 추가되면 조회 기간안에 루틴 종료일시 혹은 시작일시가 존재하는지를 파악하여 해당 기간내에 존재하는 루틴만 조회하도록 수정이 필요하다.
         List<Routine> routines = routineRepository
             .findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
-                user.getUserPk().getId(), now, now);
+                user.getUserId(), now, now);
 
         // 2. 조회기간의 각 요일별로 일치하는 루틴, 서브루틴을 조회해 날짜별 루틴으로 그룹핑하여 DTO로 변환
         Map<LocalDate, List<RoutineSearchResultDto>> routinesByDateResponse =
@@ -282,7 +292,7 @@ public class RoutineService {
         // 3. 변경 루틴 테이블의 변경된 루틴 날짜가 startDate ~ endDate인 이력을 모두 조회한다.
         List<ChangedRoutine> changedRoutines = changedRoutineRepository
             .findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqualAndChangedRoutineDateBetween(
-                user.getUserPk().getId(), now, now, startDate, endDate);
+                user.getUserId(), now, now, startDate, endDate);
 
         // 4. 3번 과정에서 가져온 루틴에서 날짜별로 변경된 루틴을 적용하여 루틴을 제거하거나 추가
         applyChangedRoutines(changedRoutines, routinesByDateResponse, now);
