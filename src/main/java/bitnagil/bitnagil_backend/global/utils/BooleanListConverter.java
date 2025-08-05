@@ -8,7 +8,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class SubRoutineCompletionConverter implements AttributeConverter<List<Boolean>, String> {
+public class BooleanListConverter implements AttributeConverter<List<Boolean>, String> {
 
     @Override
     public String convertToDatabaseColumn(List<Boolean> attribute) {

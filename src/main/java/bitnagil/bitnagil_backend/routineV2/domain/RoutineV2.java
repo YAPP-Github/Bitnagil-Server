@@ -3,9 +3,8 @@ package bitnagil.bitnagil_backend.routineV2.domain;
 import java.time.LocalDate;
 import java.util.List;
 
-import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
-import bitnagil.bitnagil_backend.global.utils.SubRoutineCompletionConverter;
-import bitnagil.bitnagil_backend.global.utils.SubRoutineConverter;
+import bitnagil.bitnagil_backend.global.utils.BooleanListConverter;
+import bitnagil.bitnagil_backend.global.utils.StringListConverter;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -36,11 +35,11 @@ public class RoutineV2 {
     private Boolean routineCompleteYn;
 
     @NotNull
-    @Convert(converter = SubRoutineConverter.class)
+    @Convert(converter = StringListConverter.class)
     List<String> subRoutineNames;
 
     @NotNull
-    @Convert(converter = SubRoutineCompletionConverter.class)
+    @Convert(converter = BooleanListConverter.class)
     List<Boolean> subRoutineCompleteYn;
 
     @ManyToOne(fetch = FetchType.LAZY)
