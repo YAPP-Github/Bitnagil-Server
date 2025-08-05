@@ -15,9 +15,9 @@ import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
-import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;
 import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
+import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.RoutineCompletionInfo;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -38,16 +38,16 @@ public class RoutineValidator {
     public void validateRoutineOwnership(User user, RoutineCompletionInfo info) {
         switch (info.getRoutineType()) {
             case ROUTINE:
-                validateRoutine(user, info);
+                validateRoutine(user, info.getRoutineId(), info.getHistorySeq());
                 break;
             case SUB_ROUTINE:
-                validateSubRoutine(user, info);
+                validateSubRoutine(user, info.getRoutineId(), info.getHistorySeq());
                 break;
             case CHANGED_ROUTINE:
-                validateChangedRoutine(user, info);
+                validateChangedRoutine(user, info.getRoutineId(), info.getHistorySeq());
                 break;
             case CHANGED_SUB_ROUTINE:
-                validateChangedSubRoutine(user, info);
+                validateChangedSubRoutine(user, info.getRoutineId(), info.getHistorySeq());
                 break;
         }
     }
@@ -67,19 +67,21 @@ public class RoutineValidator {
         return routine;
     }
 
-    private void validateRoutine(User user, RoutineCompletionInfo info) {
+    public Routine validateRoutine(User user, UUID routineId, Long historySeq) {
         Routine routine = routineRepository
-            .findByRoutinePk(new HistoryPk(info.getRoutineId(), info.getHistorySeq()))
+            .findByRoutinePk(new HistoryPk(routineId, historySeq))
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
         if (!user.getUserPk().getId().equals(routine.getUserId())) {
             throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
         }
+
+        return routine;
     }
 
-    private void validateSubRoutine(User user, RoutineCompletionInfo info) {
+    private void validateSubRoutine(User user, UUID routineId, Long historySeq) {
         SubRoutine subRoutine = subRoutineRepository
-            .findBySubRoutinePk(new HistoryPk(info.getRoutineId(), info.getHistorySeq()))
+            .findBySubRoutinePk(new HistoryPk(routineId, historySeq))
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SUB_ROUTINE));
 
         // 추후 성능 이슈가 발생할 수 있는 부분
@@ -90,19 +92,21 @@ public class RoutineValidator {
         }
     }
 
-    private void validateChangedRoutine(User user, RoutineCompletionInfo info) {
+    public ChangedRoutine validateChangedRoutine(User user, UUID routineId, Long historySeq) {
         ChangedRoutine changedRoutine = changedRoutineRepository
-            .findByChangedRoutinePk(new HistoryPk(info.getRoutineId(), info.getHistorySeq()))
+            .findByChangedRoutinePk(new HistoryPk(routineId, historySeq))
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_ROUTINE));
 
         if (!user.getUserPk().getId().equals(changedRoutine.getUserId())) {
             throw new CustomException(ErrorCode.CHANGED_ROUTINE_USER_NOT_MATCHED);
         }
+
+        return changedRoutine;
     }
 
-    private void validateChangedSubRoutine(User user, RoutineCompletionInfo info) {
+    private void validateChangedSubRoutine(User user, UUID routineId, Long historySeq) {
         ChangedSubRoutine changedSubRoutine = changedSubRoutineRepository
-            .findByChangedSubRoutinePk(new HistoryPk(info.getRoutineId(), info.getHistorySeq()))
+            .findByChangedSubRoutinePk(new HistoryPk(routineId, historySeq))
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_SUB_ROUTINE));
 
         List<ChangedRoutine> changedRoutines = changedRoutineRepository.findByChangedRoutinePk_Id(
