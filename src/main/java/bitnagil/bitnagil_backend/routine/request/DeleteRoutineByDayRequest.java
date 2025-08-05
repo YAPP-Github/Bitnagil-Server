@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,6 +24,12 @@ public class DeleteRoutineByDayRequest {
             required = true)
     @NotNull
     private UUID routineId;
+
+    @Schema(description = "루틴에 대한 타입 값입니다.",
+            example = "CHANGED_ROUTINE",
+            required = true)
+    @NotNull
+    private RoutineType routineType;
 
     @Schema(description = "세부루틴 완료 여부 정보를 담은 리스트입니다.",
             example = "["

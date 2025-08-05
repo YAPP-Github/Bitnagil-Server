@@ -74,4 +74,8 @@ public class ChangedRoutine extends BaseTimeEntity {
         this.routineId = routineId;
     }
 
+    public void updateChangedDivCode(ChangedDivCode changedDivCode) {
+        this.changedDivCode = changedDivCode;
+    }
+
 }
