@@ -15,7 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
@@ -58,7 +57,7 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public Token generateToken(HistoryPk userPk) {
+    public Token generateToken(Long userId) {
         Date now = new Date();
 
         // Access Token 생성
@@ -66,8 +65,7 @@ public class JwtUtil {
 
         String accessToken = Jwts.builder()
             .setSubject(ACCESS_TOKEN_SUBJECT)
-            .claim("userId", userPk.getId())
-            .claim("userHistorySeq", userPk.getHistorySeq())
+            .claim("userId", userId)
             .setExpiration(accessTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact();
@@ -76,13 +74,12 @@ public class JwtUtil {
         Date refreshTokenExpiresIn = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);
         String refreshToken = Jwts.builder()
             .setSubject(REFRESH_TOKEN_SUBJECT)
-            .claim("userId", userPk.getId())
-            .claim("userHistorySeq", userPk.getHistorySeq())
+            .claim("userId", userId)
             .setExpiration(refreshTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact();
 
-        authRedisService.saveRefreshToken(userPk, refreshToken);
+        authRedisService.saveRefreshToken(userId, refreshToken);
 
         return Token.builder()
             .accessToken(accessToken)
@@ -110,14 +107,11 @@ public class JwtUtil {
 
     // RefreshToken 혹은 AccessToken으로 인증된 유효 User 조회
     public User findValidUserByRefreshTokenOrAccessToken(String token) {
-        LocalDateTime now = LocalDateTime.now();
 
-        // JWT에서 유저 관련 정보 추출 후, UserPk 생성
-        UUID userId = UUID.fromString(parseClaims(token).get("userId", String.class));
+        Long userId = Long.valueOf(parseClaims(token).get("userId", String.class));
 
         return userRepository
-            .findByUserPk_IdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
-                userId, now, now)
+            .findByUserId(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 

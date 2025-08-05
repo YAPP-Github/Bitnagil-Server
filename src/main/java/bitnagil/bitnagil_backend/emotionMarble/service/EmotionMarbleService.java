@@ -52,7 +52,7 @@ public class EmotionMarbleService {
         LocalDateTime endDateTime = LocalDateTime.of(nowDate, LocalTime.of(23, 59, 59));
 
         // 감정구슬은 1일 1회만 선택할 수 있으므로, 존재 여부를 확인한다.
-        if (emotionMarbleRepository.existsByUserIdAndDate(user.getUserPk().getId(), nowDate)) {
+        if (emotionMarbleRepository.existsByUserIdAndDate(user.getUserId(), nowDate)) {
             throw new CustomException(ErrorCode.ALREADY_REGISTERED_EMOTION_MARBLE);
         }
 
@@ -72,8 +72,7 @@ public class EmotionMarbleService {
 
     @Transactional(readOnly = true)
     public EmotionMarbleTypeResponse getEmotionMarbleBySearchDate(User user, LocalDate searchDate) {
-        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(
-            user.getUserPk().getId(), searchDate);
+        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserId(), searchDate);
 
         return emotionMarbleMapper.toEmotionMarbleTypeResponse(emotionMarble);
     }

@@ -60,7 +60,7 @@ public class RoutineValidator {
                 routineId, now, now)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
-        if (!user.getUserPk().getId().equals(routine.getUserId())) {
+        if (!user.getUserId().equals(routine.getUserId())) {
             throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
         }
 
@@ -72,7 +72,7 @@ public class RoutineValidator {
             .findByRoutinePk(new HistoryPk(routineId, historySeq))
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
-        if (!user.getUserPk().getId().equals(routine.getUserId())) {
+        if (!user.getUserId().equals(routine.getUserId())) {
             throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
         }
 
@@ -87,7 +87,7 @@ public class RoutineValidator {
         // 추후 성능 이슈가 발생할 수 있는 부분
         List<Routine> routines = routineRepository.findByRoutinePk_Id(subRoutine.getRoutineId());
 
-        if (!user.getUserPk().getId().equals(routines.get(0).getUserId())) {
+        if (!user.getUserId().equals(routines.get(0).getUserId())) {
             throw new CustomException(ErrorCode.SUB_ROUTINE_USER_NOT_MATCHED);
         }
     }
@@ -97,7 +97,7 @@ public class RoutineValidator {
             .findByChangedRoutinePk(new HistoryPk(routineId, historySeq))
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CHANGED_ROUTINE));
 
-        if (!user.getUserPk().getId().equals(changedRoutine.getUserId())) {
+        if (!user.getUserId().equals(changedRoutine.getUserId())) {
             throw new CustomException(ErrorCode.CHANGED_ROUTINE_USER_NOT_MATCHED);
         }
 
@@ -112,7 +112,7 @@ public class RoutineValidator {
         List<ChangedRoutine> changedRoutines = changedRoutineRepository.findByChangedRoutinePk_Id(
             changedSubRoutine.getChangedRoutineId());
 
-        if (!user.getUserPk().getId().equals(changedRoutines.get(0).getUserId())) {
+        if (!user.getUserId().equals(changedRoutines.get(0).getUserId())) {
             throw new CustomException(ErrorCode.CHANGED_SUB_ROUTINE_USER_NOT_MATCHED);
         }
     }

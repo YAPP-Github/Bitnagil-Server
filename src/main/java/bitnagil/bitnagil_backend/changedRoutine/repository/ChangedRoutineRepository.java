@@ -22,7 +22,7 @@ public interface ChangedRoutineRepository extends JpaRepository<ChangedRoutine, 
      * historyStartDateTime < systime <= historyEndDateTime
      */
     List<ChangedRoutine> findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqualAndChangedRoutineDateBetween(
-            UUID userId,
+            Long userId,
             LocalDateTime now1,
             LocalDateTime now2,
             LocalDate startDate,

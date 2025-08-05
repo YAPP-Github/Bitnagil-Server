@@ -46,8 +46,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
      */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.info("CustomOAuth2UserService 진입-----");
-
 
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
@@ -65,7 +63,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         return new CustomOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(createdUser.getRole().getDescription())),
-            attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserPk(), createdUser.getRole());
+            attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserId(), createdUser.getRole());
     }
 
     private String getUserNameAttributeName(final OAuth2UserRequest userRequest) {
@@ -84,11 +82,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private User getMember(OAuth2Attribute attributes, SocialType socialType) {
-        LocalDateTime now = LocalDateTime.now();
 
         User findUser = userRepository
-            .findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
-                socialType, attributes.getSocialId(), now, now)
+            .findBySocialTypeAndSocialId(socialType, attributes.getSocialId())
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         if (findUser == null) {
