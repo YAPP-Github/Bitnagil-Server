@@ -108,7 +108,7 @@ public class JwtUtil {
     // RefreshToken 혹은 AccessToken으로 인증된 유효 User 조회
     public User findValidUserByRefreshTokenOrAccessToken(String token) {
 
-        Long userId = Long.valueOf(parseClaims(token).get("userId", String.class));
+        Long userId = Long.valueOf(parseClaims(token).get("userId", Integer.class));
 
         return userRepository
             .findByUserId(userId)
