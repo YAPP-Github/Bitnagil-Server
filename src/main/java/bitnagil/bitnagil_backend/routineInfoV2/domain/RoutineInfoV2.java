@@ -27,27 +27,27 @@ import lombok.NoArgsConstructor;
 public class RoutineInfoV2 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long routineInfoId;
+    private Long routineInfoId; // 루틴 정보 ID
 
     @NotNull
-    private String routineName;
+    private String routineName; // 루틴 이름
 
     @NotNull
     @Convert(converter = DayOfWeekConverter.class)
-    private List<DayOfWeek> routineRepeatDay;
+    private List<DayOfWeek> routineRepeatDay; // 루틴 반복 요일
 
     @NotNull
-    private LocalTime routineExecutionTime;
+    private LocalTime routineExecutionTime; // 루틴 실행 시간
 
     @NotNull
-    private LocalDate routineStartDate; // 루틴 시작일자
+    private LocalDate routineStartDate; // 루틴 시작 일자
 
     @NotNull
-    private LocalDate routineEndDate; // 루틴 종료일자
+    private LocalDate routineEndDate; // 루틴 종료 일자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user; // 루틴의 주체인 유저
 
     @Builder
     public RoutineInfoV2(String routineName, List<DayOfWeek> routineRepeatDay, LocalTime routineExecutionTime,

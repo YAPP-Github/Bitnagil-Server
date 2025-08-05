@@ -26,25 +26,25 @@ import lombok.NoArgsConstructor;
 public class RoutineV2 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long routineInfoId;
+    private Long routineId; // 일일 루틴 ID
 
     @NotNull
-    private LocalDate routineDate;
+    private LocalDate routineDate; // 루틴 일자
 
     @NotNull
-    private Boolean routineCompleteYn;
+    private Boolean routineCompleteYn; // 루틴 완료 여부
 
     @NotNull
     @Convert(converter = StringListConverter.class)
-    List<String> subRoutineNames;
+    List<String> subRoutineNames; // 서브 루틴 이름 리스트
 
     @NotNull
     @Convert(converter = BooleanListConverter.class)
-    List<Boolean> subRoutineCompleteYn;
+    List<Boolean> subRoutineCompleteYn; // 서브 루틴 완료 여부 리스트
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_info_id")
-    private RoutineInfoV2 routineInfo;
+    private RoutineInfoV2 routineInfo; // 루틴 정보
 
     @Builder
     public RoutineV2(LocalDate routineDate, Boolean routineCompleteYn, List<String> subRoutineNames,
