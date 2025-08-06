@@ -8,16 +8,13 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
-import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.repository.RoutineCompletionRepository;
@@ -235,8 +232,9 @@ public class RoutineService {
 
             // 기존 완료 여부 엔티티가 존재하는지 조회
             RoutineCompletion existingRoutineCompletion = routineCompletionRepository
-                .findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                .findByRoutineIdAndPerformedDateAndRoutineHistorySeqAndRoutineType(
                     routineCompletionInfo.getRoutineId(),
+                    request.getPerformedDate(),
                     routineCompletionInfo.getHistorySeq(),
                     routineCompletionInfo.getRoutineType());
 
@@ -338,9 +336,11 @@ public class RoutineService {
 
                     // 변경 서브 루틴완료 여부를 파악
                     RoutineCompletion changedSubRoutineCompletion =
-                        routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                        routineCompletionRepository.findByRoutineIdAndPerformedDateAndRoutineHistorySeqAndRoutineType(
                             changedSubRoutine.getChangedSubRoutinePk().getId(),
-                            changedSubRoutine.getChangedSubRoutinePk().getHistorySeq(), RoutineType.CHANGED_SUB_ROUTINE);
+                            changedRoutineDate,
+                            changedSubRoutine.getChangedSubRoutinePk().getHistorySeq(),
+                            RoutineType.CHANGED_SUB_ROUTINE);
 
                     SubRoutineSearchResultDto changedSubRoutineSearchResultDto =
                         routineMapper.toChangedSubRoutineSearchResultDto(changedSubRoutine, changedSubRoutineCompletion);
@@ -352,9 +352,11 @@ public class RoutineService {
 
                 // 변경루틴 완료여부 조회
                 RoutineCompletion changedRoutineCompletion =
-                    routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                    routineCompletionRepository.findByRoutineIdAndPerformedDateAndRoutineHistorySeqAndRoutineType(
                         changedRoutine.getChangedRoutinePk().getId(),
-                        changedRoutine.getChangedRoutinePk().getHistorySeq(), RoutineType.CHANGED_ROUTINE);
+                        changedRoutineDate,
+                        changedRoutine.getChangedRoutinePk().getHistorySeq(),
+                        RoutineType.CHANGED_ROUTINE);
 
                 RoutineSearchResultDto changedRoutineSearchResultDto = routineMapper.toChangedRoutineSearchResultDto(
                     changedRoutine, changedSubRoutineSearchResultList, changedRoutineCompletion);
@@ -390,8 +392,9 @@ public class RoutineService {
 
                         // 서브 루틴 완료 여부 조회
                         RoutineCompletion subRoutineCompletion =
-                            routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
+                            routineCompletionRepository.findByRoutineIdAndPerformedDateAndRoutineHistorySeqAndRoutineType(
                                 subRoutine.getSubRoutinePk().getId(),
+                                date,
                                 subRoutine.getSubRoutinePk().getHistorySeq(),
                                 RoutineType.SUB_ROUTINE);
 
@@ -405,8 +408,12 @@ public class RoutineService {
                     subRoutineSearchResultList.sort((a, b) -> a.getSortOrder().compareTo(b.getSortOrder()));
 
                     // 루틴 완료 여부 조회
-                    RoutineCompletion routineCompletion = routineCompletionRepository.findByRoutineIdAndRoutineHistorySeqAndRoutineType(
-                            routine.getRoutinePk().getId(), routine.getRoutinePk().getHistorySeq(), RoutineType.ROUTINE);
+                    RoutineCompletion routineCompletion =
+                        routineCompletionRepository.findByRoutineIdAndPerformedDateAndRoutineHistorySeqAndRoutineType(
+                            routine.getRoutinePk().getId(),
+                            date,
+                            routine.getRoutinePk().getHistorySeq(),
+                            RoutineType.ROUTINE);
 
                     RoutineSearchResultDto routineSearchResultDto =
                         routineMapper.toRoutineSearchResultDto(routine, subRoutineSearchResultList, routineCompletion);
