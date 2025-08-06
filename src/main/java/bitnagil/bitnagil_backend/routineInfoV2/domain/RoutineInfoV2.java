@@ -20,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * 추후 v2를 대비한 루틴에 대한 정보를 관리하는 엔티티 클래스입니다.
@@ -27,6 +29,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SQLDelete(sql = "UPDATE routine_info_v2 SET deleted_at = NOW() WHERE routine_info_id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class RoutineInfoV2 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

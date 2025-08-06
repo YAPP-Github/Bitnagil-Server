@@ -87,14 +87,13 @@ public class UserAuthService {
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
     public void withdrawal(User user) {
-        LocalDateTime now = LocalDateTime.now();
-
         // 변경 감지를 위해 영속 상태로 설정
         User persistedUser = userManager.getPersistedUser(user);
 
         invalidateToken(persistedUser);
 
-        persistedUser.changeRoleToWithdrawn();
+        // 회원 삭제 (delete() 호출 시 @SQLDelete 어노테이션에 의해 role은 WITHDRAWN로 deleted_at은 NOW()로 변경됨)
+        userRepository.delete(user);
 
         unlinkFromSocial(persistedUser);
     }
