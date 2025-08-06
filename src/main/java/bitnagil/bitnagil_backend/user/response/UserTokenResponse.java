@@ -13,7 +13,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class UserLoginResponse {
+public class UserTokenResponse {
     @NotEmpty
     private String accessToken;
 
@@ -23,8 +23,8 @@ public class UserLoginResponse {
     @NotEmpty
     private Role role;
 
-    public static UserLoginResponse of(Token token, Role role) {
-        return UserLoginResponse.builder()
+    public static UserTokenResponse of(Token token, Role role) {
+        return UserTokenResponse.builder()
                 .accessToken(token.getAccessToken())
                 .refreshToken(token.getRefreshToken())
                 .role(role)

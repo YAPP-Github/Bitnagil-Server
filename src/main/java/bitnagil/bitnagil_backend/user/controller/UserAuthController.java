@@ -4,11 +4,10 @@ import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
 import org.springframework.web.bind.annotation.*;
 
-import bitnagil.bitnagil_backend.user.response.UserLoginResponse;
+import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.user.controller.spec.UserAuthSpec;
 import bitnagil.bitnagil_backend.user.domain.User;
-import bitnagil.bitnagil_backend.user.response.UserReissueResponse;
 import bitnagil.bitnagil_backend.user.service.UserAuthService;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +19,16 @@ public class UserAuthController implements UserAuthSpec {
     private final UserAuthService userAuthService;
 
     @PostMapping("/login")
-    public CustomResponseDto<UserLoginResponse> login(
+    public CustomResponseDto<UserTokenResponse> login(
             @RequestBody UserLoginRequest userLoginRequest,
             @RequestHeader("SocialAccessToken") String socialAccessToken) {
 
-        UserLoginResponse userLoginResponse = userAuthService.socialLogin(
+        UserTokenResponse userTokenResponse = userAuthService.socialLogin(
             userLoginRequest.getSocialType(),
             userLoginRequest.getNickname(),
             socialAccessToken);
 
-        return CustomResponseDto.from(userLoginResponse);
+        return CustomResponseDto.from(userTokenResponse);
     }
 
     @PostMapping("/logout")
@@ -40,10 +39,8 @@ public class UserAuthController implements UserAuthSpec {
     }
 
     @PostMapping("/token/reissue")
-    public CustomResponseDto<UserReissueResponse> reissueToken(@RequestHeader("Refresh-Token") String refreshToken) {
-        UserReissueResponse userReissueResponse = userAuthService.reissueToken(refreshToken);
-
-        return CustomResponseDto.from(userReissueResponse);
+    public CustomResponseDto<UserTokenResponse> reissueToken(@RequestHeader("Refresh-Token") String refreshToken) {
+        return CustomResponseDto.from(userAuthService.reissueToken(refreshToken));
     }
 
     @PostMapping("/withdrawal")
