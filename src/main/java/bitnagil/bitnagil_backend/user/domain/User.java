@@ -1,18 +1,16 @@
 package bitnagil.bitnagil_backend.user.domain;
 
-import java.time.LocalDateTime;
-
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.enums.SocialType;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * 소셜 인증을 통해 가입한 사용자의 정보를 저장하는 JPA 엔티티 클래스입니다.
@@ -21,6 +19,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SQLDelete(sql = "UPDATE user SET role = 'WITHDRAWN', deleted_at = NOW() WHERE user_id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class User extends BaseTimeEntity {
 
     @Id
@@ -75,6 +75,7 @@ public class User extends BaseTimeEntity {
         this.onboarding = onboarding;
     }
 
+    // todo: 운영 반영 후 이슈가 없으면 제거
     public void changeRoleToWithdrawn() {
         this.role = Role.WITHDRAWN;
     }
