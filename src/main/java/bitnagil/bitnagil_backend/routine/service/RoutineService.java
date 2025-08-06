@@ -162,65 +162,28 @@ public class RoutineService {
     public void deleteRoutineByDay(User user, DeleteRoutineByDayRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
-        if (request.getRoutineType() == null) {
-            Routine routine = routineValidator.validateRoutineOwnership(request.getRoutineId(), user, now);
+        if (request.getRoutineType() == RoutineType.ROUTINE) {
+            Routine routine = routineValidator.validateRoutine(user, request.getRoutineId(), request.getHistorySeq());
 
             // 변경 루틴으로 전환
-            ChangedRoutine changedRoutineForDelete = ChangedRoutine.builder()
-                .changedRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-                .changedRoutineName(routine.getName())
-                .changedExecutionTime(routine.getExecutionTime())
-                .originalRoutineDate(request.getPerformedDate())
-                .changedRoutineDate(request.getPerformedDate())
-                .historyStartDateTime(now)
-                .historyEndDateTime(TimeUtils.END_DATE_TIME)
-                .changedDivCode(ChangedDivCode.TODAY_DELETE)
-                .userId(routine.getUserId())
-                .routineId(routine.getRoutinePk().getId())
-                .build();
-
+            ChangedRoutine changedRoutineForDelete = routineFactory.createChangedRoutineForDelete(request, routine, now);
             changedRoutineRepository.save(changedRoutineForDelete);
 
-            // 변경 서브루틴으로 전환
             List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
 
+            // 변경 서브루틴으로 전환
             for (SubRoutine subRoutine : subRoutines) {
-                ChangedSubRoutine changedSubRoutineForDelete = ChangedSubRoutine.builder()
-                    .changedSubRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-                    .changedSubRoutineName(subRoutine.getName())
-                    .historyStartDateTime(now)
-                    .historyEndDateTime(TimeUtils.END_DATE_TIME)
-                    .changedRoutineId(changedRoutineForDelete.getChangedRoutinePk().getId())
-                    .sortOrder(subRoutine.getSortOrder())
-                    .build();
-
+                ChangedSubRoutine changedSubRoutineForDelete =
+                    routineFactory.createChangedSubRoutineForDelete(subRoutine, now, changedRoutineForDelete);
                 changedSubRoutineRepository.save(changedSubRoutineForDelete);
             }
         }
-        else {
-            if (request.getRoutineType() == RoutineType.ROUTINE) {
-                Routine routine = routineValidator.validateRoutine(user, request.getRoutineId(), request.getHistorySeq());
+        else if (request.getRoutineType() == RoutineType.CHANGED_ROUTINE) {
+            ChangedRoutine changedRoutine = routineValidator.validateChangedRoutine(user, request.getRoutineId(),
+                request.getHistorySeq());
 
-                // 변경 루틴으로 전환
-                ChangedRoutine changedRoutineForDelete = routineFactory.createChangedRoutineForDelete(request, routine, now);
-                changedRoutineRepository.save(changedRoutineForDelete);
-
-                List<SubRoutine> subRoutines = subRoutineRepository.findByRoutineId(routine.getRoutinePk().getId());
-
-                // 변경 서브루틴으로 전환
-                for (SubRoutine subRoutine : subRoutines) {
-                    ChangedSubRoutine changedSubRoutineForDelete =
-                        routineFactory.createChangedSubRoutineForDelete(subRoutine, now, changedRoutineForDelete);
-                    changedSubRoutineRepository.save(changedSubRoutineForDelete);
-                }
-            }
-            else if (request.getRoutineType() == RoutineType.CHANGED_ROUTINE) {
-                ChangedRoutine changedRoutine = routineValidator.validateChangedRoutine(user, request.getRoutineId(),
-                    request.getHistorySeq());
-
-                // 기존 변경 루틴의 결정 코드를 "오늘만 루틴 삭제"로 변경
-                changedRoutine.updateChangedDivCode(ChangedDivCode.TODAY_DELETE);
-            }
+            // 기존 변경 루틴의 결정 코드를 "오늘만 루틴 삭제"로 변경
+            changedRoutine.updateChangedDivCode(ChangedDivCode.TODAY_DELETE);
         }
 
         // routineCompletionId에 해당하는 루틴 완료 여부 데이터 삭제

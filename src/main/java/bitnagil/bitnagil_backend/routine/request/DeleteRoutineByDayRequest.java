@@ -26,7 +26,9 @@ public class DeleteRoutineByDayRequest {
     private UUID routineId;
 
     @Schema(description = "루틴에 대한 타입 값입니다.",
-            example = "CHANGED_ROUTINE")
+            example = "CHANGED_ROUTINE",
+            required = true)
+    @NotNull
     private RoutineType routineType;
 
     @Schema(description = "세부루틴 완료 여부 정보를 담은 리스트입니다.",
