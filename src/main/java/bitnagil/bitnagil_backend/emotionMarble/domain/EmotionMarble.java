@@ -23,12 +23,9 @@ import java.time.LocalDateTime;
 @Where(clause = "deleted_at IS NULL")
 public class EmotionMarble extends BaseTimeEntity {
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "emotion_marble_id")),
-            @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
-    })
-    private HistoryPk emotionMarblePk;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long emotionMarbleId;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -52,9 +49,8 @@ public class EmotionMarble extends BaseTimeEntity {
     private Case resultCase;
 
     @Builder
-    public EmotionMarble(HistoryPk emotionMarblePk, EmotionMarbleType emotionMarbleType, LocalDate date, Long userId,
+    public EmotionMarble(EmotionMarbleType emotionMarbleType, LocalDate date, Long userId,
                          LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, Case resultCase) {
-        this.emotionMarblePk = emotionMarblePk;
         this.emotionMarbleType = emotionMarbleType;
         this.date = date;
         this.userId = userId;

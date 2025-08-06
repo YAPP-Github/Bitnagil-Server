@@ -24,7 +24,6 @@ public class EmotionMarbleFactory {
         LocalDateTime nowDateTime, LocalDateTime endDateTime) {
 
         return EmotionMarble.builder()
-            .emotionMarblePk(new HistoryPk(UUID.randomUUID(), 1L))
             .emotionMarbleType(request.getEmotionMarbleType())
             .date(nowDate)
             .userId(user.getUserId())
