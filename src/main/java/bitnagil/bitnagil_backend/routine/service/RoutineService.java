@@ -184,10 +184,10 @@ public class RoutineService {
             changedRoutine.updateChangedDivCode(ChangedDivCode.TODAY_DELETE);
         }
 
-        // routineCompletionId에 해당하는 완료 여부 데이터 삭제
+        // routineCompletionId에 해당하는 루틴 완료 여부 데이터 삭제
         deleteRoutineCompletionIfRoutineIdMatches(request.getRoutineCompletionId(), request.getRoutineId());
 
-        // routineCompletionId에 해당하는 완료 여부 데이터 삭제
+        // routineCompletionId에 해당하는 서브 루틴 완료 여부 데이터 삭제
         for (SubRoutineInfoForDelete info : request.getSubRoutineInfosForDelete()) {
             deleteRoutineCompletionIfRoutineIdMatches(info.getRoutineCompletionId(), info.getSubRoutineId());
         }
