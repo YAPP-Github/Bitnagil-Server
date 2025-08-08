@@ -62,6 +62,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // GUEST 권한으로만 접근 가능한 경로
                 .requestMatchers("/api/v1/auth/agreements").hasRole("GUEST")
+                // ONBAORDING 권한으로만 접근 가능한 경로
+                .requestMatchers("/api/v1/onboardings").hasRole("ONBOARDING")
                 // USER 권한으로만 접근 가능한 경로(전체)
                 .requestMatchers("/**").hasRole("USER")
                 .anyRequest().authenticated()

@@ -68,11 +68,12 @@ public class User extends BaseTimeEntity {
         this.agreedToTermsOfService = agreedToTermsOfService;
         this.agreedToPrivacyPolicy = agreedToPrivacyPolicy;
         this.isOverFourteen = isOverFourteen;
-        this.role = Role.USER; // 약관 동의 후 권한을 USER로 변경
+        this.role = Role.ONBOARDING; // 약관 동의 후 권한을 임시 USER인 ONBOARDING으로 변경
     }
 
     public void updateOnboarding(Onboarding onboarding) {
         this.onboarding = onboarding;
+        this.role = Role.USER; // 온보딩 완료 후 권한을 USER로 변경
     }
 
     // todo: 운영 반영 후 이슈가 없으면 제거
