@@ -21,6 +21,13 @@ public interface OnboardingSpec {
     })
     public CustomResponseDto<OnboardingResponse> startOnboarding(OnboardingRequest onboardingRequest, User user);
 
+    @Operation(summary = "(V2) 온보딩 시 추천 루틴을 등록합니다.(복수 선택이 가능합니다.)")
+    @ApiErrorCodeExamples({
+            ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE
+    })
+    public CustomResponseDto<Object> registrationRoutinesV2(RegistrationRoutinesRequest registrationRoutinesRequest,
+                                                        User user);
+
     @Operation(summary = "온보딩 시 추천 루틴을 등록합니다.(복수 선택이 가능합니다.)")
     @ApiErrorCodeExamples({
             ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE

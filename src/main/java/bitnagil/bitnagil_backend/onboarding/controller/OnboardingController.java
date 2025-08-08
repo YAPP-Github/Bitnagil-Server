@@ -16,18 +16,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/onboardings")
+@RequestMapping(value = "/api")
 public class OnboardingController implements OnboardingSpec {
 
     private final OnboardingService onboardingService;
 
-    @PostMapping()
+    @PostMapping("/v1/onboardings")
     public CustomResponseDto<OnboardingResponse> startOnboarding(@RequestBody OnboardingRequest onboardingRequest,
                                                                 @CurrentUser User user) {
         return onboardingService.startOnboarding(onboardingRequest, user);
     }
 
-    @PostMapping("/routines")
+    // 온보딩 루틴 등록 API (V2)
+    @PostMapping("/v2/onboardings/routines")
+    public CustomResponseDto<Object> registrationRoutinesV2(@RequestBody RegistrationRoutinesRequest registrationRoutinesRequest,
+                                                            @CurrentUser User user) {
+        onboardingService.registrationRoutinesV2(registrationRoutinesRequest, user);
+        return CustomResponseDto.from(null);
+    }
+
+    // TODO: v2로 전환 시 deprecated 처리
+    @Deprecated()
+    @PostMapping("/v1/onboardings/routines")
     public CustomResponseDto<Object> registrationRoutines(@RequestBody RegistrationRoutinesRequest registrationRoutinesRequest,
                                                         @CurrentUser User user) {
         onboardingService.registrationRoutines(registrationRoutinesRequest, user);
