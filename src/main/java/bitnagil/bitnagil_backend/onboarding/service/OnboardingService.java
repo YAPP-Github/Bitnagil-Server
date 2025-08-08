@@ -101,16 +101,16 @@ public class OnboardingService {
 
             // 온보딩의 추천 루틴 등록은 반복 루틴이 아닌 당일날만 수행되는 루틴이므로 변경루틴 테이블에 저장한다.
             // 원본 루틴이 존재하지 않으므로 원본 루틴 ID는 null로 설정
-            ChangedRoutine changedRoutine = changedRoutineFactory.createChangedRoutineForOnboarding(
-                user, recommendedRoutine, today, now);
+            ChangedRoutine changedRoutine = changedRoutineFactory.createChangedRoutineForToday(
+                user, recommendedRoutine.getRecommendedRoutineName(), recommendedRoutine.getExecutionTime(), today, now);
             changedRoutines.add(changedRoutine);
 
             List<RecommendedSubRoutine> recommendedSubRoutines =
                 recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
 
             List<ChangedSubRoutine> subRoutines = IntStream.range(0, recommendedSubRoutines.size())
-                    .mapToObj(i -> changedRoutineFactory.createChangedSubRoutineForOnboarding(
-                        i, recommendedSubRoutines.get(i), now, changedRoutine))
+                    .mapToObj(i -> changedRoutineFactory.createChangedSubRoutineForToday(
+                        i, recommendedSubRoutines.get(i).getSubRoutineName(), now, changedRoutine))
                     .toList();
 
             changedSubRoutines.addAll(subRoutines);

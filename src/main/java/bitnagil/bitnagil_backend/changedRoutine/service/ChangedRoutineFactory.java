@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.changedRoutine.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -19,13 +20,13 @@ import bitnagil.bitnagil_backend.user.domain.User;
 public class ChangedRoutineFactory {
 
     // 유저 초기 온보딩 시 추천 루틴을 등록할 때 변경 루틴에 저장
-    public ChangedRoutine createChangedRoutineForOnboarding(
-        User user, RecommendedRoutine recommendedRoutine, LocalDate today, LocalDateTime now) {
+    public ChangedRoutine createChangedRoutineForToday(
+        User user, String RoutineName, LocalTime executionTime, LocalDate today, LocalDateTime now) {
 
         return ChangedRoutine.builder()
             .changedRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-            .changedRoutineName(recommendedRoutine.getRecommendedRoutineName())
-            .changedExecutionTime(recommendedRoutine.getExecutionTime())
+            .changedRoutineName(RoutineName)
+            .changedExecutionTime(executionTime)
             .originalRoutineDate(today) // 원본 루틴 날짜는 현재 날짜로 설정
             .changedRoutineDate(today) // 변경된 루틴 날짜도 현재 날짜로 설정
             .historyStartDateTime(now)
@@ -36,12 +37,12 @@ public class ChangedRoutineFactory {
     }
 
     // 유저 초기 온보딩 시 추천 루틴을 등록할 때 변경 서브루틴에 저장
-    public ChangedSubRoutine createChangedSubRoutineForOnboarding(
-        int sortOrder, RecommendedSubRoutine recommendedSubRoutine, LocalDateTime now, ChangedRoutine changedRoutine) {
+    public ChangedSubRoutine createChangedSubRoutineForToday(
+        int sortOrder, String subRoutineName, LocalDateTime now, ChangedRoutine changedRoutine) {
 
         return ChangedSubRoutine.builder()
             .changedSubRoutinePk(new HistoryPk(UUID.randomUUID(), 1L))
-            .changedSubRoutineName(recommendedSubRoutine.getSubRoutineName())
+            .changedSubRoutineName(subRoutineName)
             .historyStartDateTime(now)
             .historyEndDateTime(TimeUtils.END_DATE_TIME)
             .changedRoutineId(changedRoutine.getChangedRoutinePk().getId())
