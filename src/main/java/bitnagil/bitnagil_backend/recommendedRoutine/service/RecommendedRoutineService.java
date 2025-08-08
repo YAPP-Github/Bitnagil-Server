@@ -94,9 +94,8 @@ public class RecommendedRoutineService {
             if (value == RecommendedRoutineType.PERSONALIZED) {
                 continue;
             }
-            // 추천 루틴 조회(상위 4개만 조회)
-            List<RecommendedRoutine> recommendedRoutines =
-                recommendedRoutineRepository.findTop4ByRecommendedRoutineTypeOrderByRecommendedRoutineIdAsc(value);
+            // 추천 루틴 조회
+            List<RecommendedRoutine> recommendedRoutines = recommendedRoutineRepository.findByRecommendedRoutineType(value);
             List<RecommendedRoutineSearchResult> recommendedRoutineResults = buildRecommendedRoutineSearchResult(
                 recommendedRoutines);
             // Map에 값을 저장
