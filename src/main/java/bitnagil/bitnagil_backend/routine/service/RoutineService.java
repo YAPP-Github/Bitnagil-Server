@@ -8,12 +8,14 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedRoutineRepository;
 import bitnagil.bitnagil_backend.changedRoutine.repository.ChangedSubRoutineRepository;
+import bitnagil.bitnagil_backend.changedRoutine.service.ChangedRoutineFactory;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
@@ -60,20 +62,40 @@ public class RoutineService {
     private final RoutineValidator routineValidator;
     private final RoutineFactory routineFactory;
     private final RoutineMapper routineMapper;
+    private final ChangedRoutineFactory changedRoutineFactory;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
     public void registerRoutine(User user, RegisterRoutineRequest request) {
+        LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
 
-        // 루틴 생성 및 저장
-        Routine newRoutine = routineFactory.createNewRoutine(user, request, now);
-        routineRepository.save(newRoutine);
+        // 당일 루틴으로 등록한 경우
+        if (request.getRepeatDay().isEmpty()) {
+            // 당일 루틴을 ChangedRoutine에 등록
+            ChangedRoutine changedRoutineForToday = changedRoutineFactory.createChangedRoutineForToday(
+                user, request.getRoutineName(), request.getExecutionTime(), today, now);
 
-        // 서브 루틴 생성 및 저장
-        List<SubRoutine> newSubRoutines = routineFactory
-            .createNewSubRoutines(request.getSubRoutineName(), newRoutine, now);
-        subRoutineRepository.saveAll(newSubRoutines);
+            changedRoutineRepository.save(changedRoutineForToday);
+
+            // 당일 서브루틴을 ChangedSubRoutine에 등록
+            List<ChangedSubRoutine> changedSubRoutines = IntStream.range(0, request.getSubRoutineName().size())
+                .mapToObj(i -> changedRoutineFactory.createChangedSubRoutineForToday(
+                    i, request.getSubRoutineName().get(i), now, changedRoutineForToday))
+                .toList();
+
+            changedSubRoutineRepository.saveAll(changedSubRoutines);
+        }
+        else { // 반복 요일이 있는 반복 루틴의 경우
+            // 루틴 생성 및 저장
+            Routine newRoutine = routineFactory.createNewRoutine(user, request, now);
+            routineRepository.save(newRoutine);
+
+            // 서브 루틴 생성 및 저장
+            List<SubRoutine> newSubRoutines = routineFactory
+                .createNewSubRoutines(request.getSubRoutineName(), newRoutine, now);
+            subRoutineRepository.saveAll(newSubRoutines);
+        }
     }
 
     // 루틴, 세부 루틴을 수정하는 메서드
@@ -389,7 +411,6 @@ public class RoutineService {
                     // 서브루틴 List DTO 생성
                     List<SubRoutineSearchResultDto> subRoutineSearchResultList = new ArrayList<>();
                     for (SubRoutine subRoutine : subRoutines) {
-
                         // 서브 루틴 완료 여부 조회
                         RoutineCompletion subRoutineCompletion =
                             routineCompletionRepository.findByRoutineIdAndPerformedDateAndRoutineHistorySeqAndRoutineType(
