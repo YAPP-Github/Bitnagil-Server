@@ -11,8 +11,8 @@ import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 
 public interface RoutineCompletionRepository extends JpaRepository<RoutineCompletion, Long> {
 
-    RoutineCompletion findByRoutineIdAndRoutineHistorySeqAndRoutineType(
-        UUID routineId, Long routineHistorySeq, RoutineType routineType);
+    RoutineCompletion findByRoutineIdAndPerformedDateAndRoutineHistorySeqAndRoutineType(
+        UUID routineId, LocalDate performedDate, Long routineHistorySeq, RoutineType routineType);
 
     Optional<RoutineCompletion> findByPerformedDateAndRoutineIdAndRoutineHistorySeqAndRoutineType(
         LocalDate performedDate, UUID routineId, Long routineHistorySeq, RoutineType routineType);

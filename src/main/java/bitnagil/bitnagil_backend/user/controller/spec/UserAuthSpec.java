@@ -3,13 +3,12 @@ package bitnagil.bitnagil_backend.user.controller.spec;
 import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
 
-import bitnagil.bitnagil_backend.user.response.UserLoginResponse;
+import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.user.domain.User;
-import bitnagil.bitnagil_backend.user.response.UserReissueResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -31,7 +30,7 @@ public interface UserAuthSpec {
             @Parameter(name = "SocialAccessToken", description = "소셜로그인 플랫폼에서 발급해준 access token 입니다.(Bearer를 붙히지 않습니다.)", required = true,
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", in = ParameterIn.HEADER),
     })
-    CustomResponseDto<UserLoginResponse> login(UserLoginRequest userLoginRequest,
+    CustomResponseDto<UserTokenResponse> login(UserLoginRequest userLoginRequest,
                                            String socialAccessToken);
 
 
@@ -50,7 +49,7 @@ public interface UserAuthSpec {
             @Parameter(name = "Refresh-Token", description = "서버에서 발급해준 refresh token 입니다.(Bearer를 붙히지 않습니다.)", required = true,
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", in = ParameterIn.HEADER)
     })
-    CustomResponseDto<UserReissueResponse> reissueToken(String refreshToken);
+    CustomResponseDto<UserTokenResponse> reissueToken(String refreshToken);
 
 
     @Operation(summary = "소셜로그인으로 연결된 유저가 회원탈퇴합니다. 반환 정보는 없습니다.")

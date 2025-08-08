@@ -24,10 +24,9 @@ public class EmotionMarbleFactory {
         LocalDateTime nowDateTime, LocalDateTime endDateTime) {
 
         return EmotionMarble.builder()
-            .emotionMarblePk(new HistoryPk(UUID.randomUUID(), 1L))
             .emotionMarbleType(request.getEmotionMarbleType())
             .date(nowDate)
-            .userId(user.getUserPk().getId())
+            .userId(user.getUserId())
             .historyStartDateTime(nowDateTime)
             .historyEndDateTime(endDateTime) // historyEndDateTime은 당일 11시 59분 59초로 설정(하루씩 설정되기 때문. 이러면 매일 감정 갱신이 불필요함)
             .resultCase( // 감정 구슬에 따른 추천 루틴을 찾기 위해 Case 객체를 생성

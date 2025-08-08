@@ -56,11 +56,11 @@ public class Routine extends BaseTimeEntity {
     private LocalDateTime historyEndDateTime;
 
     @NotNull
-    private UUID userId;
+    private Long userId;
 
     @Builder
     public Routine(HistoryPk routinePk, String name, List<DayOfWeek> repeatDay, LocalTime executionTime,
-        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, UUID userId) {
+        LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, Long userId) {
         this.routinePk = routinePk;
         this.name = name;
         this.repeatDay = repeatDay;

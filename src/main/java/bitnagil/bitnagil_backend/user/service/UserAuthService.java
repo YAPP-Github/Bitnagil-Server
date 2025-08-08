@@ -1,10 +1,7 @@
 package bitnagil.bitnagil_backend.user.service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
-import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +18,10 @@ import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.enums.SocialType;
-import bitnagil.bitnagil_backend.user.response.UserLoginResponse;
+import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
-import bitnagil.bitnagil_backend.user.response.UserReissueResponse;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -45,20 +41,20 @@ public class UserAuthService {
 
     // 소셜 로그인을 통해 로그인 혹은 회원가입을 진행
     @Transactional
-    public UserLoginResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
+    public UserTokenResponse socialLogin(SocialType socialType, String nickname, String socialAccessToken) {
 
         UserAuthInfo userAuthInfo = getUserAuthInfo(socialType, socialAccessToken);
 
         User user = signUpOrLogin(socialType, nickname, userAuthInfo);
 
-        Token token = jwtUtil.generateToken(user.getUserPk());
+        Token token = jwtUtil.generateToken(user.getUserId());
 
-        return UserLoginResponse.of(token, user.getRole());
+        return UserTokenResponse.of(token, user.getRole());
     }
 
     // refreshToken으로 accessToken 재발행
     @Transactional
-    public UserReissueResponse reissueToken(String refreshToken) {
+    public UserTokenResponse reissueToken(String refreshToken) {
 
         if (!jwtUtil.validateToken(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
@@ -66,16 +62,16 @@ public class UserAuthService {
 
         User user = jwtUtil.findValidUserByRefreshTokenOrAccessToken(refreshToken);
 
-        RefreshToken refreshTokenByRedis = authRedisService.getRefreshTokenByUserPk(user.getUserPk())
+        RefreshToken refreshTokenByRedis = authRedisService.getRefreshTokenByUserId(user.getUserId())
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_JWT_TOKEN));
 
         if(!refreshTokenByRedis.getRefreshToken().equals(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
         }
 
-        Token token = jwtUtil.generateToken(user.getUserPk());
+        Token token = jwtUtil.generateToken(user.getUserId());
 
-        return UserReissueResponse.of(token);
+        return UserTokenResponse.of(token, user.getRole());
     }
 
     // refreshToken 삭제 및 카카오 토큰 무효화
@@ -91,16 +87,13 @@ public class UserAuthService {
     // 회원탈퇴 - 회원 관련 정보 삭제 및 소셜과 연결 끊기
     @Transactional
     public void withdrawal(User user) {
-        LocalDateTime now = LocalDateTime.now();
-
         // 변경 감지를 위해 영속 상태로 설정
         User persistedUser = userManager.getPersistedUser(user);
 
         invalidateToken(persistedUser);
 
-        // 기존 유저의 이력 종료일시를 갱신 및 role 변경
-        persistedUser.updateHistoryEndDateTime(now);
-        persistedUser.changeRoleToWithdrawn();
+        // 회원 삭제 (delete() 호출 시 @SQLDelete 어노테이션에 의해 role은 WITHDRAWN로 deleted_at은 NOW()로 변경됨)
+        userRepository.delete(user);
 
         unlinkFromSocial(persistedUser);
     }
@@ -156,7 +149,7 @@ public class UserAuthService {
 
     // 서비스 refreshToken 무효화
     private void invalidateToken(User user) {
-        authRedisService.deleteRefreshToken(user.getUserPk());
+        authRedisService.deleteRefreshToken(user.getUserId());
 
         // 서비스 액세스 토큰 블랙리스트 처리
         // String accessToken = jwtProvider.resolveToken(request);
@@ -166,11 +159,9 @@ public class UserAuthService {
 
     // 소셜 로그인 - 신규 유저는 DB 등록
     private User signUpOrLogin(SocialType socialType, String nickname, UserAuthInfo userAuthInfo) {
-        LocalDateTime now = LocalDateTime.now();
 
         return userRepository
-            .findBySocialTypeAndSocialIdAndHistoryStartDateTimeLessThanAndHistoryEndDateTimeGreaterThanEqual(
-            socialType, userAuthInfo.getSocialId(), now, now)
+            .findBySocialTypeAndSocialId(socialType, userAuthInfo.getSocialId())
             .orElseGet(() -> saveUser(socialType, nickname, userAuthInfo));
     }
 
@@ -180,15 +171,12 @@ public class UserAuthService {
         nickname = (socialType == SocialType.APPLE) ? nickname : userAuthInfo.getNickname();
 
         User user = User.builder()
-            .userPk(new HistoryPk(UUID.randomUUID(), 1L))
             .socialType(socialType)
             .socialId(userAuthInfo.getSocialId())
             .role(Role.GUEST) // 최초 가입 시 GUEST로 설정
             .email(userAuthInfo.getEmail())
             .nickname(nickname)
             .refreshToken(userAuthInfo.getRefreshToken()) // 애플 로그인의 경우만 세팅
-            .historyStartDateTime(now)
-            .historyEndDateTime(TimeUtils.END_DATE_TIME)
             .build();
 
         return userRepository.save(user);

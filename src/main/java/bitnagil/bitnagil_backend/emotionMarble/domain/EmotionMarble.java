@@ -10,22 +10,22 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SQLDelete(sql = "UPDATE emotion_marble SET deleted_at = NOW() WHERE emotion_marble_id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class EmotionMarble extends BaseTimeEntity {
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "emotion_marble_id")),
-            @AttributeOverride(name = "historySeq", column = @Column(name = "history_seq"))
-    })
-    private HistoryPk emotionMarblePk;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long emotionMarbleId;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -36,7 +36,7 @@ public class EmotionMarble extends BaseTimeEntity {
     private LocalDate date;
 
     @NotNull
-    private UUID userId;
+    private Long userId;
 
     @NotNull
     private LocalDateTime historyStartDateTime;
@@ -49,9 +49,8 @@ public class EmotionMarble extends BaseTimeEntity {
     private Case resultCase;
 
     @Builder
-    public EmotionMarble(HistoryPk emotionMarblePk, EmotionMarbleType emotionMarbleType, LocalDate date, UUID userId,
+    public EmotionMarble(EmotionMarbleType emotionMarbleType, LocalDate date, Long userId,
                          LocalDateTime historyStartDateTime, LocalDateTime historyEndDateTime, Case resultCase) {
-        this.emotionMarblePk = emotionMarblePk;
         this.emotionMarbleType = emotionMarbleType;
         this.date = date;
         this.userId = userId;

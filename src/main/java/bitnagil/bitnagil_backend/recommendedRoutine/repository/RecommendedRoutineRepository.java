@@ -12,5 +12,5 @@ import java.util.List;
 public interface RecommendedRoutineRepository extends JpaRepository<RecommendedRoutine, Long> {
     List<RecommendedRoutine> findByResultCase(Case resultCase);
 
-    List<RecommendedRoutine> findTop4ByRecommendedRoutineTypeOrderByRecommendedRoutineIdAsc(RecommendedRoutineType value);
+    List<RecommendedRoutine> findByRecommendedRoutineType(RecommendedRoutineType value);
 }

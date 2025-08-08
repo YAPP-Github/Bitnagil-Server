@@ -27,13 +27,13 @@ public interface RoutineRepository extends JpaRepository<Routine, HistoryPk> {
      * historyStartDate < systime <= historyEndDate
      */
     List<Routine> findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeBeforeAndHistoryEndDateTimeGreaterThanEqual(
-            UUID userId,
+            Long userId,
             LocalDateTime now1,
             LocalDateTime now2
     );
 
     List<Routine> findByUserIdAndDeletedAtIsNullAndHistoryStartDateTimeLessThanEqualAndHistoryEndDateTimeGreaterThanEqual(
-            UUID userId,
+            Long userId,
             LocalDateTime endDateTime,
             LocalDateTime startDateTime
     );
