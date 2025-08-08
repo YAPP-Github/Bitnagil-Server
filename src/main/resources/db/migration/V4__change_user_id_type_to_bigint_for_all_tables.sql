@@ -1,3 +1,6 @@
+-- routine 테이블 백업
+RENAME TABLE changed_routine TO changed_routine_old;
+
 -- 새로운 changed_routine 테이블 생성(user_id를 UUID에서 BIGINT로 변경)
 create table changed_routine
 (
