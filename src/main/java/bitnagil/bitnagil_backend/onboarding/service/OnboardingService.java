@@ -130,7 +130,7 @@ public class OnboardingService {
 
             // 서브 루틴 완료 여부 리스트 생성
             List<Boolean> subRoutineCompleteYn = recommendedSubRoutines.stream()
-                    .map(sr -> false)
+                    .map(completeYn -> false)
                     .toList();
 
             // 루틴 정보에 해당하는 루틴을 생성한다.
