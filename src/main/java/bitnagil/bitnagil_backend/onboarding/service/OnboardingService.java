@@ -19,8 +19,13 @@ import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineManager;
+import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
+import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repository;
+import bitnagil.bitnagil_backend.routineInfoV2.service.RoutineInfoFactoryV2;
+import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
+import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
+import bitnagil.bitnagil_backend.routineV2.service.RoutineFactoryV2;
 import bitnagil.bitnagil_backend.user.domain.User;
-import bitnagil.bitnagil_backend.user.repository.UserRepository;
 import bitnagil.bitnagil_backend.user.service.UserManager;
 import lombok.RequiredArgsConstructor;
 
@@ -38,16 +43,23 @@ import java.util.stream.IntStream;
 public class OnboardingService {
 
     private final OnboardingRepository onboardingRepository;
-    private final UserRepository userRepository;
     private final RecommendedRoutineRepository recommendRoutineRepository;
     private final RecommendedSubRoutineRepository recommendedSubRoutineRepository;
     private final ChangedRoutineRepository changedRoutineRepository;
     private final ChangedSubRoutineRepository changedSubRoutineRepository;
 
-
     private final RecommendedRoutineManager recommendedRoutineManager;
     private final ChangedRoutineFactory changedRoutineFactory;
     private final UserManager userManager;
+
+    // V2 관련 리포지토리
+    // TODO: v2로 전환 시 Rename
+    private final RoutineInfoV2Repository routineInfoV2Repository;
+    private final RoutineV2Repository routineV2Repository;
+
+    private final RoutineFactoryV2 routineFactoryV2;
+    private final RoutineInfoFactoryV2 routineInfoFactory;
+
 
     /**
      * 유저와 매칭되는 온보딩 결과를 설정하고, 리턴하는 메서드
@@ -85,6 +97,58 @@ public class OnboardingService {
     /**
      * 온보딩 시 추천 루틴을 저장하는 메서드
      */
+    @Transactional
+    public void registrationRoutinesV2(RegistrationRoutinesRequest request, User user) {
+
+        LocalDate today = LocalDate.now();
+
+        for (Long recommendedRoutineId : request.getRecommendedRoutineIds()) {
+            // 추천 루틴을 조회한다
+            RecommendedRoutine recommendedRoutine = recommendRoutineRepository.findById(recommendedRoutineId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
+
+            // 온보딩으로 등록한 루틴은 루틴 시작, 종료일자가 당일로 설정된다.
+            RoutineInfoV2 routineInfo = routineInfoFactory.createNewRoutineInfo(
+                    recommendedRoutine.getRecommendedRoutineName(),
+                    List.of(), // 온보딩은 반복일자를 설정하지 않는다.
+                    recommendedRoutine.getExecutionTime(),
+                    today,
+                    today,
+                    user
+            );
+
+            routineInfoV2Repository.save(routineInfo);
+
+            // 추천 서브 루틴을 조회한다.
+            List<RecommendedSubRoutine> recommendedSubRoutines =
+                    recommendedSubRoutineRepository.findByRecommendedRoutine(recommendedRoutine);
+
+            // 서브 루틴 이름 리스트 생성
+            List<String> subRoutineNames = recommendedSubRoutines.stream()
+                    .map(RecommendedSubRoutine::getSubRoutineName)
+                    .toList();
+
+            // 서브 루틴 완료 여부 리스트 생성
+            List<Boolean> subRoutineCompleteYn = recommendedSubRoutines.stream()
+                    .map(completeYn -> false)
+                    .toList();
+
+            // 루틴 정보에 해당하는 루틴을 생성한다.
+            RoutineV2 routine = routineFactoryV2.createNewRoutine(
+                    today,
+                    false,
+                    subRoutineNames,
+                    subRoutineCompleteYn,
+                    routineInfo);
+            routineV2Repository.save(routine);
+        }
+    }
+
+    /**
+     * 온보딩 시 추천 루틴을 저장하는 메서드
+     */
+    // TODO: v2로 전환 시 deprecated 처리
+    @Deprecated
     @Transactional
     public void registrationRoutines(RegistrationRoutinesRequest request, User user) {
 
