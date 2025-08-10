@@ -36,61 +36,40 @@ public class RoutineV2Service {
     public void registerRoutineV2(User user, RegisterRoutineV2Request request) {
 
         LocalDate today = LocalDate.now();
-        int subRoutineCnt = request.getSubRoutineName().size();
 
-        // 당일 루틴 등록 시
-        if (request.getRepeatDay().isEmpty()) {
-            //루틴 정보 등록
-            RoutineInfoV2 routineInfo = routineInfoV2Factory.createNewRoutineInfo(
-                request.getRoutineName(),
-                List.of(), // 당일 루틴이기 때문에 반복 요일은 빈 리스트
-                request.getExecutionTime(),
+        // repeatDay가 비어 있으면 빈 리스트, 아니면 요청값 사용
+        List<DayOfWeek> repeatDays = request.getRepeatDay().isEmpty() ? List.of() : request.getRepeatDay();
+
+        // 루틴 정보 등록
+        RoutineInfoV2 routineInfo = routineInfoV2Factory.createNewRoutineInfo(
+            request.getRoutineName(),
+            repeatDays,
+            request.getExecutionTime(),
+            request.getRoutineStartDate(),
+            request.getRoutineEndDate(),
+            user);
+
+        routineInfoV2Repository.save(routineInfo);
+
+        // 루틴을 생성할 날짜 목록 생성
+        List<LocalDate> targetDates = request.getRepeatDay().isEmpty()
+            ? List.of(today) // 당일 루틴
+            : generateRoutineDatesWithinPeriod(
                 request.getRoutineStartDate(),
                 request.getRoutineEndDate(),
-                user);
+                request.getRepeatDay());
 
-            routineInfoV2Repository.save(routineInfo);
-
-            // 루틴 정보에 해당하는 루틴을 생성한다.
-            RoutineV2 routine = routineV2Factory.createNewRoutine(
-                today,
+        // 위 날짜 목록을 바탕으로 루틴 생성
+        List<RoutineV2> routinesToRegister = targetDates.stream()
+            .map(routineDate -> routineV2Factory.createNewRoutine(
+                routineDate,
                 false,
                 request.getSubRoutineName(),
-                routineInfo);
+                routineInfo
+            ))
+            .toList();
 
-            routineV2Repository.save(routine);
-        }
-        else { // 반복 요일이 있는 루틴의 경우
-            //루틴 정보 등록
-            RoutineInfoV2 routineInfo = routineInfoV2Factory.createNewRoutineInfo(
-                request.getRoutineName(),
-                request.getRepeatDay(),
-                request.getExecutionTime(),
-                request.getRoutineStartDate(),
-                request.getRoutineEndDate(),
-                user);
-
-            routineInfoV2Repository.save(routineInfo);
-
-            // 날짜 범위 내 지정된 요일에 해당하는 날짜 목록 생성
-            List<LocalDate> targetDates = generateRoutineDatesWithinPeriod(
-                request.getRoutineStartDate(),
-                request.getRoutineEndDate(),
-                request.getRepeatDay()
-            );
-
-            // 위 날짜 목록을 순회하며 RoutineV2 생성
-            List<RoutineV2> routinesToRegister = targetDates.stream()
-                .map(routineDate -> routineV2Factory.createNewRoutine(
-                    routineDate,
-                    false,
-                    request.getSubRoutineName(),
-                    routineInfo
-                ))
-                .toList();
-
-            routineV2Repository.saveAll(routinesToRegister);
-        }
+        routineV2Repository.saveAll(routinesToRegister);
     }
 
     /**
