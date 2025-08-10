@@ -21,10 +21,10 @@ import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRou
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineManager;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repository;
-import bitnagil.bitnagil_backend.routineInfoV2.service.RoutineInfoFactoryV2;
+import bitnagil.bitnagil_backend.routineInfoV2.service.RoutineInfoV2Factory;
 import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
 import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
-import bitnagil.bitnagil_backend.routineV2.service.RoutineFactoryV2;
+import bitnagil.bitnagil_backend.routineV2.service.RoutineV2Factory;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.service.UserManager;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +57,8 @@ public class OnboardingService {
     private final RoutineInfoV2Repository routineInfoV2Repository;
     private final RoutineV2Repository routineV2Repository;
 
-    private final RoutineFactoryV2 routineFactoryV2;
-    private final RoutineInfoFactoryV2 routineInfoFactory;
+    private final RoutineV2Factory routineV2Factory;
+    private final RoutineInfoV2Factory routineInfoV2Factory;
 
 
     /**
@@ -108,7 +108,7 @@ public class OnboardingService {
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE));
 
             // 온보딩으로 등록한 루틴은 루틴 시작, 종료일자가 당일로 설정된다.
-            RoutineInfoV2 routineInfo = routineInfoFactory.createNewRoutineInfo(
+            RoutineInfoV2 routineInfo = routineInfoV2Factory.createNewRoutineInfo(
                     recommendedRoutine.getRecommendedRoutineName(),
                     List.of(), // 온보딩은 반복일자를 설정하지 않는다.
                     recommendedRoutine.getExecutionTime(),
@@ -128,18 +128,14 @@ public class OnboardingService {
                     .map(RecommendedSubRoutine::getSubRoutineName)
                     .toList();
 
-            // 서브 루틴 완료 여부 리스트 생성
-            List<Boolean> subRoutineCompleteYn = recommendedSubRoutines.stream()
-                    .map(completeYn -> false)
-                    .toList();
-
             // 루틴 정보에 해당하는 루틴을 생성한다.
-            RoutineV2 routine = routineFactoryV2.createNewRoutine(
+            RoutineV2 routine = routineV2Factory.createNewRoutine(
                     today,
                     false,
                     subRoutineNames,
-                    subRoutineCompleteYn,
-                    routineInfo);
+                    routineInfo,
+                    subRoutineNames.size()); // 서브 루틴 이름의 개수만큼 완료 여부를 생성
+
             routineV2Repository.save(routine);
         }
     }
