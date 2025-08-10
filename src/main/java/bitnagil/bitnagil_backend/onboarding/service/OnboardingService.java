@@ -133,8 +133,7 @@ public class OnboardingService {
                     today,
                     false,
                     subRoutineNames,
-                    routineInfo,
-                    subRoutineNames.size()); // 서브 루틴 이름의 개수만큼 완료 여부를 생성
+                    routineInfo); // 서브 루틴 이름의 개수만큼 완료 여부를 생성
 
             routineV2Repository.save(routine);
         }

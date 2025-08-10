@@ -18,12 +18,12 @@ public class RoutineV2Factory {
 
     // 신규 Routine 엔티티 생성 및 초기화
     public RoutineV2 createNewRoutine(LocalDate routineDate, Boolean routineCompleteYn, List<String> subRoutineNames,
-                                      RoutineInfoV2 routineInfo, Integer subRoutineCnt) {
+                                      RoutineInfoV2 routineInfo) {
         return RoutineV2.builder()
                 .routineDate(routineDate)
                 .routineCompleteYn(routineCompleteYn)
                 .subRoutineNames(subRoutineNames)
-                .subRoutineCompleteYn(initSubRoutineCompleteYn(subRoutineCnt))
+                .subRoutineCompleteYn(initSubRoutineCompleteYn(subRoutineNames.size()))
                 .routineInfo(routineInfo)
                 .build();
     }

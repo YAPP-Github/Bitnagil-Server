@@ -53,8 +53,7 @@ public class RoutineV2Service {
                 today,
                 false,
                 request.getSubRoutineName(),
-                routineInfo,
-                subRoutineCnt);
+                routineInfo);
 
             routineV2Repository.save(routine);
         }
@@ -83,8 +82,7 @@ public class RoutineV2Service {
                     routineDate,
                     false,
                     request.getSubRoutineName(),
-                    routineInfo,
-                    subRoutineCnt
+                    routineInfo
                 ))
                 .toList();
 
