@@ -3,6 +3,7 @@ package bitnagil.bitnagil_backend.routineV2.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.BooleanListConverter;
 import bitnagil.bitnagil_backend.global.utils.StringListConverter;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
@@ -30,7 +31,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @SQLDelete(sql = "UPDATE routine_v2 SET deleted_at = NOW() WHERE routine_id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class RoutineV2 {
+public class RoutineV2 extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long routineId; // 일일 루틴 ID

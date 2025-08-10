@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.Convert;
@@ -31,7 +32,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @SQLDelete(sql = "UPDATE routine_info_v2 SET deleted_at = NOW() WHERE routine_info_id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class RoutineInfoV2 {
+public class RoutineInfoV2 extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long routineInfoId; // 루틴 정보 ID
