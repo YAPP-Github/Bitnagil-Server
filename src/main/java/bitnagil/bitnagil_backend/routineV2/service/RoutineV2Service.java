@@ -59,12 +59,18 @@ public class RoutineV2Service {
                 request.getRoutineEndDate(),
                 request.getRepeatDay());
 
+        // 서브 루틴 완료 여부 리스트 생성
+        List<Boolean> subRoutineCompleteYn = request.getSubRoutineName().stream()
+            .map(completeYn -> false)
+            .toList();
+
         // 위 날짜 목록을 바탕으로 루틴 생성
         List<RoutineV2> routinesToRegister = targetDates.stream()
             .map(routineDate -> routineV2Factory.createNewRoutine(
                 routineDate,
                 false,
                 request.getSubRoutineName(),
+                subRoutineCompleteYn,
                 routineInfo
             ))
             .toList();
