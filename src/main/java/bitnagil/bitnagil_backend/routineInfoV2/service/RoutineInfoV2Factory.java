@@ -13,7 +13,7 @@ import java.util.List;
  * 루틴 관련 엔티티 생성, 초기화 책임을 담당하는 클래스입니다.
  */
 @Component
-public class RoutineInfoFactoryV2 {
+public class RoutineInfoV2Factory {
 
     // 신규 RoutineInfo 엔티티 생성 및 초기화
     public RoutineInfoV2 createNewRoutineInfo(String routineName, List<DayOfWeek> routineRepeatDay,

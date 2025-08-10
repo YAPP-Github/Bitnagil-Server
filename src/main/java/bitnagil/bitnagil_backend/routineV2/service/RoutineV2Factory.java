@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.routineV2.service;
 
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
+
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ import java.util.List;
  * 루틴 관련 엔티티 생성, 초기화 책임을 담당하는 클래스입니다.
  */
 @Component
-public class RoutineFactoryV2 {
+public class RoutineV2Factory {
 
     // 신규 Routine 엔티티 생성 및 초기화
     public RoutineV2 createNewRoutine(LocalDate routineDate, Boolean routineCompleteYn, List<String> subRoutineNames,

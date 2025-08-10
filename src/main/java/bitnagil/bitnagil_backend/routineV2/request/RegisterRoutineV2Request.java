@@ -1,6 +1,7 @@
-package bitnagil.bitnagil_backend.routine.request;
+package bitnagil.bitnagil_backend.routineV2.request;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Schema(description = "루틴 등록 요청 DTO")
-public class RegisterRoutineRequest {
+public class RegisterRoutineV2Request {
 
     @Schema(description = "루틴 이름입니다.",
             example = "아침 준비",
@@ -20,19 +21,31 @@ public class RegisterRoutineRequest {
     @NotNull
     private String routineName;
 
-    @Schema(description = "반복 요일에 대한 리스트입니다.",
+    @Schema(description = "반복 요일에 대한 리스트입니다. (반복요일이 없으면 당일 루틴입니다.)",
             example = "[\"MONDAY\", \"FRIDAY\"]",
             required = true)
     @NotNull
     private List<DayOfWeek> repeatDay;
 
-    @Schema(description = "루틴 시작 시간입니다.",
-            example = "08:15:00",
+    @Schema(description = "루틴 시작 일자입니다.",
+            example = "2025-08-01",
             required = true)
+    @NotNull
+    private LocalDate routineStartDate;
+
+    @Schema(description = "루틴 시작 일자입니다.",
+            example = "2025-08-31",
+            required = true)
+    @NotNull
+    private LocalDate routineEndDate;
+
+    @Schema(description = "루틴 시작 시간입니다.",
+        example = "08:15:00",
+        required = true)
     @NotNull
     private LocalTime executionTime;
 
     @Schema(description = "세부 루틴 이름에 대한 리스트입니다.",
-            example = "[\"손 씻기\", \"세수 하기\", \"양치 하기\"]")
+        example = "[\"손 씻기\", \"세수 하기\", \"양치 하기\"]")
     private List<String> subRoutineName;
 }
