@@ -28,6 +28,7 @@ public class RoutineV2Factory {
                 .build();
     }
 
+    // 서브루틴 완료 여부 리스트를 초기화 및 생성
     private  List<Boolean> initSubRoutineCompleteYn(Integer subRoutineCnt) {
         return IntStream.range(0, subRoutineCnt)
             .mapToObj(i -> false)

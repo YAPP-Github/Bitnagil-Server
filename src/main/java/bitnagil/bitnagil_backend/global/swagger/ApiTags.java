@@ -8,7 +8,7 @@ public class ApiTags {
     public static final String USER_AUTH = "유저 인증 API";
     public static final String HEALTH_CHECK = "헬스체크 API";
     public static final String ROUTINE = "루틴 API";
-    public static final String ROUTINEV2 = "[V2] 루틴 API";
+    public static final String ROUTINEV2 = "[v2] 루틴 API";
     public static final String ONBOARDING = "온보딩 API";
     public static final String EMOTION_MARBLE = "감정구슬 API";
     public static final String RECOMMENDED_ROUTINE = "추천 루틴 API";

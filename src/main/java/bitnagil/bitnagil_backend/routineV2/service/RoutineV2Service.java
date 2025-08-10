@@ -17,6 +17,9 @@ import bitnagil.bitnagil_backend.routineV2.request.RegisterRoutineV2Request;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * [v2] 루틴 관련된 서비스 로직을 담은 클래스입니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class RoutineV2Service {
