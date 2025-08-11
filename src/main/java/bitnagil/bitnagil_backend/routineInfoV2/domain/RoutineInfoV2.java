@@ -68,8 +68,4 @@ public class RoutineInfoV2 extends BaseTimeEntity {
         this.routineEndDate = routineEndDate;
         this.user = user;
     }
-
-    public void setDeleteAt(LocalDateTime deleteAt) {
-        this.deletedAt = deleteAt;
-    }
 }

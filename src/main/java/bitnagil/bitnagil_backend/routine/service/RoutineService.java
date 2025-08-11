@@ -41,6 +41,7 @@ import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.SubRoutineInfo;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
+import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repository;
 import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
 import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
 import bitnagil.bitnagil_backend.user.domain.User;
@@ -67,6 +68,7 @@ public class RoutineService {
     private final RoutineMapper routineMapper;
     private final ChangedRoutineFactory changedRoutineFactory;
     private final RoutineV2Repository routineV2Repository;
+    private final RoutineInfoV2Repository routineInfoV2Repository;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
@@ -280,15 +282,20 @@ public class RoutineService {
 
         RoutineInfoV2 routineInfoV2 = routineV2.getRoutineInfo();
 
-        if (!routineInfoV2.getUser().getUserId().equals(user.getUserId())) { // 로그인한 유저가 등록한 루틴이 아닌 경우
+        if (!isMatchedUserAndRoutine(user, routineInfoV2)) {
             throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
         }
-        routineInfoV2.setDeleteAt(now); // 루틴 정보 삭제 (Sort Delete)
+        routineInfoV2Repository.delete(routineInfoV2); // 루틴 정보 삭제 (Sort Delete)
 
         // 오늘 이후 루틴 내역 모두 삭제 (Hard Delete)
         List<RoutineV2> routinesV2AfterToday = routineV2Repository
             .findByRoutineInfoAndRoutineDateAfter(routineInfoV2, today);
         routineV2Repository.deleteAll(routinesV2AfterToday);
+    }
+
+    // 로그인한 유저가 등록한 루틴인지 검증하는 로직
+    private static boolean isMatchedUserAndRoutine(User user, RoutineInfoV2 routineInfoV2) {
+        return routineInfoV2.getUser().getUserId().equals(user.getUserId());
     }
 
     // v1에서 사용하는 루틴 삭제 메서드
