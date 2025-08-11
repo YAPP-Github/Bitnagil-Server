@@ -44,11 +44,11 @@ public class RoutineV2 extends BaseTimeEntity {
 
     @NotNull
     @Convert(converter = StringListConverter.class)
-    List<String> subRoutineNames; // 서브 루틴 이름 리스트
+    private List<String> subRoutineNames; // 서브 루틴 이름 리스트
 
     @NotNull
     @Convert(converter = BooleanListConverter.class)
-    List<Boolean> subRoutineCompleteYn; // 서브 루틴 완료 여부 리스트
+    private List<Boolean> subRoutineCompleteYn; // 서브 루틴 완료 여부 리스트
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_info_id")

@@ -1,0 +1,37 @@
+package bitnagil.bitnagil_backend.routineV2.service;
+
+import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
+import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
+import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * 루틴 관련해서 DB에서 조회해오거나 가공된 데이터를 DTO로 변환하는 Mapper 클래스입니다.
+ */
+@Component
+public class RoutineV2Mapper {
+
+    public RoutineV2SearchResultDto toRoutineV2SearchResultDto(RoutineV2 routine){
+        return RoutineV2SearchResultDto.builder()
+                .routineId(String.valueOf(routine.getRoutineId()))
+                .routineName(routine.getRoutineInfo().getRoutineName())
+                .repeatDay(routine.getRoutineInfo().getRoutineRepeatDay())
+                .executionTime(routine.getRoutineInfo().getRoutineExecutionTime())
+                .routineDate(routine.getRoutineDate())
+                .routineCompleteYn(routine.getRoutineCompleteYn())
+                .subRoutineNames(routine.getSubRoutineNames())
+                .subRoutineCompleteYn(routine.getSubRoutineCompleteYn())
+                .build();
+    }
+
+    public RoutineV2SearchResponse toRoutineV2SearchResponse(Map<LocalDate, List<RoutineV2SearchResultDto>> response) {
+        return RoutineV2SearchResponse.builder()
+                .routines(response)
+                .build();
+    }
+}
