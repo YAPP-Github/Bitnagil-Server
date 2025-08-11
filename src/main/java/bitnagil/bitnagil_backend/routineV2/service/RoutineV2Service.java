@@ -2,9 +2,10 @@ package bitnagil.bitnagil_backend.routineV2.service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
+import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,13 @@ public class RoutineV2Service {
     private final RoutineInfoV2Factory routineInfoV2Factory;
     private final RoutineV2Factory routineV2Factory;
     private final RoutineV2Repository routineV2Repository;
+    private final RoutineV2Mapper routineV2Mapper;
+
+    // 회원이 보유한 특정 기간(start_date, end_date)의 루틴을 조회하는 메서드입니다.
+    @Transactional(readOnly = true)
+    public RoutineV2SearchResponse getRoutines(User user, LocalDate startDate, LocalDate endDate) {
+        return queryRoutines(user, startDate, endDate);
+    }
 
     /**
      * 루틴 정보를 등록하면서 루틴 시작, 종료일자를 기반으로 루틴 내역을 생성
@@ -93,4 +101,24 @@ public class RoutineV2Service {
         return routineDatesToRegister;
     }
 
+    // 특정 기간 보유 루틴 조회
+    private RoutineV2SearchResponse queryRoutines(User user, LocalDate startDate, LocalDate endDate) {
+        Map<LocalDate, List<RoutineV2SearchResultDto>> response = new HashMap<>();
+
+        List<RoutineV2> routineList = routineV2Repository.findByUserAndDateRange(user, startDate, endDate);
+
+        for (RoutineV2 routineV2 : routineList) {
+            LocalDate date = routineV2.getRoutineDate();
+            RoutineV2SearchResultDto routineSearchResultDto = routineV2Mapper.toRoutineV2SearchResultDto(routineV2);
+
+            // 날짜별 리스트에 추가
+            response.computeIfAbsent(date, key -> new ArrayList<>()).add(routineSearchResultDto);
+        }
+
+        response.forEach((date, routineSearchResultDto) ->
+                routineSearchResultDto.sort(Comparator.comparing(RoutineV2SearchResultDto::getExecutionTime))
+        );
+
+        return routineV2Mapper.toRoutineV2SearchResponse(response);
+    }
 }
