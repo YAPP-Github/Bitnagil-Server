@@ -4,6 +4,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
+import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,24 @@ public class RoutineV2Service {
     private final RoutineV2Repository routineV2Repository;
     private final RoutineV2Mapper routineV2Mapper;
 
-    // 회원이 보유한 특정 기간(start_date, end_date)의 루틴을 조회하는 메서드입니다.
+    /**
+     * 회원이 보유한 특정 기간(start_date, end_date)의 루틴을 조회하는 메서드입니다.
+     */
     @Transactional(readOnly = true)
     public RoutineV2SearchResponse getRoutines(User user, LocalDate startDate, LocalDate endDate) {
         return queryRoutines(user, startDate, endDate);
+    }
+
+    /**
+     * 회원이 보유한 루틴 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public RoutineV2SearchResultDto getRoutine(User user, Long routineId) {
+        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId);
+        if(routineV2 == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_ROUTINE);
+        }
+        return routineV2Mapper.toRoutineV2SearchResultDto(routineV2);
     }
 
     /**

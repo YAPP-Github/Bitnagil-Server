@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.routineV2.controller;
 
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
+import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,13 @@ public class RoutineV2Controller implements RoutineV2Spec {
                                                                   @RequestParam @NotNull LocalDate startDate,
                                                                   @RequestParam @NotNull LocalDate endDate) {
         return CustomResponseDto.from(routineV2Service.getRoutines(user, startDate, endDate));
+    }
+
+    // 루틴 단건 조회
+    @GetMapping("{routineId}")
+    public CustomResponseDto<RoutineV2SearchResultDto> getRoutine(@CurrentUser User user,
+                                                                  @PathVariable Long routineId) {
+        return CustomResponseDto.from(routineV2Service.getRoutine(user, routineId));
     }
 
     @PostMapping("")

@@ -28,4 +28,18 @@ public interface RoutineV2Repository extends JpaRepository<RoutineV2, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    /**
+     * 특정 사용자의 루틴을 ID로 조회하는 메서드입니다.
+     */
+    @Query("""
+        select r from RoutineV2 r
+        join fetch r.routineInfo ri
+        where ri.user = :user
+          and r.id = :routineId
+    """)
+    RoutineV2 findByUserAndRoutineId(
+            @Param("user") User user,
+            @Param("routineId") Long routineId
+    );
 }

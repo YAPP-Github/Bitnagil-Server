@@ -1,11 +1,12 @@
 package bitnagil.bitnagil_backend.routineV2.controller.spec;
 
-import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
+import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
+import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
-import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
 import bitnagil.bitnagil_backend.routineV2.request.RegisterRoutineV2Request;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
+import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import bitnagil.bitnagil_backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Tag(name = ApiTags.ROUTINEV2)
 public interface RoutineV2Spec {
@@ -25,6 +27,11 @@ public interface RoutineV2Spec {
             @Parameter(name = "endDate", description = "조회 종료일", required = true, example = "2025-07-13")
     })
     CustomResponseDto<RoutineV2SearchResponse> getRoutines(User user, @NotNull LocalDate startDate, @NotNull LocalDate endDate);
+
+    @Operation(summary = "회원이 보유한 루틴을 단건 조회합니다.")
+    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE})
+    CustomResponseDto<RoutineV2SearchResultDto> getRoutine(User user, Long routineId);
+
 
     @Operation(summary = "루틴 정보 등록 및 루틴 시작, 종료일자 사이에서 반복요일에 해당하는 날짜로 루틴 데이터를 생성합니다.")
     CustomResponseDto<Object> registerRoutine(User user, RegisterRoutineV2Request request);
