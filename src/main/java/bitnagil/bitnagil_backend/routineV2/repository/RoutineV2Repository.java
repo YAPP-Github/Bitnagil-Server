@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RoutineV2Repository extends JpaRepository<RoutineV2, Long> {
@@ -36,9 +37,9 @@ public interface RoutineV2Repository extends JpaRepository<RoutineV2, Long> {
         select r from RoutineV2 r
         join fetch r.routineInfo ri
         where ri.user = :user
-          and r.id = :routineId
+            and r.routineId = :routineId
     """)
-    RoutineV2 findByUserAndRoutineId(
+    Optional<RoutineV2> findByUserAndRoutineId(
             @Param("user") User user,
             @Param("routineId") Long routineId
     );

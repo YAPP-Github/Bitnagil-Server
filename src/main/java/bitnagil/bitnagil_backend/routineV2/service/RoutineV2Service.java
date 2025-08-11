@@ -46,10 +46,9 @@ public class RoutineV2Service {
      */
     @Transactional(readOnly = true)
     public RoutineV2SearchResultDto getRoutine(User user, Long routineId) {
-        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId);
-        if(routineV2 == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_ROUTINE);
-        }
+        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
         return routineV2Mapper.toRoutineV2SearchResultDto(routineV2);
     }
 
