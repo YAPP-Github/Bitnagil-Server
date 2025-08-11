@@ -3,13 +3,11 @@ package bitnagil.bitnagil_backend.routine.controller;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResultDto;
 import jakarta.validation.constraints.NotNull;
 
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,19 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import bitnagil.bitnagil_backend.routine.request.RoutineSearchRequest;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
 import org.springframework.web.bind.annotation.*;
 
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.routine.controller.spec.RoutineSpec;
-import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.routine.service.RoutineService;
 import bitnagil.bitnagil_backend.user.domain.User;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -56,7 +51,7 @@ public class RoutineController implements RoutineSpec {
     }
 
     @DeleteMapping("/{routineId}")
-    public CustomResponseDto<Object> deleteRoutine(@CurrentUser User user, @PathVariable UUID routineId) {
+    public CustomResponseDto<Object> deleteRoutine(@CurrentUser User user, @PathVariable String routineId) {
         routineService.deleteRoutine(user, routineId);
 
         return CustomResponseDto.from(null);
