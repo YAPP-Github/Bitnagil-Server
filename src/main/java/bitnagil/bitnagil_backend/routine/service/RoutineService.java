@@ -285,6 +285,8 @@ public class RoutineService {
         if (!isMatchedUserAndRoutine(user, routineInfoV2)) {
             throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
         }
+
+        routineInfoV2.updateRoutineEndDate(today); // 종료 일자를 삭제 당일로 변경
         routineInfoV2Repository.delete(routineInfoV2); // 루틴 정보 삭제 (Sort Delete)
 
         // 오늘 이후 루틴 내역 모두 삭제 (Hard Delete)

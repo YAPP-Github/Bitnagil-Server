@@ -68,4 +68,8 @@ public class RoutineInfoV2 extends BaseTimeEntity {
         this.routineEndDate = routineEndDate;
         this.user = user;
     }
+
+    public void updateRoutineEndDate(LocalDate routineEndDate) {
+        this.routineEndDate = routineEndDate;
+    }
 }
