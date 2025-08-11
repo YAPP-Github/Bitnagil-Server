@@ -2,6 +2,7 @@ package bitnagil.bitnagil_backend.routineInfoV2.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import org.hibernate.annotations.Where;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@SQLDelete(sql = "UPDATE routine_info_v2 SET deleted_at = NOW() WHERE routine_info_id = ?")
+@SQLDelete(sql = "UPDATE routine_infov2 SET deleted_at = NOW() WHERE routine_info_id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class RoutineInfoV2 extends BaseTimeEntity {
     @Id
@@ -66,5 +67,9 @@ public class RoutineInfoV2 extends BaseTimeEntity {
         this.routineStartDate = routineStartDate;
         this.routineEndDate = routineEndDate;
         this.user = user;
+    }
+
+    public void setDeleteAt(LocalDateTime deleteAt) {
+        this.deletedAt = deleteAt;
     }
 }
