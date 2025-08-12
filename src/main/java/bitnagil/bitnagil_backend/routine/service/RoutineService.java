@@ -277,14 +277,10 @@ public class RoutineService {
 
     // v2에서 사용하는 루틴 삭제 메서드
     private void deleteV2Routine(User user, Long v2RoutineId, LocalDateTime now, LocalDate today) {
-        RoutineV2 routineV2 = routineV2Repository.findById(v2RoutineId)
+        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, v2RoutineId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
         RoutineInfoV2 routineInfoV2 = routineV2.getRoutineInfo();
-
-        if (!isMatchedUserAndRoutine(user, routineInfoV2)) {
-            throw new CustomException(ErrorCode.ROUTINE_USER_NOT_MATCHED);
-        }
 
         // 오늘 이후 루틴 내역 모두 삭제 (Hard Delete)
         List<RoutineV2> routinesV2AfterToday = routineV2Repository
@@ -292,12 +288,7 @@ public class RoutineService {
         routineV2Repository.deleteAll(routinesV2AfterToday);
 
         routineInfoV2.updateRoutineEndDate(today); // 종료 일자를 삭제 당일로 변경
-        routineInfoV2Repository.delete(routineInfoV2); // 루틴 정보 삭제 (Sort Delete)
-    }
-
-    // 로그인한 유저가 등록한 루틴인지 검증하는 로직
-    private static boolean isMatchedUserAndRoutine(User user, RoutineInfoV2 routineInfoV2) {
-        return routineInfoV2.getUser().getUserId().equals(user.getUserId());
+        routineInfoV2.updateRoutineDeletedYn(true); // 루틴 삭제 여부 갱신
     }
 
     // v1에서 사용하는 루틴 삭제 메서드

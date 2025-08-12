@@ -25,6 +25,7 @@ public class RoutineInfoV2Factory {
                 .routineExecutionTime(routineExecutionTime)
                 .routineStartDate(routineStartDate)
                 .routineEndDate(routineEndDate)
+                .routineDeletedYn(false)
                 .user(user)
                 .build();
     }
