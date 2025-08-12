@@ -5,6 +5,7 @@ import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
 import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
+import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponseV2;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
 import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
@@ -68,6 +69,13 @@ public class EmotionMarbleService {
         return RegisterEmotionMarbleResponse.builder()
                 .recommendedRoutines(recommendedRoutineDtoList)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public EmotionMarbleTypeResponseV2 getEmotionMarbleBySearchDateV2(User user, LocalDate searchDate) {
+        EmotionMarble emotionMarble = emotionMarbleRepository.findByUserIdAndDateIs(user.getUserId(), searchDate);
+
+        return emotionMarbleMapper.toEmotionMarbleTypeResponseV2(emotionMarble);
     }
 
     @Transactional(readOnly = true)
