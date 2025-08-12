@@ -4,6 +4,7 @@ import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
 import bitnagil.bitnagil_backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -47,4 +48,12 @@ public interface RoutineV2Repository extends JpaRepository<RoutineV2, Long> {
 
     // 오늘 이후의 루틴 정보에 맞는 루틴 내역을 조회
     List<RoutineV2> findByRoutineInfoAndRoutineDateAfter(RoutineInfoV2 routineInfoV2, LocalDate date);
+
+    /**
+     *  루틴을 물리 삭제하기 위한 JPQL
+     *  메모리 로드 비용 줄이기 위해 routineIds를 파라미터로 채택
+     */
+    @Modifying
+    @Query("DELETE FROM RoutineV2 r WHERE r.routineId IN :ids")
+    void deleteAllPhysicallyByIds(@Param("ids") List<Long> routineIds);
 }

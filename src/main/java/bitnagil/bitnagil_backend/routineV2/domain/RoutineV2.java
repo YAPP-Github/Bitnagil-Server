@@ -29,7 +29,7 @@ import org.hibernate.annotations.Where;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@SQLDelete(sql = "DELETE FROM routinev2 WHERE routine_id = ?")
+@SQLDelete(sql = "UPDATE routine_v2 SET deleted_at = NOW() WHERE routine_id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class RoutineV2 extends BaseTimeEntity {
     @Id

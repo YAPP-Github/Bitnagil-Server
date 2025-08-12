@@ -175,7 +175,7 @@ public class RoutineService {
         }
         else { // (v2) routineId의 타입이 Long인 경우
             Long v2RoutineId = Long.valueOf(routineId);
-            deleteV2Routine(user, v2RoutineId, now, today);
+            deleteV2Routine(user, v2RoutineId, today);
         }
     }
 
@@ -276,7 +276,7 @@ public class RoutineService {
     }
 
     // v2에서 사용하는 루틴 삭제 메서드
-    private void deleteV2Routine(User user, Long v2RoutineId, LocalDateTime now, LocalDate today) {
+    private void deleteV2Routine(User user, Long v2RoutineId, LocalDate today) {
         RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, v2RoutineId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
@@ -285,7 +285,12 @@ public class RoutineService {
         // 오늘 이후 루틴 내역 모두 삭제 (Hard Delete)
         List<RoutineV2> routinesV2AfterToday = routineV2Repository
             .findByRoutineInfoAndRoutineDateAfter(routineInfoV2, today);
-        routineV2Repository.deleteAll(routinesV2AfterToday);
+
+        List<Long> routineIds = routinesV2AfterToday.stream()
+            .map(RoutineV2::getRoutineId)
+            .toList();
+
+        routineV2Repository.deleteAllPhysicallyByIds(routineIds); // 물리 삭제
 
         routineInfoV2.updateRoutineEndDate(today); // 종료 일자를 삭제 당일로 변경
         routineInfoV2.updateRoutineDeletedYn(true); // 루틴 삭제 여부 갱신
