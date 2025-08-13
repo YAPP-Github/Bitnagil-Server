@@ -40,7 +40,7 @@ public interface RoutineV2Spec {
     @Operation(summary = "루틴 정보 등록 및 루틴 시작, 종료일자 사이에서 반복요일에 해당하는 날짜로 루틴 데이터를 생성합니다.")
     CustomResponseDto<Object> registerRoutine(User user, RegisterRoutineV2Request request);
 
-    @Operation(summary = "루틴 완료 여부를 갱신합니다. (여러 루틴의 완료 여부를 리스트로 만들어 요청하는 방식입니다.)")
+    @Operation(summary = "여러 루틴의 완료 여부를 갱신합니다. (여러 루틴의 완료 여부를 리스트로 만들어 요청하는 방식입니다.)")
     @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE})
     CustomResponseDto<Object> updateRoutineCompletionStatus(
         @CurrentUser User user, @RequestBody UpdateRoutineCompletionRequest request);

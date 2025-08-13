@@ -23,7 +23,7 @@ public class UpdateRoutineCompletionInfo {
     @NotNull
     private Boolean routineCompleteYn;
 
-    @Schema(description = "서브루틴 완료 여부 리스트입니다..",
+    @Schema(description = "서브루틴 완료 여부 리스트입니다.",
             example = "[true, false, true]",
             required = true)
     @NotNull
