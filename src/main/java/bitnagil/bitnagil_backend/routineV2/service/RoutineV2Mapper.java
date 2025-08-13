@@ -29,7 +29,7 @@ public class RoutineV2Mapper {
                 .build();
     }
 
-    public RoutineV2SearchResponse toRoutineV2SearchResponse(Map<LocalDate, List<RoutineV2SearchResultDto>> response) {
+    public RoutineV2SearchResponse toRoutineV2SearchResponse(Map<LocalDate, RoutineV2SearchResponse.RoutineData> response) {
         return RoutineV2SearchResponse.builder()
                 .routines(response)
                 .build();

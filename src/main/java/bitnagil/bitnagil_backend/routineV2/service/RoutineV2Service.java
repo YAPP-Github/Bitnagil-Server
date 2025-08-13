@@ -118,7 +118,7 @@ public class RoutineV2Service {
 
     // 특정 기간 보유 루틴 조회
     private RoutineV2SearchResponse queryRoutines(User user, LocalDate startDate, LocalDate endDate) {
-        Map<LocalDate, List<RoutineV2SearchResultDto>> response = new HashMap<>();
+        Map<LocalDate, RoutineV2SearchResponse.RoutineData> response = new HashMap<>();
 
         List<RoutineV2> routineList = routineV2Repository.findByUserAndDateRange(user, startDate, endDate);
 
@@ -126,12 +126,26 @@ public class RoutineV2Service {
             LocalDate date = routineV2.getRoutineDate();
             RoutineV2SearchResultDto routineSearchResultDto = routineV2Mapper.toRoutineV2SearchResultDto(routineV2);
 
-            // 날짜별 리스트에 추가
-            response.computeIfAbsent(date, key -> new ArrayList<>()).add(routineSearchResultDto);
+            // 날짜별 RoutineData 생성 혹은 가져오기
+            response.computeIfAbsent(date, key -> RoutineV2SearchResponse.RoutineData.builder()
+                    .routineList(new ArrayList<>())
+                    .allCompleted(true) // 초기값 true
+                    .build());
+
+            RoutineV2SearchResponse.RoutineData routineData = response.get(date);
+
+            // 리스트에 추가
+            routineData.getRoutineList().add(routineSearchResultDto);
+
+            // 하나라도 완료 안 된 루틴이 있으면 false로 변경
+            if (!routineSearchResultDto.getRoutineCompleteYn()) {
+                routineData.setAllCompleted(false);
+            }
         }
 
-        response.forEach((date, routineSearchResultDto) ->
-                routineSearchResultDto.sort(Comparator.comparing(RoutineV2SearchResultDto::getExecutionTime))
+        // 정렬 처리
+        response.values().forEach(data ->
+                data.getRoutineList().sort(Comparator.comparing(RoutineV2SearchResultDto::getExecutionTime))
         );
 
         return routineV2Mapper.toRoutineV2SearchResponse(response);
