@@ -101,6 +101,14 @@ public class RoutineV2Service {
         routineV2Repository.saveAll(routinesToRegister);
     }
 
+    // 루틴 오늘만 삭제 메서드
+    public void deleteRoutineByDay(User user, Long routineId) {
+        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+        routineV2Repository.delete(routineV2); // soft delete
+    }
+
     /**
      * 날짜 범위에서 주어진 요일(repeatDays)에 해당하는 날짜만 반환
      */
