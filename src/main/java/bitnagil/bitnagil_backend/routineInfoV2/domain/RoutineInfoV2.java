@@ -30,7 +30,7 @@ import org.hibernate.annotations.Where;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@SQLDelete(sql = "UPDATE routine_info_v2 SET deleted_at = NOW() WHERE routine_info_id = ?")
+@SQLDelete(sql = "UPDATE routine_infov2 SET deleted_at = NOW() WHERE routine_info_id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class RoutineInfoV2 extends BaseTimeEntity {
     @Id
@@ -53,18 +53,30 @@ public class RoutineInfoV2 extends BaseTimeEntity {
     @NotNull
     private LocalDate routineEndDate; // 루틴 종료 일자
 
+    @NotNull
+    private Boolean routineDeletedYn; // 루틴 삭제 여부
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 루틴의 주체인 유저
 
     @Builder
     public RoutineInfoV2(String routineName, List<DayOfWeek> routineRepeatDay, LocalTime routineExecutionTime,
-        LocalDate routineStartDate, LocalDate routineEndDate, User user) {
+        LocalDate routineStartDate, LocalDate routineEndDate, Boolean routineDeletedYn, User user) {
         this.routineName = routineName;
         this.routineRepeatDay = routineRepeatDay;
         this.routineExecutionTime = routineExecutionTime;
         this.routineStartDate = routineStartDate;
         this.routineEndDate = routineEndDate;
+        this.routineDeletedYn = routineDeletedYn;
         this.user = user;
+    }
+
+    public void updateRoutineEndDate(LocalDate routineEndDate) {
+        this.routineEndDate = routineEndDate;
+    }
+
+    public void updateRoutineDeletedYn(Boolean routineDeletedYn) {
+        this.routineDeletedYn = routineDeletedYn;
     }
 }
