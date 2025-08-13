@@ -63,4 +63,10 @@ public class RoutineV2 extends BaseTimeEntity {
         this.subRoutineCompleteYn = subRoutineCompleteYn;
         this.routineInfo = routineInfo;
     }
+
+    // 루틴 완료 여부 갱신
+    public void updateRoutineCompleteYn(Boolean routineCompleteYn, List<Boolean> subRoutineCompleteYn) {
+        this.routineCompleteYn = routineCompleteYn;
+        this.subRoutineCompleteYn = subRoutineCompleteYn;
+    }
 }

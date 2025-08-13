@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routineV2.controller;
 
+import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import jakarta.validation.constraints.NotNull;
@@ -43,4 +44,18 @@ public class RoutineV2Controller implements RoutineV2Spec {
 
         return CustomResponseDto.from(null);
     }
+
+    /*
+     * 루틴 완료 여부를 갱신하는 API 입니다.
+     * 멱등성이 보장되는 업데이트 API이므로 PUT Method를 사용했습니다.
+     */
+    @PutMapping("")
+    public CustomResponseDto<Object> updateRoutineCompletionStatus(
+        @CurrentUser User user, @RequestBody UpdateRoutineCompletionRequest request) {
+
+        routineV2Service.updateRoutineCompletionStatus(user, request);
+
+        return CustomResponseDto.from(null);
+    }
+
 }
