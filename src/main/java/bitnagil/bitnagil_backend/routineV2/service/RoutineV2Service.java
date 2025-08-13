@@ -6,6 +6,8 @@ import java.util.*;
 
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionInfo;
+import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Service;
@@ -99,6 +101,18 @@ public class RoutineV2Service {
             .toList();
 
         routineV2Repository.saveAll(routinesToRegister);
+    }
+
+    // 루틴 완료 여부를 업데이트 하는 메서드
+    @Transactional
+    public void updateRoutineCompletionStatus(User user, UpdateRoutineCompletionRequest request) {
+        for (UpdateRoutineCompletionInfo info : request.getRoutineCompletionInfos()) {
+            RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, info.getRoutineId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+            // 루틴, 서브루틴 완료 여부 갱신
+            routineV2.updateRoutineCompleteYn(info.getRoutineCompleteYn(), info.getSubRoutineCompleteYn());
+        }
     }
 
     /**
