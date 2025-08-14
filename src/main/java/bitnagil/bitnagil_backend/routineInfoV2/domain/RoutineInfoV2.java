@@ -7,15 +7,9 @@ import java.util.List;
 
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
+import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_backend.user.domain.User;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,13 +50,18 @@ public class RoutineInfoV2 extends BaseTimeEntity {
     @NotNull
     private Boolean routineDeletedYn; // 루틴 삭제 여부
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(40)")
+    private RecommendedRoutineType recommendedRoutineType; // 추천 루틴 타입
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 루틴의 주체인 유저
 
     @Builder
     public RoutineInfoV2(String routineName, List<DayOfWeek> routineRepeatDay, LocalTime routineExecutionTime,
-        LocalDate routineStartDate, LocalDate routineEndDate, Boolean routineDeletedYn, User user) {
+        LocalDate routineStartDate, LocalDate routineEndDate, Boolean routineDeletedYn, User user,
+        RecommendedRoutineType recommendedRoutineType) {
         this.routineName = routineName;
         this.routineRepeatDay = routineRepeatDay;
         this.routineExecutionTime = routineExecutionTime;
@@ -70,6 +69,7 @@ public class RoutineInfoV2 extends BaseTimeEntity {
         this.routineEndDate = routineEndDate;
         this.routineDeletedYn = routineDeletedYn;
         this.user = user;
+        this.recommendedRoutineType = recommendedRoutineType;
     }
 
     public void updateRoutineEndDate(LocalDate routineEndDate) {
