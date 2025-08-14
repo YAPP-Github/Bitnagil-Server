@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routineV2.response;
 
+import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -31,4 +32,6 @@ public class RoutineV2SearchResultDto {
     private List<String> subRoutineNames;
     @Schema(example = "[true, false]")
     private List<Boolean> subRoutineCompleteYn;
+    @Schema(example = "WAKE_UP")
+    private RecommendedRoutineType recommendedRoutineType;
 }

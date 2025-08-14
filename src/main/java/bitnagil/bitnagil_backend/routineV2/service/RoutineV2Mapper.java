@@ -6,7 +6,6 @@ import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +25,7 @@ public class RoutineV2Mapper {
                 .routineCompleteYn(routine.getRoutineCompleteYn())
                 .subRoutineNames(routine.getSubRoutineNames())
                 .subRoutineCompleteYn(routine.getSubRoutineCompleteYn())
+                .recommendedRoutineType(routine.getRoutineInfo().getRecommendedRoutineType())
                 .build();
     }
 
