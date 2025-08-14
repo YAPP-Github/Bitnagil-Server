@@ -72,6 +72,7 @@ public class RoutineV2Service {
             request.getExecutionTime(),
             request.getRoutineStartDate(),
             request.getRoutineEndDate(),
+            request.getRecommendedRoutineType(),
             user);
 
         routineInfoV2Repository.save(routineInfo);
