@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routineInfoV2.service;
 
+import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.user.domain.User;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,8 @@ public class RoutineInfoV2Factory {
     // 신규 RoutineInfo 엔티티 생성 및 초기화
     public RoutineInfoV2 createNewRoutineInfo(String routineName, List<DayOfWeek> routineRepeatDay,
                                         LocalTime routineExecutionTime, LocalDate routineStartDate,
-                                        LocalDate routineEndDate, User user) {
+                                        LocalDate routineEndDate, RecommendedRoutineType recommendedRoutineType,
+                                        User user) {
         return RoutineInfoV2.builder()
                 .routineName(routineName)
                 .routineRepeatDay(routineRepeatDay) // 온보딩은 반복일자를 설정하지 않는다.
@@ -27,6 +29,7 @@ public class RoutineInfoV2Factory {
                 .routineEndDate(routineEndDate)
                 .routineDeletedYn(false)
                 .user(user)
+                .recommendedRoutineType(recommendedRoutineType)
                 .build();
     }
 }

@@ -43,6 +43,7 @@ public class RecommendedRoutineMapper {
             .recommendedRoutineLevel(recommendedRoutine.getRecommendedRoutineLevel())
             .executionTime(recommendedRoutine.getExecutionTime())
             .recommendedSubRoutineSearchResult(recommendedSubRoutineResults)
+            .recommendedRoutineType(recommendedRoutine.getRecommendedRoutineType())
             .build();
     }
 

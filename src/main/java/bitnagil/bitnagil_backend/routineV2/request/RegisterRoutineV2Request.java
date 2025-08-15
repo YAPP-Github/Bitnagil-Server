@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -48,4 +49,7 @@ public class RegisterRoutineV2Request {
     @Schema(description = "세부 루틴 이름에 대한 리스트입니다.",
         example = "[\"손 씻기\", \"세수 하기\", \"양치 하기\"]")
     private List<String> subRoutineName;
+
+    @Schema(description = "추천 루틴 타입입니다.", example = "WAKE_UP")
+    private RecommendedRoutineType recommendedRoutineType;
 }

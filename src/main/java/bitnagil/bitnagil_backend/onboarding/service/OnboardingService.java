@@ -114,6 +114,7 @@ public class OnboardingService {
                     recommendedRoutine.getExecutionTime(),
                     today,
                     today,
+                    recommendedRoutine.getRecommendedRoutineType(),
                     user
             );
 
