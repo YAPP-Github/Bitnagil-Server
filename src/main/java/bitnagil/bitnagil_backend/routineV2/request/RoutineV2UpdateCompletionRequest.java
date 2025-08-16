@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Schema(description = "루틴 완료 여부 갱신 DTO")
-public class UpdateRoutineCompletionRequest {
+public class RoutineV2UpdateCompletionRequest {
 
     @Schema(description = "루틴 완료 여부를 갱신할 루틴 정보 리스트입니다.",
             required = true)
     @NotNull
-    List<UpdateRoutineCompletionInfo> routineCompletionInfos;
+    List<RoutineV2UpdateCompletionInfo> routineCompletionInfos;
 }

@@ -7,9 +7,9 @@ import java.util.*;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.routineV2.domain.enums.UpdateApplyDate;
-import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineInfoV2Request;
-import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionInfo;
-import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionRequest;
+import bitnagil.bitnagil_backend.routineInfoV2.request.RoutineInfoV2UpdateRequest;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionInfo;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repositor
 import bitnagil.bitnagil_backend.routineInfoV2.service.RoutineInfoV2Factory;
 import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
 import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
-import bitnagil.bitnagil_backend.routineV2.request.RegisterRoutineV2Request;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2RegisterRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
@@ -60,7 +60,7 @@ public class RoutineV2Service {
      * 루틴 정보를 등록하면서 루틴 시작, 종료일자를 기반으로 루틴 내역을 생성
      */
     @Transactional
-    public void registerRoutineV2(User user, RegisterRoutineV2Request request) {
+    public void registerRoutineV2(User user, RoutineV2RegisterRequest request) {
 
         LocalDate today = LocalDate.now();
 
@@ -98,7 +98,7 @@ public class RoutineV2Service {
 
     // 루틴 정보 수정 메서드
     @Transactional
-    public void updateRoutineInfo(User user, UpdateRoutineInfoV2Request request) {
+    public void updateRoutineInfo(User user, RoutineInfoV2UpdateRequest request) {
 
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = LocalDate.now().plusDays(1);
@@ -124,7 +124,7 @@ public class RoutineV2Service {
         routineInfoV2.updateRoutineEndDate(changedDate.minusDays(1));
 
         // 변경날짜부터의 새로운 루틴 등록 request 변환
-        RegisterRoutineV2Request registerRoutineV2Request = RegisterRoutineV2Request.builder()
+        RoutineV2RegisterRequest routineV2RegisterRequest = RoutineV2RegisterRequest.builder()
             .routineName(request.getRoutineName())
             .repeatDay(request.getRepeatDay())
             .routineStartDate(changedDate)
@@ -134,11 +134,11 @@ public class RoutineV2Service {
             .build();
 
         // 변경날짜부터의 새로운 루틴 등록
-        registerRoutineV2(user, registerRoutineV2Request);
+        registerRoutineV2(user, routineV2RegisterRequest);
     }
 
     // 루틴 정보에서 변경된 부분이 있는지 검증
-    private boolean isChangedRoutineInfo(UpdateRoutineInfoV2Request request, RoutineInfoV2 routineInfoV2) {
+    private boolean isChangedRoutineInfo(RoutineInfoV2UpdateRequest request, RoutineInfoV2 routineInfoV2) {
         return !routineInfoV2.getRoutineName().equals(request.getRoutineName()) ||
             !routineInfoV2.getRoutineRepeatDay().equals(request.getRepeatDay()) ||
             !routineInfoV2.getRoutineExecutionTime().equals(request.getExecutionTime()) ||
@@ -170,8 +170,8 @@ public class RoutineV2Service {
 
     // 루틴 완료 여부를 업데이트 하는 메서드
     @Transactional
-    public void updateRoutineCompletionStatus(User user, UpdateRoutineCompletionRequest request) {
-        for (UpdateRoutineCompletionInfo info : request.getRoutineCompletionInfos()) {
+    public void updateRoutineCompletionStatus(User user, RoutineV2UpdateCompletionRequest request) {
+        for (RoutineV2UpdateCompletionInfo info : request.getRoutineCompletionInfos()) {
             RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, info.getRoutineId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 

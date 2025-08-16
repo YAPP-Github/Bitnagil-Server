@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routineV2.controller;
 
+import bitnagil.bitnagil_backend.routineInfoV2.request.RoutineInfoV2UpdateRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.routineV2.controller.spec.RoutineV2Spec;
-import bitnagil.bitnagil_backend.routineV2.request.RegisterRoutineV2Request;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2RegisterRequest;
 import bitnagil.bitnagil_backend.routineV2.service.RoutineV2Service;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class RoutineV2Controller implements RoutineV2Spec {
 
     // 루틴을 새롭게 등록하는 API 입니다.
     @PostMapping("")
-    public CustomResponseDto<Object> registerRoutine(@CurrentUser User user, @RequestBody RegisterRoutineV2Request request) {
+    public CustomResponseDto<Object> registerRoutine(@CurrentUser User user, @RequestBody RoutineV2RegisterRequest request) {
         routineV2Service.registerRoutineV2(user, request);
 
         return CustomResponseDto.from(null);
@@ -54,7 +55,7 @@ public class RoutineV2Controller implements RoutineV2Spec {
     }
 
     @PatchMapping("")
-    public CustomResponseDto<Object> updateRoutineInfo(@CurrentUser User user, @RequestBody UpdateRoutineInfoV2Request request) {
+    public CustomResponseDto<Object> updateRoutineInfo(@CurrentUser User user, @RequestBody RoutineInfoV2UpdateRequest request) {
         routineV2Service.updateRoutineInfo(user, request);
 
         return CustomResponseDto.from(null);
