@@ -15,7 +15,7 @@ public class RoutineV2UpdateCompletionInfo {
             example = "4",
             required = true)
     @NotNull
-    private Long routineId;
+    private String routineId;
 
     @Schema(description = "메인 루틴의 완료 여부입니다.",
             example = "true",

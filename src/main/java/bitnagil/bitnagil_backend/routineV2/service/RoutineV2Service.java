@@ -172,7 +172,8 @@ public class RoutineV2Service {
     @Transactional
     public void updateRoutineCompletionStatus(User user, RoutineV2UpdateCompletionRequest request) {
         for (RoutineV2UpdateCompletionInfo info : request.getRoutineCompletionInfos()) {
-            RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, info.getRoutineId())
+            Long routineId = Long.valueOf(info.getRoutineId());
+            RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 
             // 루틴, 서브루틴 완료 여부 갱신
