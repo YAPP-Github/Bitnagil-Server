@@ -1,10 +1,12 @@
 package bitnagil.bitnagil_backend.routineV2.controller.spec;
 
+import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.routineV2.request.RegisterRoutineV2Request;
+import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineInfoV2Request;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import bitnagil.bitnagil_backend.user.domain.User;
@@ -15,7 +17,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.UUID;
+
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = ApiTags.ROUTINEV2)
 public interface RoutineV2Spec {
@@ -35,4 +38,8 @@ public interface RoutineV2Spec {
 
     @Operation(summary = "루틴 정보 등록 및 루틴 시작, 종료일자 사이에서 반복요일에 해당하는 날짜로 루틴 데이터를 생성합니다.")
     CustomResponseDto<Object> registerRoutine(User user, RegisterRoutineV2Request request);
+
+    @Operation(summary = "루틴 정보를 업데이트합니다.")
+    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.NOT_FOUND_ROUTINE_INFO})
+    CustomResponseDto<Object> updateRoutineInfo(User user, UpdateRoutineInfoV2Request request);
 }

@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.routineV2.controller;
 
+import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineInfoV2Request;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import jakarta.validation.constraints.NotNull;
@@ -49,6 +50,13 @@ public class RoutineV2Controller implements RoutineV2Spec {
     @DeleteMapping("/{routineId}")
     public CustomResponseDto<Object> deleteRoutineByDay(@CurrentUser User user, @PathVariable Long routineId) {
         routineV2Service.deleteRoutineByDay(user, routineId);
+
+        return CustomResponseDto.from(null);
+    }
+
+    @PatchMapping("")
+    public CustomResponseDto<Object> updateRoutineInfo(@CurrentUser User user, @RequestBody UpdateRoutineInfoV2Request request) {
+        routineV2Service.updateRoutineInfo(user, request);
 
         return CustomResponseDto.from(null);
     }
