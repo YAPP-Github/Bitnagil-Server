@@ -66,7 +66,7 @@ public class RoutineV2Controller implements RoutineV2Spec {
      * 루틴 완료 여부를 갱신하는 API 입니다.
      * 멱등성이 보장되는 업데이트 API이므로 PUT Method를 사용했습니다.
      */
-    @PutMapping("")
+    @PutMapping("/completions")
     public CustomResponseDto<Object> updateRoutineCompletionStatus(
         @CurrentUser User user, @RequestBody RoutineV2UpdateCompletionRequest request) {
 

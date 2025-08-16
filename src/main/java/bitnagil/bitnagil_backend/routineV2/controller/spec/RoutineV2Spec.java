@@ -19,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = ApiTags.ROUTINEV2)
@@ -48,4 +49,8 @@ public interface RoutineV2Spec {
     @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE})
     CustomResponseDto<Object> updateRoutineCompletionStatus(
         @CurrentUser User user, @RequestBody RoutineV2UpdateCompletionRequest request);
+
+    @Operation(summary = "오늘만 루틴을 삭제합니다.")
+    @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE})
+    CustomResponseDto<Object> deleteRoutineByDay(User user, Long routineId);
 }

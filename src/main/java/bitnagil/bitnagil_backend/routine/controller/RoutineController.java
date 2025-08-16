@@ -34,6 +34,7 @@ public class RoutineController implements RoutineSpec {
 
     private final RoutineService routineService;
 
+    @Deprecated()
     @PostMapping("")
     public CustomResponseDto<Object> registerRoutine(@CurrentUser User user,
         @RequestBody RegisterRoutineRequest registerRoutineRequest) {
@@ -42,6 +43,7 @@ public class RoutineController implements RoutineSpec {
         return CustomResponseDto.from(null);
     }
 
+    @Deprecated()
     @PatchMapping("")
     public CustomResponseDto<Object> updateRoutine(@CurrentUser User user,
         @RequestBody UpdateRoutineRequest updateRoutineRequest) {
@@ -60,6 +62,7 @@ public class RoutineController implements RoutineSpec {
     /*
      * 유저가 선택한 요일(당일)만 삭제하는 API입니다.
      */
+    @Deprecated()
     @DeleteMapping("/day")
     public CustomResponseDto<Object> deleteRoutineByDay(@CurrentUser User user,
         @RequestBody DeleteRoutineByDayRequest deleteRoutineByDayRequest) {
@@ -72,6 +75,7 @@ public class RoutineController implements RoutineSpec {
      * 회원이 보유한 특정 기간(start_date, end_date)의 루틴을 조회하는 API입니다.
      */
     @GetMapping
+    @Deprecated()
     public CustomResponseDto<RoutineSearchResponse> getRoutines(@CurrentUser User user,
                                                                 @RequestParam @NotNull LocalDate startDate,
                                                                 @RequestParam @NotNull LocalDate endDate) {
@@ -82,6 +86,7 @@ public class RoutineController implements RoutineSpec {
      * 루틴 완료 여부 업데이트
      * 새 엔티티를 생성할 수도, 부분 수정할 수도 있기에 PATCH를 쓰지 않고 POST를 씁니다.
      */
+    @Deprecated()
     @PostMapping("/completions")
     public CustomResponseDto<Object> updateRoutineCompletionStatus(@CurrentUser User user,
         @RequestBody UpdateRoutineCompletionRequest updateRoutineCompletionRequest) {
@@ -91,6 +96,7 @@ public class RoutineController implements RoutineSpec {
     }
 
     // 루틴 수정 페이지에서 사용되는 루틴 단건 조회 API
+    @Deprecated()
     @GetMapping("{routineId}")
     public CustomResponseDto<RoutineSearchResultDto> getRoutine(@CurrentUser User user, @PathVariable UUID routineId) {
 
