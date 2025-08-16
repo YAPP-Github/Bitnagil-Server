@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.routineV2.controller;
 
 import bitnagil.bitnagil_backend.routineInfoV2.request.RoutineInfoV2UpdateRequest;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import jakarta.validation.constraints.NotNull;
@@ -67,7 +68,7 @@ public class RoutineV2Controller implements RoutineV2Spec {
      */
     @PutMapping("")
     public CustomResponseDto<Object> updateRoutineCompletionStatus(
-        @CurrentUser User user, @RequestBody UpdateRoutineCompletionRequest request) {
+        @CurrentUser User user, @RequestBody RoutineV2UpdateCompletionRequest request) {
 
         routineV2Service.updateRoutineCompletionStatus(user, request);
 
