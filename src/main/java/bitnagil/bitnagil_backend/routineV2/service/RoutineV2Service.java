@@ -6,8 +6,10 @@ import java.util.*;
 
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
-import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionInfo;
-import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionRequest;
+import bitnagil.bitnagil_backend.routineV2.domain.enums.UpdateApplyDate;
+import bitnagil.bitnagil_backend.routineInfoV2.request.RoutineInfoV2UpdateRequest;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionInfo;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repositor
 import bitnagil.bitnagil_backend.routineInfoV2.service.RoutineInfoV2Factory;
 import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
 import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
-import bitnagil.bitnagil_backend.routineV2.request.RegisterRoutineV2Request;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2RegisterRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
@@ -58,7 +60,7 @@ public class RoutineV2Service {
      * 루틴 정보를 등록하면서 루틴 시작, 종료일자를 기반으로 루틴 내역을 생성
      */
     @Transactional
-    public void registerRoutineV2(User user, RegisterRoutineV2Request request) {
+    public void registerRoutineV2(User user, RoutineV2RegisterRequest request) {
 
         LocalDate today = LocalDate.now();
 
@@ -78,15 +80,77 @@ public class RoutineV2Service {
         routineInfoV2Repository.save(routineInfo);
 
         // 루틴을 생성할 날짜 목록 생성
-        List<LocalDate> targetDates = request.getRepeatDay().isEmpty()
+        createRoutinesMatchedRepeatDayWithinPeriod(request.getRepeatDay().isEmpty()
             ? List.of(today) // 당일 루틴
             : generateRoutineDatesWithinPeriod(
-                request.getRoutineStartDate(),
-                request.getRoutineEndDate(),
-                request.getRepeatDay());
+            request.getRoutineStartDate(),
+            request.getRoutineEndDate(),
+            request.getRepeatDay()), request.getSubRoutineName(), routineInfo);
+    }
+
+    // 루틴 오늘만 삭제 메서드
+    public void deleteRoutineByDay(User user, Long routineId) {
+        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+        routineV2Repository.deletePhysicallyById(routineV2.getRoutineId()); // 물리 삭제
+    }
+
+    // 루틴 정보 수정 메서드
+    @Transactional
+    public void updateRoutineInfo(User user, RoutineInfoV2UpdateRequest request) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        Long routineId = Long.valueOf(request.getRoutineId());
+
+        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+        RoutineInfoV2 routineInfoV2 = routineInfoV2Repository.findById(routineV2.getRoutineInfo().getRoutineInfoId())
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE_INFO));
+
+        // 요첨받은 루틴 정보가 기존 루틴 정보와 동일할 경우
+        if (!isChangedRoutineInfo(request, routineInfoV2)) return;
+
+        // 변경사항을 적용할 변경날짜를 설정
+        LocalDate changedDate = request.getUpdateApplyDate().equals(UpdateApplyDate.TODAY) ? today : tomorrow;
+
+        // 기존 루틴에서 수정날짜 이후 데이터는 물리 삭제
+        routineV2Repository.deleteByRoutineDateBetweenAndRoutineInfo(
+            changedDate, routineInfoV2.getRoutineEndDate(), routineInfoV2.getRoutineInfoId());
+
+        // 기존 루틴 정보의 종료일자를 업데이트
+        routineInfoV2.updateRoutineEndDate(changedDate.minusDays(1));
+
+        // 변경날짜부터의 새로운 루틴 등록 request 변환
+        RoutineV2RegisterRequest routineV2RegisterRequest = RoutineV2RegisterRequest.builder()
+            .routineName(request.getRoutineName())
+            .repeatDay(request.getRepeatDay())
+            .routineStartDate(changedDate)
+            .routineEndDate(request.getRoutineEndDate())
+            .executionTime(request.getExecutionTime())
+            .subRoutineName(request.getSubRoutineName())
+            .build();
+
+        // 변경날짜부터의 새로운 루틴 등록
+        registerRoutineV2(user, routineV2RegisterRequest);
+    }
+
+    // 루틴 정보에서 변경된 부분이 있는지 검증
+    private boolean isChangedRoutineInfo(RoutineInfoV2UpdateRequest request, RoutineInfoV2 routineInfoV2) {
+        return !routineInfoV2.getRoutineName().equals(request.getRoutineName()) ||
+            !routineInfoV2.getRoutineRepeatDay().equals(request.getRepeatDay()) ||
+            !routineInfoV2.getRoutineExecutionTime().equals(request.getExecutionTime()) ||
+            !routineInfoV2.getRoutineStartDate().equals(request.getRoutineStartDate()) ||
+            !routineInfoV2.getRoutineEndDate().equals(request.getRoutineEndDate());
+    }
+
+    private void createRoutinesMatchedRepeatDayWithinPeriod(
+        List<LocalDate> targetDates, List<String> request, RoutineInfoV2 routineInfoV2) {
 
         // 서브 루틴 완료 여부 리스트 생성
-        List<Boolean> subRoutineCompleteYn = request.getSubRoutineName().stream()
+        List<Boolean> subRoutineCompleteYn = request.stream()
             .map(completeYn -> false)
             .toList();
 
@@ -95,9 +159,9 @@ public class RoutineV2Service {
             .map(routineDate -> routineV2Factory.createNewRoutine(
                 routineDate,
                 false,
-                request.getSubRoutineName(),
+                request,
                 subRoutineCompleteYn,
-                routineInfo
+                routineInfoV2
             ))
             .toList();
 
@@ -106,8 +170,8 @@ public class RoutineV2Service {
 
     // 루틴 완료 여부를 업데이트 하는 메서드
     @Transactional
-    public void updateRoutineCompletionStatus(User user, UpdateRoutineCompletionRequest request) {
-        for (UpdateRoutineCompletionInfo info : request.getRoutineCompletionInfos()) {
+    public void updateRoutineCompletionStatus(User user, RoutineV2UpdateCompletionRequest request) {
+        for (RoutineV2UpdateCompletionInfo info : request.getRoutineCompletionInfos()) {
             RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, info.getRoutineId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
 

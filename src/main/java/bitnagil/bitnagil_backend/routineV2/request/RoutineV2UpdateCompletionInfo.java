@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UpdateRoutineCompletionInfo {
+public class RoutineV2UpdateCompletionInfo {
 
     @Schema(description = "루틴 완료 여부를 갱신할 루틴 ID 값입니다.",
             example = "4",

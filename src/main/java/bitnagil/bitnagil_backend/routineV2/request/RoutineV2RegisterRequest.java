@@ -8,13 +8,17 @@ import java.util.List;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "루틴 등록 요청 DTO")
-public class RegisterRoutineV2Request {
+public class RoutineV2RegisterRequest {
 
     @Schema(description = "루틴 이름입니다.",
             example = "아침 준비",
@@ -29,15 +33,11 @@ public class RegisterRoutineV2Request {
     private List<DayOfWeek> repeatDay;
 
     @Schema(description = "루틴 시작 일자입니다.",
-            example = "2025-08-01",
-            required = true)
-    @NotNull
+            example = "2025-08-01")
     private LocalDate routineStartDate;
 
     @Schema(description = "루틴 시작 일자입니다.",
-            example = "2025-08-31",
-            required = true)
-    @NotNull
+            example = "2025-08-31")
     private LocalDate routineEndDate;
 
     @Schema(description = "루틴 시작 시간입니다.",

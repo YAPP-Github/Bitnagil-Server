@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.routineV2.controller;
 
-import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionRequest;
+import bitnagil.bitnagil_backend.routineInfoV2.request.RoutineInfoV2UpdateRequest;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.routineV2.controller.spec.RoutineV2Spec;
-import bitnagil.bitnagil_backend.routineV2.request.RegisterRoutineV2Request;
+import bitnagil.bitnagil_backend.routineV2.request.RoutineV2RegisterRequest;
 import bitnagil.bitnagil_backend.routineV2.service.RoutineV2Service;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +39,25 @@ public class RoutineV2Controller implements RoutineV2Spec {
         return CustomResponseDto.from(routineV2Service.getRoutine(user, routineId));
     }
 
+    // 루틴을 새롭게 등록하는 API 입니다.
     @PostMapping("")
-    public CustomResponseDto<Object> registerRoutine(@CurrentUser User user, @RequestBody RegisterRoutineV2Request request) {
+    public CustomResponseDto<Object> registerRoutine(@CurrentUser User user, @RequestBody RoutineV2RegisterRequest request) {
         routineV2Service.registerRoutineV2(user, request);
+
+        return CustomResponseDto.from(null);
+    }
+
+    // 루틴 당일(오늘)만 삭제하는 API 입니다.
+    @DeleteMapping("/{routineId}")
+    public CustomResponseDto<Object> deleteRoutineByDay(@CurrentUser User user, @PathVariable Long routineId) {
+        routineV2Service.deleteRoutineByDay(user, routineId);
+
+        return CustomResponseDto.from(null);
+    }
+
+    @PatchMapping("")
+    public CustomResponseDto<Object> updateRoutineInfo(@CurrentUser User user, @RequestBody RoutineInfoV2UpdateRequest request) {
+        routineV2Service.updateRoutineInfo(user, request);
 
         return CustomResponseDto.from(null);
     }
@@ -49,9 +66,9 @@ public class RoutineV2Controller implements RoutineV2Spec {
      * 루틴 완료 여부를 갱신하는 API 입니다.
      * 멱등성이 보장되는 업데이트 API이므로 PUT Method를 사용했습니다.
      */
-    @PutMapping("")
+    @PutMapping("/completions")
     public CustomResponseDto<Object> updateRoutineCompletionStatus(
-        @CurrentUser User user, @RequestBody UpdateRoutineCompletionRequest request) {
+        @CurrentUser User user, @RequestBody RoutineV2UpdateCompletionRequest request) {
 
         routineV2Service.updateRoutineCompletionStatus(user, request);
 
