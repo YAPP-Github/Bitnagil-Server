@@ -8,6 +8,8 @@ import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.routineV2.domain.enums.UpdateApplyDate;
 import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineInfoV2Request;
+import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionInfo;
+import bitnagil.bitnagil_backend.routineV2.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
 import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Service;
@@ -72,6 +74,7 @@ public class RoutineV2Service {
             request.getExecutionTime(),
             request.getRoutineStartDate(),
             request.getRoutineEndDate(),
+            request.getRecommendedRoutineType(),
             user);
 
         routineInfoV2Repository.save(routineInfo);
@@ -92,7 +95,7 @@ public class RoutineV2Service {
 
         routineV2Repository.deletePhysicallyById(routineV2.getRoutineId()); // 물리 삭제
     }
-    
+
     // 루틴 정보 수정 메서드
     @Transactional
     public void updateRoutineInfo(User user, UpdateRoutineInfoV2Request request) {
@@ -144,7 +147,7 @@ public class RoutineV2Service {
     }
 
     private void createRoutinesMatchedRepeatDayWithinPeriod(
-        List<LocalDate> targetDates, List<String> request, RoutineInfoV2 routineInfoV21) {
+        List<LocalDate> targetDates, List<String> request, RoutineInfoV2 routineInfoV2) {
 
         // 서브 루틴 완료 여부 리스트 생성
         List<Boolean> subRoutineCompleteYn = request.stream()
@@ -158,11 +161,23 @@ public class RoutineV2Service {
                 false,
                 request,
                 subRoutineCompleteYn,
-                routineInfoV21
+                routineInfoV2
             ))
             .toList();
 
         routineV2Repository.saveAll(routinesToRegister);
+    }
+
+    // 루틴 완료 여부를 업데이트 하는 메서드
+    @Transactional
+    public void updateRoutineCompletionStatus(User user, UpdateRoutineCompletionRequest request) {
+        for (UpdateRoutineCompletionInfo info : request.getRoutineCompletionInfos()) {
+            RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, info.getRoutineId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+            // 루틴, 서브루틴 완료 여부 갱신
+            routineV2.updateRoutineCompleteYn(info.getRoutineCompleteYn(), info.getSubRoutineCompleteYn());
+        }
     }
 
     /**
@@ -182,7 +197,7 @@ public class RoutineV2Service {
 
     // 특정 기간 보유 루틴 조회
     private RoutineV2SearchResponse queryRoutines(User user, LocalDate startDate, LocalDate endDate) {
-        Map<LocalDate, List<RoutineV2SearchResultDto>> response = new HashMap<>();
+        Map<LocalDate, RoutineV2SearchResponse.RoutineData> response = new HashMap<>();
 
         List<RoutineV2> routineList = routineV2Repository.findByUserAndDateRange(user, startDate, endDate);
 
@@ -190,12 +205,26 @@ public class RoutineV2Service {
             LocalDate date = routineV2.getRoutineDate();
             RoutineV2SearchResultDto routineSearchResultDto = routineV2Mapper.toRoutineV2SearchResultDto(routineV2);
 
-            // 날짜별 리스트에 추가
-            response.computeIfAbsent(date, key -> new ArrayList<>()).add(routineSearchResultDto);
+            // 날짜별 RoutineData 생성 혹은 가져오기
+            response.computeIfAbsent(date, key -> RoutineV2SearchResponse.RoutineData.builder()
+                    .routineList(new ArrayList<>())
+                    .allCompleted(true) // 초기값 true
+                    .build());
+
+            RoutineV2SearchResponse.RoutineData routineData = response.get(date);
+
+            // 리스트에 추가
+            routineData.getRoutineList().add(routineSearchResultDto);
+
+            // 하나라도 완료 안 된 루틴이 있으면 false로 변경
+            if (!routineSearchResultDto.getRoutineCompleteYn()) {
+                routineData.setAllCompleted(false);
+            }
         }
 
-        response.forEach((date, routineSearchResultDto) ->
-                routineSearchResultDto.sort(Comparator.comparing(RoutineV2SearchResultDto::getExecutionTime))
+        // 정렬 처리
+        response.values().forEach(data ->
+                data.getRoutineList().sort(Comparator.comparing(RoutineV2SearchResultDto::getExecutionTime))
         );
 
         return routineV2Mapper.toRoutineV2SearchResponse(response);

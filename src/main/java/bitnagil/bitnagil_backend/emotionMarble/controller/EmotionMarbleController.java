@@ -39,7 +39,7 @@ public class EmotionMarbleController implements EmotionMarbleSpec {
     }
 
     // todo: 당일의 유저가 선택한 감정 구슬 조회 API V2로 변환
-    @GetMapping("/v2/{searchDate}")
+    @GetMapping("/v2/emotion-marbles/{searchDate}")
     public CustomResponseDto<EmotionMarbleTypeResponseV2> getEmotionMarbleBySearchDateV2(
             @CurrentUser User user,
             @PathVariable LocalDate searchDate) {
@@ -50,7 +50,7 @@ public class EmotionMarbleController implements EmotionMarbleSpec {
     // 당일의 유저가 선택한 감정 구슬 조회 API
     // TODO: v2로 전환 시 deprecated 처리
     @Deprecated()
-    @GetMapping("/v1/{searchDate}")
+    @GetMapping("/v1/emotion-marbles/{searchDate}")
     public CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbleBySearchDate(
         @CurrentUser User user,
         @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate searchDate) {
