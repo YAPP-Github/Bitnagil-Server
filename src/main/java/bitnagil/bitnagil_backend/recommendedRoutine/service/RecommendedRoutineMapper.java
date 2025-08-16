@@ -59,7 +59,7 @@ public class RecommendedRoutineMapper {
 
     // 추천 카테고리 별 루틴, 서브루틴을 반환하는 DTO로 변환
     public RecommendedRoutineSearchResponse toRecommendedRoutineSearchResponse(
-        Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> response, EmotionMarble emotionMarble) {
+        Map<String, List<RecommendedRoutineSearchResult>> response, EmotionMarble emotionMarble) {
 
         return RecommendedRoutineSearchResponse.builder()
             .recommendedRoutines(response)
