@@ -9,6 +9,7 @@ import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.user.controller.spec.UserSpec;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.response.UserInfoResponse;
+import bitnagil.bitnagil_backend.user.response.UserOnboardingResponse;
 import bitnagil.bitnagil_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -24,5 +25,10 @@ public class UserController implements UserSpec {
         UserInfoResponse userInfoResponse = userService.getUserInfo(user);
 
         return CustomResponseDto.from(userInfoResponse);
+    }
+
+    @GetMapping("/onboarding")
+    public CustomResponseDto<UserOnboardingResponse> getUserOnboarding(@CurrentUser User user) {
+        return CustomResponseDto.from(userService.getUserOnboarding(user));
     }
 }
