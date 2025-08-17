@@ -89,6 +89,7 @@ public class RoutineV2Service {
     }
 
     // 루틴 오늘만 삭제 메서드
+    @Transactional
     public void deleteRoutineByDay(User user, Long routineId) {
         RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, routineId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
