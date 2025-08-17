@@ -10,14 +10,27 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
 
+    private static final String START_TIME_ATTR = "startTime";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        long startTime = System.currentTimeMillis();
+        request.setAttribute(START_TIME_ATTR, startTime);
+
         log.info("️⏹ [REQUEST] {} {}", request.getMethod(), request.getRequestURI());
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        log.info("⏹ [RESPONSE] {} {} - Status: {}", request.getMethod(), request.getRequestURI(), response.getStatus());
+        Long startTime = (Long) request.getAttribute(START_TIME_ATTR);
+        long endTime = System.currentTimeMillis();
+        long duration = (startTime != null) ? (endTime - startTime) : -1;
+
+        log.info("⏹ [RESPONSE] {} {} - Status: {} ({} ms)",
+                request.getMethod(),
+                request.getRequestURI(),
+                response.getStatus(),
+                duration);
     }
 }
