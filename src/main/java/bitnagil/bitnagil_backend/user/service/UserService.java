@@ -3,8 +3,10 @@ package bitnagil.bitnagil_backend.user.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.response.UserInfoResponse;
+import bitnagil.bitnagil_backend.user.response.UserOnboardingResponse;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -18,5 +20,15 @@ public class UserService {
 
     public UserInfoResponse getUserInfo(User user) {
         return userMapper.toUserInfoResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserOnboardingResponse getUserOnboarding(User user) {
+        Onboarding onboarding = user.getOnboarding();
+
+        return userMapper.toUserOnboardingResponse(
+            onboarding.getTimeSlot(),
+            onboarding.getEmotionType(),
+            onboarding.getTargetOutingFrequency());
     }
 }
