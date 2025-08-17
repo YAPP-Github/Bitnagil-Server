@@ -48,7 +48,7 @@ public class RoutineV2Controller implements RoutineV2Spec {
     }
 
     // 루틴 당일(오늘)만 삭제하는 API 입니다.
-    @DeleteMapping("/{routineId}")
+    @DeleteMapping("/day/{routineId}")
     public CustomResponseDto<Object> deleteRoutineByDay(@CurrentUser User user, @PathVariable Long routineId) {
         routineV2Service.deleteRoutineByDay(user, routineId);
 
