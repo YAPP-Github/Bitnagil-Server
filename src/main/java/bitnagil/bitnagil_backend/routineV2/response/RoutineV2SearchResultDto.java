@@ -34,4 +34,10 @@ public class RoutineV2SearchResultDto {
     private List<Boolean> subRoutineCompleteYn;
     @Schema(example = "WAKE_UP")
     private RecommendedRoutineType recommendedRoutineType;
+    @Schema(example = "true")
+    private Boolean routineDeletedYn; // 루틴 삭제 여부
+    @Schema(example = "2025-08-15")
+    private LocalDate routineStartDate; // 루틴 시작 일자
+    @Schema(example = "2025-08-31")
+    private LocalDate routineEndDate; // 루틴 종료 일자
 }

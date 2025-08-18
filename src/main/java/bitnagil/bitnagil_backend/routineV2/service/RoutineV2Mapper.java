@@ -26,6 +26,9 @@ public class RoutineV2Mapper {
                 .subRoutineNames(routine.getSubRoutineNames())
                 .subRoutineCompleteYn(routine.getSubRoutineCompleteYn())
                 .recommendedRoutineType(routine.getRoutineInfo().getRecommendedRoutineType())
+                .routineDeletedYn(routine.getRoutineInfo().getRoutineDeletedYn())
+                .routineStartDate(routine.getRoutineInfo().getRoutineStartDate())
+                .routineEndDate(routine.getRoutineInfo().getRoutineEndDate())
                 .build();
     }
 
