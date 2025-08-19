@@ -17,10 +17,10 @@ import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
-import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.user.domain.enums.SocialType;
 import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
-import bitnagil.bitnagil_backend.enums.Role;
+import bitnagil.bitnagil_backend.user.domain.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
 import lombok.RequiredArgsConstructor;
 

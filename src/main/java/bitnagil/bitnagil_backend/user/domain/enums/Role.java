@@ -1,5 +1,6 @@
-package bitnagil.bitnagil_backend.enums;
+package bitnagil.bitnagil_backend.user.domain.enums;
 
+import bitnagil.bitnagil_backend.enums.EnumType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

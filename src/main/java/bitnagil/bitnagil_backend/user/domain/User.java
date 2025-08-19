@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.user.domain;
 
-import bitnagil.bitnagil_backend.enums.Role;
-import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.user.domain.enums.Role;
+import bitnagil.bitnagil_backend.user.domain.enums.SocialType;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import jakarta.persistence.*;

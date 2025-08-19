@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.user.response;
 
 import bitnagil.bitnagil_backend.auth.jwt.Token;
-import bitnagil.bitnagil_backend.enums.Role;
+import bitnagil.bitnagil_backend.user.domain.enums.Role;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
