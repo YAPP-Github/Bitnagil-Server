@@ -4,15 +4,13 @@ import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.onboarding.controller.spec.OnboardingSpec;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
+import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequestV2;
 import bitnagil.bitnagil_backend.onboarding.request.RegistrationRoutinesRequest;
 import bitnagil.bitnagil_backend.onboarding.response.OnboardingResponse;
 import bitnagil.bitnagil_backend.onboarding.service.OnboardingService;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,10 +19,17 @@ public class OnboardingController implements OnboardingSpec {
 
     private final OnboardingService onboardingService;
 
+    @Deprecated
     @PostMapping("/v1/onboardings")
     public CustomResponseDto<OnboardingResponse> startOnboarding(@RequestBody OnboardingRequest onboardingRequest,
                                                                 @CurrentUser User user) {
         return onboardingService.startOnboarding(onboardingRequest, user);
+    }
+
+    @PostMapping("/v2/onboardings")
+    public CustomResponseDto<OnboardingResponse> startOnboardingV2(@RequestBody OnboardingRequestV2 onboardingRequest,
+                                                                 @CurrentUser User user) {
+        return onboardingService.startOnboardingV2(onboardingRequest, user);
     }
 
     // 온보딩 루틴 등록 API (V2)

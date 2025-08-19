@@ -9,8 +9,10 @@ import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
+import bitnagil.bitnagil_backend.onboarding.domain.enums.EmotionType;
 import bitnagil.bitnagil_backend.onboarding.repository.OnboardingRepository;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
+import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequestV2;
 import bitnagil.bitnagil_backend.onboarding.request.RegistrationRoutinesRequest;
 import bitnagil.bitnagil_backend.onboarding.response.OnboardingResponse;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
@@ -27,6 +29,8 @@ import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
 import bitnagil.bitnagil_backend.routineV2.service.RoutineV2Factory;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.service.UserManager;
+import bitnagil.bitnagil_backend.userOnboardingInfo.domain.UserOnboardingInfo;
+import bitnagil.bitnagil_backend.userOnboardingInfo.repository.UserOnboardingInfoRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -56,6 +60,7 @@ public class OnboardingService {
     // TODO: v2로 전환 시 Rename
     private final RoutineInfoV2Repository routineInfoV2Repository;
     private final RoutineV2Repository routineV2Repository;
+    private final UserOnboardingInfoRepository userOnboardingInfoRepository;
 
     private final RoutineV2Factory routineV2Factory;
     private final RoutineInfoV2Factory routineInfoV2Factory;
@@ -93,6 +98,59 @@ public class OnboardingService {
 
         return CustomResponseDto.from(response);
     }
+
+    /**
+     * 유저와 매칭되는 온보딩 결과를 설정하고, 리턴하는 메서드
+     * todo: v2로 전환 예정
+     */
+    @Transactional
+    public CustomResponseDto<OnboardingResponse> startOnboardingV2(OnboardingRequestV2 request, User user) {
+        // 요청에 알맞는 Onboarding 객체를 찾는다.
+        Onboarding onboarding = onboardingRepository
+                .findByTimeSlotAndEmotionTypeAndRealOutingFrequencyAndTargetOutingFrequency(
+                        request.getTimeSlot(),
+                        EmotionType.valueOf(request.getEmotionType().get(0)), // EmotionType은 List로 받지만, 단일값으로 처리
+                        request.getRealOutingFrequency(),
+                        request.getTargetOutingFrequency()
+                );
+
+        if(onboarding == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE);
+        }
+
+        // 회원은 온보딩과의 연관관계를 설정한다.
+        User persistedUser = userManager.getPersistedUser(user);
+        persistedUser.updateOnboarding(onboarding);
+
+        // 회원과 연관된 UserOnboardingInfo 객체를 찾고, 기존에 존재하는 경우 update, 없는 경우 생성한다.
+        UserOnboardingInfo userOnboardingInfo = userOnboardingInfoRepository.findByUser(persistedUser);
+        if (userOnboardingInfo == null) { // insert
+            UserOnboardingInfo newUserOnboardingInfo = UserOnboardingInfo.builder()
+                    .user(persistedUser)
+                    .timeSlot(request.getTimeSlot())
+                    .emotionTypes(request.getEmotionType())
+                    .targetOutingFrequency(request.getTargetOutingFrequency())
+                    .build();
+            userOnboardingInfoRepository.save(newUserOnboardingInfo);
+        }else{ // update
+            userOnboardingInfo.updateUserOnboardingInfo(
+                    request.getTimeSlot(),
+                    request.getEmotionType(),
+                    request.getTargetOutingFrequency()
+            );
+        }
+
+        // 온보딩의 CASE를 통해 추천루틴을 조회한다.
+        List<RecommendedRoutineDto> recommendedRoutineDtoList =
+                recommendedRoutineManager.recommendRoutinesByEmotionMarble(onboarding.getResultCase());
+
+        OnboardingResponse response = OnboardingResponse.builder()
+                .recommendedRoutines(recommendedRoutineDtoList)
+                .build();
+
+        return CustomResponseDto.from(response);
+    }
+
 
     /**
      * 온보딩 시 추천 루틴을 저장하는 메서드
