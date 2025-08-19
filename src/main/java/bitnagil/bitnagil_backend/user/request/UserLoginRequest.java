@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.user.request;
 
-import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.user.domain.enums.SocialType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

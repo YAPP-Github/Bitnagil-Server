@@ -4,25 +4,14 @@ import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
 import bitnagil.bitnagil_backend.auth.jwt.JwtUtil;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
-import bitnagil.bitnagil_backend.enums.Role;
-import bitnagil.bitnagil_backend.enums.SocialType;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
-import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
-import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 @DisplayName("회원 인증 테스트")
 @ExtendWith(MockitoExtension.class)
