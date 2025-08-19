@@ -5,6 +5,7 @@ import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequest;
+import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequestV2;
 import bitnagil.bitnagil_backend.onboarding.request.RegistrationRoutinesRequest;
 import bitnagil.bitnagil_backend.onboarding.response.OnboardingResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
@@ -14,6 +15,12 @@ import jakarta.validation.constraints.Null;
 
 @Tag(name = ApiTags.ONBOARDING)
 public interface OnboardingSpec {
+
+    @Operation(summary = "(v2) 온보딩을 수행하고, 추천 루틴을 응답받습니다. v1과 달리 emotionType 복수선택을 반영하기 위해 배열형태로 받습니다.")
+    @ApiErrorCodeExamples({
+            ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_RECOMMENDED_ROUTINE, ErrorCode.NOT_FOUND_USER_ONBOARDING_INFO
+    })
+    public CustomResponseDto<OnboardingResponse> startOnboardingV2(OnboardingRequestV2 onboardingRequestV2, User user);
 
     @Operation(summary = "온보딩을 수행하고, 추천 루틴을 응답받습니다.")
     @ApiErrorCodeExamples({
