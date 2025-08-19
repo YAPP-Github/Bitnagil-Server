@@ -17,7 +17,7 @@ public class AndroidAppVersionService {
     @Transactional(readOnly = true)
     public ForceUpdateResponse validateForceUpdateRequired(Integer clientMajor, Integer clientMinor) {
 
-        AndroidAppVersion latestVersion = androidAppVersionRepository.findLatestVersion();
+        AndroidAppVersion latestVersion = androidAppVersionRepository.findFirstByOrderByMajorDescMinorDesc();
 
         // major 비교
         if (clientMajor < latestVersion.getMajor()) {
