@@ -3,10 +3,6 @@ package bitnagil.bitnagil_backend.routine.controller.spec;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
@@ -43,9 +39,9 @@ public interface RoutineSpec {
         ErrorCode.ROUTINE_USER_NOT_MATCHED})
     CustomResponseDto<Object> updateRoutine(User user, UpdateRoutineRequest updateRoutineRequest);
 
-    @Operation(summary = "루틴 및 서브 루틴을 모두 삭제합니다.")
+    @Operation(summary = "(V2) 모든 날짜에서 루틴을 삭제합니다. (루틴 전체 삭제)")
     @ApiErrorCodeExamples({ErrorCode.NOT_FOUND_ROUTINE, ErrorCode.ROUTINE_USER_NOT_MATCHED})
-    CustomResponseDto<Object> deleteRoutine(User user, UUID routineId);
+    CustomResponseDto<Object> deleteRoutine(User user, String routineId);
 
     @Operation(summary = "여러 루틴의 완료 여부를 갱신합니다.")
     @ApiErrorCodeExamples({

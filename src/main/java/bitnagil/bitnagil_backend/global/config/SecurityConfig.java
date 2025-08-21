@@ -36,7 +36,8 @@ public class SecurityConfig {
         "/swagger-ui.html",
         "/swagger-ui/**",
         "/v3/api-docs/**",
-        "/api/v1/health-check"
+        "/api/v1/health-check",
+        "/api/v1/version/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -62,6 +63,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // GUEST 권한으로만 접근 가능한 경로
                 .requestMatchers("/api/v1/auth/agreements").hasRole("GUEST")
+                // ONBAORDING 권한으로만 접근 가능한 경로
+                .requestMatchers("/api/v1/onboardings", "/api/v2/onboardings", "/api/v1/onboardings/routines", "/api/v2/onboardings/routines", "/api/v1/users/infos").hasAnyRole("USER", "ONBOARDING")
                 // USER 권한으로만 접근 가능한 경로(전체)
                 .requestMatchers("/**").hasRole("USER")
                 .anyRequest().authenticated()

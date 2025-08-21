@@ -56,6 +56,7 @@ public enum ErrorCode {
     // 루틴 관련 에러 코드
     NOT_FOUND_ROUTINE("RT001", HttpStatus.NOT_FOUND, "존재하지 않는 루틴입니다."),
     ROUTINE_USER_NOT_MATCHED("RT002", HttpStatus.FORBIDDEN, "루틴의 유저 정보와 로그인 유저 정보가 일치하지 않습니다."),
+    NOT_FOUND_ROUTINE_INFO("RT003", HttpStatus.NOT_FOUND, "존재하지 않는 루틴 정보입니다."),
 
     // 서브 루틴 관련 에러 코드
     NOT_FOUND_SUB_ROUTINE("SR001", HttpStatus.NOT_FOUND, "해당 복합 키에 맞는 서브 루틴이 존재하지 않습니다."),
@@ -75,6 +76,7 @@ public enum ErrorCode {
 
     // 온보딩 관련 에러 코드
     NOT_FOUND_RECOMMENDED_ROUTINE("ON000", HttpStatus.NOT_FOUND, "조건에 맞는 추천 루틴을 찾을 수 없습니다."),
+    NOT_FOUND_USER_ONBOARDING_INFO("ON001", HttpStatus.NOT_FOUND, "온보딩 정보가 존재하지 않습니다."),
 
     // 감정구슬 관련 에러코드
     ALREADY_REGISTERED_EMOTION_MARBLE("EM000", HttpStatus.CONFLICT, "감정구슬은 하루에 한번만 등록할 수 있습니다."),

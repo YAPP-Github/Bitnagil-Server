@@ -17,7 +17,7 @@ public class RecommendedRoutineSearchResponse {
 
     // 추천 루틴 타입별 루틴, 서브루틴 리스트
     @Schema(description = "추천 루틴 타입을 key로 가지는 루틴 목록 Map입니다. Swagger에서는 additionalProp1처럼 보일 수 있습니다.")
-    Map<RecommendedRoutineType, List<RecommendedRoutineSearchResult>> recommendedRoutines;
+    Map<String, List<RecommendedRoutineSearchResult>> recommendedRoutines;
     // 감정 구슬 enum 값
     @Schema(description = "감정 구슬 타입")
     EmotionMarbleType emotionMarbleType;

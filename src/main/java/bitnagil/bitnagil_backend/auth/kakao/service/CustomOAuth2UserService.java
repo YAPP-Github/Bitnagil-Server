@@ -1,6 +1,5 @@
 package bitnagil.bitnagil_backend.auth.kakao.service;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ import bitnagil.bitnagil_backend.auth.kakao.domain.OAuth2Attribute;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
-import bitnagil.bitnagil_backend.enums.SocialType;
+import bitnagil.bitnagil_backend.user.domain.enums.SocialType;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

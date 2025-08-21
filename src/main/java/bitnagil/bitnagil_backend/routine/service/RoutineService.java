@@ -40,6 +40,10 @@ import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.SubRoutineInfo;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
+import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
+import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repository;
+import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
+import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +67,8 @@ public class RoutineService {
     private final RoutineFactory routineFactory;
     private final RoutineMapper routineMapper;
     private final ChangedRoutineFactory changedRoutineFactory;
+    private final RoutineV2Repository routineV2Repository;
+    private final RoutineInfoV2Repository routineInfoV2Repository;
 
     // 루틴, 세부루틴을 함께 저장하는 루틴 등록 메서드
     @Transactional
@@ -157,24 +163,20 @@ public class RoutineService {
         }
     }
 
-    // 루틴, 세부 루틴을 삭제하는 메서드
+    // 루틴을 모든 날짜에서 삭제하는 메서드
     @Transactional
-    public void deleteRoutine(User user, UUID routineId) {
+    public void deleteRoutine(User user, String routineId) {
+        LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
 
-        Routine routine = routineValidator.validateRoutineOwnership(routineId, user, now);
-
-        // 기존 루틴, 서브 루틴의 이력 종료일시 및 deleteAt 갱신
-        routine.updateHistoryEndDateTime(now);
-        routine.setDeleteAt(now);
-
-        // 서브 루틴을 순회하면서 이력 종료일시 및 deleteAt 갱신
-        subRoutineRepository.findByRoutineId(routineId)
-            .forEach(subRoutine -> {
-                subRoutine.updateHistoryEndDateTime(now);
-                subRoutine.setDeleteAt(now);
-            });
-
+        if (routineId.length() == 36) { // (v1) routineId의 타입이 UUID인 경우
+            UUID v1RoutineId = UUID.fromString(routineId);
+            deleteV1Routine(user, v1RoutineId, now);
+        }
+        else { // (v2) routineId의 타입이 Long인 경우
+            Long v2RoutineId = Long.valueOf(routineId);
+            deleteV2Routine(user, v2RoutineId, today);
+        }
     }
 
     // 유저가 선택한 요일(당일)만 루틴, 서브 루틴을 삭제하는 메서드
@@ -271,6 +273,43 @@ public class RoutineService {
                 routineCompletionRepository.save(newRoutineCompletion);
             }
         }
+    }
+
+    // v2에서 사용하는 루틴 삭제 메서드
+    private void deleteV2Routine(User user, Long v2RoutineId, LocalDate today) {
+        RoutineV2 routineV2 = routineV2Repository.findByUserAndRoutineId(user, v2RoutineId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE));
+
+        RoutineInfoV2 routineInfoV2 = routineV2.getRoutineInfo();
+
+        // 오늘 이후 루틴 내역 모두 삭제 (Hard Delete)
+        List<RoutineV2> routinesV2AfterToday = routineV2Repository
+            .findByRoutineInfoAndRoutineDateAfter(routineInfoV2, today);
+
+        List<Long> routineIds = routinesV2AfterToday.stream()
+            .map(RoutineV2::getRoutineId)
+            .toList();
+
+        routineV2Repository.deleteAllPhysicallyByIds(routineIds); // 물리 삭제
+
+        routineInfoV2.updateRoutineEndDate(today); // 종료 일자를 삭제 당일로 변경
+        routineInfoV2.updateRoutineDeletedYn(true); // 루틴 삭제 여부 갱신
+    }
+
+    // v1에서 사용하는 루틴 삭제 메서드
+    private void deleteV1Routine(User user, UUID v1RoutineId, LocalDateTime now) {
+        Routine routine = routineValidator.validateRoutineOwnership(v1RoutineId, user, now);
+
+        // 기존 루틴, 서브 루틴의 이력 종료일시 및 deleteAt 갱신
+        routine.updateHistoryEndDateTime(now);
+        routine.setDeleteAt(now);
+
+        // 서브 루틴을 순회하면서 이력 종료일시 및 deleteAt 갱신
+        subRoutineRepository.findByRoutineId(v1RoutineId)
+            .forEach(subRoutine -> {
+                subRoutine.updateHistoryEndDateTime(now);
+                subRoutine.setDeleteAt(now);
+            });
     }
 
     // routineCompletionId에 해당하는 완료 여부 데이터 삭제

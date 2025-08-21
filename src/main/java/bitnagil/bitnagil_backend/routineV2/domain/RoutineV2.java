@@ -3,6 +3,7 @@ package bitnagil.bitnagil_backend.routineV2.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.BooleanListConverter;
 import bitnagil.bitnagil_backend.global.utils.StringListConverter;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
@@ -30,7 +31,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @SQLDelete(sql = "UPDATE routine_v2 SET deleted_at = NOW() WHERE routine_id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class RoutineV2 {
+public class RoutineV2 extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long routineId; // 일일 루틴 ID
@@ -43,11 +44,11 @@ public class RoutineV2 {
 
     @NotNull
     @Convert(converter = StringListConverter.class)
-    List<String> subRoutineNames; // 서브 루틴 이름 리스트
+    private List<String> subRoutineNames; // 서브 루틴 이름 리스트
 
     @NotNull
     @Convert(converter = BooleanListConverter.class)
-    List<Boolean> subRoutineCompleteYn; // 서브 루틴 완료 여부 리스트
+    private List<Boolean> subRoutineCompleteYn; // 서브 루틴 완료 여부 리스트
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_info_id")
@@ -61,5 +62,11 @@ public class RoutineV2 {
         this.subRoutineNames = subRoutineNames;
         this.subRoutineCompleteYn = subRoutineCompleteYn;
         this.routineInfo = routineInfo;
+    }
+
+    // 루틴 완료 여부 갱신
+    public void updateRoutineCompleteYn(Boolean routineCompleteYn, List<Boolean> subRoutineCompleteYn) {
+        this.routineCompleteYn = routineCompleteYn;
+        this.subRoutineCompleteYn = subRoutineCompleteYn;
     }
 }

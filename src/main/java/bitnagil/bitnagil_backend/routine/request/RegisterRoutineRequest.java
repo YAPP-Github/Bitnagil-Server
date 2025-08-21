@@ -23,6 +23,7 @@ public class RegisterRoutineRequest {
     @Schema(description = "반복 요일에 대한 리스트입니다.",
             example = "[\"MONDAY\", \"FRIDAY\"]",
             required = true)
+    @NotNull
     private List<DayOfWeek> repeatDay;
 
     @Schema(description = "루틴 시작 시간입니다.",

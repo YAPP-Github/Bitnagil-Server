@@ -3,6 +3,7 @@ package bitnagil.bitnagil_backend.emotionMarble.controller;
 import bitnagil.bitnagil_backend.emotionMarble.controller.spec.EmotionMarbleSpec;
 import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
+import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponseV2;
 import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
 import bitnagil.bitnagil_backend.emotionMarble.service.EmotionMarbleService;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
@@ -18,18 +19,18 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/emotion-marbles")
+@RequestMapping(value = "/api")
 public class EmotionMarbleController implements EmotionMarbleSpec {
     private final EmotionMarbleService emotionMarbleService;
 
     // 감정구슬 조회 API
-    @GetMapping("")
+    @GetMapping("/v1/emotion-marbles")
     public CustomResponseDto<List<EmotionMarbleTypeResponse>> getEmotionMarbles() {
         return CustomResponseDto.from(emotionMarbleService.getEmotionMarbles());
     }
 
     // 감정구슬 등록 API
-    @PostMapping("")
+    @PostMapping("/v1/emotion-marbles")
     public CustomResponseDto<RegisterEmotionMarbleResponse> registryEmotionMarble(
         @CurrentUser User user,
         @RequestBody RegisterEmotionMarbleRequest request) {
@@ -37,8 +38,19 @@ public class EmotionMarbleController implements EmotionMarbleSpec {
         return CustomResponseDto.from(emotionMarbleService.registryEmotionMarble(user, request));
     }
 
+    // todo: 당일의 유저가 선택한 감정 구슬 조회 API V2로 변환
+    @GetMapping("/v2/emotion-marbles/{searchDate}")
+    public CustomResponseDto<EmotionMarbleTypeResponseV2> getEmotionMarbleBySearchDateV2(
+            @CurrentUser User user,
+            @PathVariable LocalDate searchDate) {
+
+        return CustomResponseDto.from(emotionMarbleService.getEmotionMarbleBySearchDateV2(user, searchDate));
+    }
+
     // 당일의 유저가 선택한 감정 구슬 조회 API
-    @GetMapping("/{searchDate}")
+    // TODO: v2로 전환 시 deprecated 처리
+    @Deprecated()
+    @GetMapping("/v1/emotion-marbles/{searchDate}")
     public CustomResponseDto<EmotionMarbleTypeResponse> getEmotionMarbleBySearchDate(
         @CurrentUser User user,
         @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate searchDate) {
