@@ -112,7 +112,7 @@ public class RoutineV2Service {
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROUTINE_INFO));
 
         // 요첨받은 루틴 정보가 기존 루틴 정보와 동일할 경우
-        if (!isChangedRoutineInfo(request, routineInfoV2)) return;
+        if (!isChangedRoutineInfo(request, routineInfoV2, routineV2)) return;
 
         // 변경사항을 적용할 변경날짜를 설정
         LocalDate changedDate = request.getUpdateApplyDate().equals(UpdateApplyDate.TODAY) ? today : tomorrow;
@@ -139,12 +139,13 @@ public class RoutineV2Service {
     }
 
     // 루틴 정보에서 변경된 부분이 있는지 검증
-    private boolean isChangedRoutineInfo(RoutineInfoV2UpdateRequest request, RoutineInfoV2 routineInfoV2) {
+    private boolean isChangedRoutineInfo(RoutineInfoV2UpdateRequest request, RoutineInfoV2 routineInfoV2, RoutineV2 routineV2) {
         return !routineInfoV2.getRoutineName().equals(request.getRoutineName()) ||
             !routineInfoV2.getRoutineRepeatDay().equals(request.getRepeatDay()) ||
             !routineInfoV2.getRoutineExecutionTime().equals(request.getExecutionTime()) ||
             !routineInfoV2.getRoutineStartDate().equals(request.getRoutineStartDate()) ||
-            !routineInfoV2.getRoutineEndDate().equals(request.getRoutineEndDate());
+            !routineInfoV2.getRoutineEndDate().equals(request.getRoutineEndDate()) ||
+            !routineV2.getSubRoutineNames().equals(request.getSubRoutineName());
     }
 
     private void createRoutinesMatchedRepeatDayWithinPeriod(
