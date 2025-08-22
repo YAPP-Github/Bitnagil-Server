@@ -132,6 +132,7 @@ public class RoutineV2Service {
             .routineEndDate(request.getRoutineEndDate())
             .executionTime(request.getExecutionTime())
             .subRoutineName(request.getSubRoutineName())
+            .recommendedRoutineType(routineInfoV2.getRecommendedRoutineType())
             .build();
 
         // 변경날짜부터의 새로운 루틴 등록
