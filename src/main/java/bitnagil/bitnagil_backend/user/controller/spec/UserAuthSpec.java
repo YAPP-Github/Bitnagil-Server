@@ -3,6 +3,7 @@ package bitnagil.bitnagil_backend.user.controller.spec;
 import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
 
+import bitnagil.bitnagil_backend.user.request.UserWithdrawalRequest;
 import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
@@ -56,7 +57,7 @@ public interface UserAuthSpec {
     @ApiErrorCodeExamples({
             ErrorCode.KAKAO_FEIGN_CALL_FAILED, ErrorCode.KAKAO_UNLINK_FAILED, ErrorCode.APPLE_FEIGN_CALL_FAILED
     })
-    CustomResponseDto<Object> withdrawal(User user);
+    CustomResponseDto<Object> withdrawal(UserWithdrawalRequest userWithdrawalRequest, User user);
 
     @Operation(summary = "유저가 최초 회원가입 시 약관 동의를 처리합니다.")
     @ApiErrorCodeExamples({

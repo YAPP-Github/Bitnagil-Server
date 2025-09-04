@@ -4,6 +4,7 @@ import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
 import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
 import org.springframework.web.bind.annotation.*;
 
+import bitnagil.bitnagil_backend.user.request.UserWithdrawalRequest;
 import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.user.controller.spec.UserAuthSpec;
@@ -44,8 +45,9 @@ public class UserAuthController implements UserAuthSpec {
     }
 
     @PostMapping("/withdrawal")
-    public CustomResponseDto<Object> withdrawal(@CurrentUser User user) {
-        userAuthService.withdrawal(user);
+    public CustomResponseDto<Object> withdrawal(@RequestBody UserWithdrawalRequest userWithdrawalRequest,
+                                                @CurrentUser User user) {
+        userAuthService.withdrawal(userWithdrawalRequest, user);
 
         return CustomResponseDto.from(null);
     }
