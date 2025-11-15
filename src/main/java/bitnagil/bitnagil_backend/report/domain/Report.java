@@ -1,16 +1,20 @@
 package bitnagil.bitnagil_backend.report.domain;
 
+import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.StringListConverter;
 import bitnagil.bitnagil_backend.report.domain.enums.ReportCategory;
+import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -21,7 +25,7 @@ import java.util.List;
 @Entity
 @SQLDelete(sql = "UPDATE report SET deleted_at = NOW() WHERE report_id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class Report {
+public class Report extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reportId; // 제보ID
@@ -46,4 +50,17 @@ public class Report {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Report(ReportCategory reportCategory, List<String> reportImageUrls, String reportTitle, String reportContent,
+                  String reportLocation, BigDecimal latitude, BigDecimal longitude, User user) {
+        this.reportCategory = reportCategory;
+        this.reportImageUrls = reportImageUrls;
+        this.reportTitle = reportTitle;
+        this.reportContent = reportContent;
+        this.reportLocation = reportLocation;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.user = user;
+    }
 }
