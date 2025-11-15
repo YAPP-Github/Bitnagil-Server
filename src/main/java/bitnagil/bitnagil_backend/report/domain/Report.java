@@ -23,6 +23,7 @@ import java.util.List;
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Getter
 @SQLDelete(sql = "UPDATE report SET deleted_at = NOW() WHERE report_id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Report extends BaseTimeEntity {
@@ -30,6 +31,8 @@ public class Report extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reportId; // 제보ID
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(40)")
     private ReportCategory reportCategory; // 제보카테고리
 
     @Convert(converter = StringListConverter.class)
@@ -62,5 +65,9 @@ public class Report extends BaseTimeEntity {
         this.latitude = latitude;
         this.longitude = longitude;
         this.user = user;
+    }
+
+    public void updateReportImageUrls(List<String> urls) {
+        this.reportImageUrls = urls;
     }
 }

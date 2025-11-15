@@ -21,11 +21,17 @@ public class ReportController implements ReportSpec {
     private final ReportService reportService;
 
     // 제보 등록 API
-    @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public CustomResponseDto<Object> registerReport(@CurrentUser User user,
-                                                    @RequestPart("request") ReportRegisterRequest request,
-                                                    @RequestPart(value = "images", required = false) List<MultipartFile> images) {
-        reportService.registerReport(user, request, images);
+    @PostMapping()
+    public CustomResponseDto<Long> registerReport(@CurrentUser User user,
+                                                    @RequestBody ReportRegisterRequest request) {
+        return CustomResponseDto.from(reportService.registerReport(user, request));
+    }
+
+    // 제보 파일 저장 API
+    @PutMapping(value = "/{reportId}/images")
+    public CustomResponseDto<Object> updateImages(@PathVariable Long reportId,
+                                                  @RequestParam List<String> urls) {
+        reportService.updateImages(reportId, urls);
         return CustomResponseDto.from(null);
     }
 }

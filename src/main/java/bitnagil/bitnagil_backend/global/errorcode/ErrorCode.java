@@ -83,9 +83,10 @@ public enum ErrorCode {
 
     // 기타 에러 코드
     JSON_CONVERT_ERROR("ETC001", HttpStatus.INTERNAL_SERVER_ERROR, "List를 JSON 문자열로 변환하는 데 실패했습니다."),
-    JSON_PARSE_ERROR("ETC001", HttpStatus.INTERNAL_SERVER_ERROR, "JSON 문자열을 List<String> 으로 변환하는 데 실패했습니다.");
+    JSON_PARSE_ERROR("ETC001", HttpStatus.INTERNAL_SERVER_ERROR, "JSON 문자열을 List<String> 으로 변환하는 데 실패했습니다."),
 
-
+    // 제보 관련 에러코드
+    NOT_FOUND_REPORT("RP001", HttpStatus.NOT_FOUND, "존재하지 않는 제보입니다.");
 
 
 
