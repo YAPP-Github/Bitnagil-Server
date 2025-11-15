@@ -14,4 +14,5 @@ public class ApiTags {
     public static final String RECOMMENDED_ROUTINE = "추천 루틴 API";
     public static final String APP_VERSION = "앱 버전 API";
     public static final String REPORT = "제보 API";
+    public static final String FILE = "파일 API";
 }
