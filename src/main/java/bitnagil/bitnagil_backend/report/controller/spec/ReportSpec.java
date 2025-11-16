@@ -17,7 +17,9 @@ public interface ReportSpec {
             description = "회원이 제보를 등록합니다.")
     CustomResponseDto<Long> registerReport(User user, @RequestBody ReportRegisterRequest request);
 
+    /* 추후에 변경을 고려해서 소스만 남겨놓음
     @Operation(summary = "제보 이미지 등록",
             description = "presigned URL을 통해 업로드된 이미지들의 URL을 제보 이미지로 등록합니다.")
     CustomResponseDto<Object> updateImages(Long reportId, List<String> urls);
+    */
 }

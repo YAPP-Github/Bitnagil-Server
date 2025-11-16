@@ -27,6 +27,7 @@ public class ReportController implements ReportSpec {
         return CustomResponseDto.from(reportService.registerReport(user, request));
     }
 
+    /* 추후에 변경을 고려해서 소스만 남겨놓음
     // 제보 파일 저장 API
     @PutMapping(value = "/{reportId}/images")
     public CustomResponseDto<Object> updateImages(@PathVariable Long reportId,
@@ -34,4 +35,5 @@ public class ReportController implements ReportSpec {
         reportService.updateImages(reportId, urls);
         return CustomResponseDto.from(null);
     }
+    */
 }

@@ -24,6 +24,7 @@ public class ReportService {
     public long registerReport(User user, ReportRegisterRequest request) {
         Report report = Report.builder()
                 .reportCategory(request.getReportCategory())
+                .reportImageUrls(request.getReportImageUrls())
                 .reportContent(request.getReportContent())
                 .reportLocation(request.getReportLocation())
                 .reportTitle(request.getReportTitle())
@@ -36,6 +37,7 @@ public class ReportService {
         return report.getReportId();
     }
 
+    /* 추후에 변경을 고려해서 소스만 남겨놓음
     @Transactional
     public void updateImages(Long reportId, List<String> urls) {
         Report report = reportRepository.findById(reportId)
@@ -43,4 +45,5 @@ public class ReportService {
 
         report.updateReportImageUrls(urls);
     }
+    */
 }
