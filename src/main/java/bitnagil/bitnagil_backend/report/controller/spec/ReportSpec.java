@@ -6,8 +6,7 @@ import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
 import bitnagil.bitnagil_backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -16,5 +15,11 @@ public interface ReportSpec {
 
     @Operation(summary = "제보등록",
             description = "회원이 제보를 등록합니다.")
-    CustomResponseDto<Object> registerReport(User user, @RequestPart ReportRegisterRequest request, @RequestPart List<MultipartFile> images);
+    CustomResponseDto<Long> registerReport(User user, @RequestBody ReportRegisterRequest request);
+
+    /* 추후에 변경을 고려해서 소스만 남겨놓음
+    @Operation(summary = "제보 이미지 등록",
+            description = "presigned URL을 통해 업로드된 이미지들의 URL을 제보 이미지로 등록합니다.")
+    CustomResponseDto<Object> updateImages(Long reportId, List<String> urls);
+    */
 }

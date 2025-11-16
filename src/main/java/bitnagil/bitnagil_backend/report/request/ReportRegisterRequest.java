@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Builder
@@ -32,6 +33,11 @@ public class ReportRegisterRequest {
             required = true)
     @NotNull
     private ReportCategory reportCategory;
+
+    @Schema(description = "제보 이미지 URL 리스트",
+            example = "[\"https://example.com/report/image1.jpg\", \"https://example.com/report/image2.jpg\"]" + "\n"
+    +"S3에 업로드 시 url에 https://example-bucket.s3.amazonaws.com/report/2d84%A4%EC%9D%BC.jpg?x-amz-acl=... 와 같은 쿼리파아미터가 붙어있는데, 이 쿼리파라미터는 모두 잘라서 앞부분에 해당하는 url만 요청해주세요.")
+    private List<String> reportImageUrls;
 
     @Schema(description = "제보 위치",
             example = "서울시 강남구 삼성동",
