@@ -3,6 +3,7 @@ package bitnagil.bitnagil_backend.report.domain;
 import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.StringListConverter;
 import bitnagil.bitnagil_backend.report.domain.enums.ReportCategory;
+import bitnagil.bitnagil_backend.report.domain.enums.ReportStatus;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.user.domain.User;
 import jakarta.persistence.*;
@@ -33,6 +34,10 @@ public class Report extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(40)")
+    private ReportStatus reportStatus; // 제보 처리 상태
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(40)")
     private ReportCategory reportCategory; // 제보카테고리
 
     @Convert(converter = StringListConverter.class)
@@ -55,8 +60,10 @@ public class Report extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Report(ReportCategory reportCategory, List<String> reportImageUrls, String reportTitle, String reportContent,
-                  String reportLocation, BigDecimal latitude, BigDecimal longitude, User user) {
+    public Report(ReportStatus reportStatus, ReportCategory reportCategory, List<String> reportImageUrls,
+        String reportTitle, String reportContent, String reportLocation, BigDecimal latitude, BigDecimal longitude,
+        User user) {
+        this.reportStatus = reportStatus;
         this.reportCategory = reportCategory;
         this.reportImageUrls = reportImageUrls;
         this.reportTitle = reportTitle;
