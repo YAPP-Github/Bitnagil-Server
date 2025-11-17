@@ -6,6 +6,7 @@ import bitnagil.bitnagil_backend.report.controller.spec.ReportSpec;
 import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
 import bitnagil.bitnagil_backend.report.service.ReportService;
 import bitnagil.bitnagil_backend.user.domain.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/report")
+@RequestMapping(value = "/api/v2/reports")
 public class ReportController implements ReportSpec {
 
     private final ReportService reportService;

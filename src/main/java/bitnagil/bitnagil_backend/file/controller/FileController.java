@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/file")
+@RequestMapping(value = "/api/v2/files")
 public class FileController implements FileSpec {
     private final FileService fileService;
 
