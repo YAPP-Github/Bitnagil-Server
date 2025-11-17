@@ -6,13 +6,19 @@ import bitnagil.bitnagil_backend.report.domain.Report;
 import bitnagil.bitnagil_backend.report.domain.enums.ReportStatus;
 import bitnagil.bitnagil_backend.report.repository.ReportRepository;
 import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
+import bitnagil.bitnagil_backend.report.response.ReportInfo;
+import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +43,39 @@ public class ReportService {
 
         reportRepository.save(report);
         return report.getReportId();
+    }
+
+    // 제보 전체 목록 조회
+    @Transactional
+    public ReportInfoResponse getAllReportInfo(User user) {
+        List<Report> reports = reportRepository.findByUser(user);
+
+        Map<LocalDate, List<ReportInfo>> reportInfoMap = new HashMap<>();
+
+        for (Report report : reports) {
+            LocalDate reportDate = report.getCreatedAt().toLocalDate();
+
+            ReportInfo reportInfo = ReportInfo.builder()
+                .reportStatus(report.getReportStatus())
+                .reportTitle(report.getReportTitle())
+                .reportCategory(report.getReportCategory())
+                .reportLocation(report.getReportLocation())
+                .reportImageUrl(report.getReportContent())
+                .build();
+
+            List<ReportInfo> reportInfos;
+            if (reportInfoMap.containsKey(reportDate)) {
+                reportInfos = reportInfoMap.get(reportDate);
+
+            } else {
+                reportInfos = new ArrayList<>();
+            }
+            reportInfos.add(reportInfo);
+            reportInfoMap.put(reportDate, reportInfos);
+
+        }
+
+        return new ReportInfoResponse(reportInfoMap);
     }
 
     /* 추후에 변경을 고려해서 소스만 남겨놓음

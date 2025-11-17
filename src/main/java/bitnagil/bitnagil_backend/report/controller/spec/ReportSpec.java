@@ -1,11 +1,18 @@
 package bitnagil.bitnagil_backend.report.controller.spec;
 
+import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
+import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
 import bitnagil.bitnagil_backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -13,9 +20,16 @@ import java.util.List;
 @Tag(name = ApiTags.REPORT)
 public interface ReportSpec {
 
+    @ApiResponse(responseCode = "200", useReturnTypeSchema = true, content =
+        @Content(mediaType = "application/json", examples = @ExampleObject(name = "성공 예시", value =
+            "{\n \"code\": \"OK\",\n \"message\": \"등록되었습니다.\",\n \"data\": 1\n}")))
     @Operation(summary = "제보등록",
             description = "회원이 제보를 등록합니다.")
     CustomResponseDto<Long> registerReport(User user, @RequestBody ReportRegisterRequest request);
+
+    @Operation(summary = "전체 제보 목록 조회",
+        description = "전체 제보 목록을 조회합니다.")
+    CustomResponseDto<ReportInfoResponse> getAllReportInfo(@CurrentUser User user);
 
     /* 추후에 변경을 고려해서 소스만 남겨놓음
     @Operation(summary = "제보 이미지 등록",
