@@ -4,12 +4,10 @@ import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.report.controller.spec.ReportSpec;
 import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
+import bitnagil.bitnagil_backend.report.response.ReportDetailInfoResponse;
 import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
 import bitnagil.bitnagil_backend.report.service.ReportService;
 import bitnagil.bitnagil_backend.user.domain.User;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +29,13 @@ public class ReportController implements ReportSpec {
     @GetMapping()
     public CustomResponseDto<ReportInfoResponse> getAllReportInfo(@CurrentUser User user) {
         return CustomResponseDto.from(reportService.getAllReportInfo(user));
+    }
+
+    // 제보 상세 조회 API
+    @GetMapping("/{reportId}")
+    public CustomResponseDto<ReportDetailInfoResponse> getReportDetailInfo(@CurrentUser User user,
+                                                                            @PathVariable Long reportId) {
+        return CustomResponseDto.from(reportService.getReportDetailInfo(user, reportId));
     }
 
     /* 추후에 변경을 고려해서 소스만 남겨놓음

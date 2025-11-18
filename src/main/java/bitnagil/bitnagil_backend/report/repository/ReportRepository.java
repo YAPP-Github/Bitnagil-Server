@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.report.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import bitnagil.bitnagil_backend.report.domain.Report;
 import bitnagil.bitnagil_backend.user.domain.User;
@@ -12,4 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
     List<Report> findByUser(User user);
+
+    Optional<Report> findByReportIdAndUser(Long reportId, User user);
 }
