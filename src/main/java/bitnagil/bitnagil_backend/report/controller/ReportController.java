@@ -4,18 +4,18 @@ import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.report.controller.spec.ReportSpec;
 import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
+import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
 import bitnagil.bitnagil_backend.report.service.ReportService;
 import bitnagil.bitnagil_backend.user.domain.User;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/report")
+@RequestMapping(value = "/api/v2/reports")
 public class ReportController implements ReportSpec {
 
     private final ReportService reportService;
@@ -25,6 +25,12 @@ public class ReportController implements ReportSpec {
     public CustomResponseDto<Long> registerReport(@CurrentUser User user,
                                                     @RequestBody ReportRegisterRequest request) {
         return CustomResponseDto.from(reportService.registerReport(user, request));
+    }
+
+    // 제보 목록 조회 API
+    @GetMapping()
+    public CustomResponseDto<ReportInfoResponse> getAllReportInfo(@CurrentUser User user) {
+        return CustomResponseDto.from(reportService.getAllReportInfo(user));
     }
 
     /* 추후에 변경을 고려해서 소스만 남겨놓음
