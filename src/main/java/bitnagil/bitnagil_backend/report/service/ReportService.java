@@ -46,7 +46,7 @@ public class ReportService {
     }
 
     // 제보 전체 목록 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public ReportInfoResponse getAllReportInfo(User user) {
         List<Report> reports = reportRepository.findByUser(user);
 
