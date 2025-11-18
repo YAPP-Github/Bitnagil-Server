@@ -12,6 +12,10 @@ import lombok.Getter;
 @Builder
 public class ReportInfo {
 
+    @Schema(description = "제보 ID 식별값입니다.",
+            example = "1")
+    private Long reportId;
+
     @Schema(description = "현재 제보 상태",
             example = "IN_PROGRESS")
     private ReportStatus reportStatus;

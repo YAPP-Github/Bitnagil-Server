@@ -56,11 +56,12 @@ public class ReportService {
             LocalDate reportDate = report.getCreatedAt().toLocalDate();
 
             ReportInfo reportInfo = ReportInfo.builder()
+                .reportId(report.getReportId())
                 .reportStatus(report.getReportStatus())
                 .reportTitle(report.getReportTitle())
                 .reportCategory(report.getReportCategory())
                 .reportLocation(report.getReportLocation())
-                .reportImageUrl(report.getReportContent())
+                .reportImageUrl(report.getReportImageUrls().get(0)) // 첫 번째 사진을 썸네일로 임의 설정
                 .build();
 
             List<ReportInfo> reportInfos;
