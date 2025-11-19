@@ -26,7 +26,9 @@ public interface ReportSpec {
         @Content(mediaType = "application/json", examples = @ExampleObject(name = "성공 예시", value =
             "{\n \"code\": \"OK\",\n \"message\": \"등록되었습니다.\",\n \"data\": 1\n}")))
     @Operation(summary = "제보등록",
-            description = "회원이 제보를 등록합니다.")
+            description = "회원이 제보를 등록합니다.\n\n"
+                + "발급된 presigned url 전체를 reportImageUrl에 담아서 보내주세요.\n\n"
+                + "queryParam은 빼고 담아주세요.")
     CustomResponseDto<Long> registerReport(User user, ReportRegisterRequest request);
 
     @Operation(summary = "전체 제보 목록 조회",
