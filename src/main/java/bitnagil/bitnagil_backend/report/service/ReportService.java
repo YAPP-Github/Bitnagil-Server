@@ -6,6 +6,7 @@ import bitnagil.bitnagil_backend.report.domain.Report;
 import bitnagil.bitnagil_backend.report.domain.enums.ReportStatus;
 import bitnagil.bitnagil_backend.report.repository.ReportRepository;
 import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
+import bitnagil.bitnagil_backend.report.response.ReportDetailInfoResponse;
 import bitnagil.bitnagil_backend.report.response.ReportInfo;
 import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
 import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
@@ -65,18 +66,33 @@ public class ReportService {
                 .build();
 
             List<ReportInfo> reportInfos;
-            if (reportInfoMap.containsKey(reportDate)) {
-                reportInfos = reportInfoMap.get(reportDate);
+            if (reportInfoMap.containsKey(reportDate)) { // 제보 날짜에 대한 이미 제보 기록이 있는 경우
+                reportInfos = reportInfoMap.get(reportDate); // 기존 제보 기록 정의
 
-            } else {
+            } else { // 제보 날짜에 대한 제보 기록이 없는 경우
                 reportInfos = new ArrayList<>();
             }
-            reportInfos.add(reportInfo);
-            reportInfoMap.put(reportDate, reportInfos);
 
+            reportInfos.add(reportInfo); // reportDate에 대한 ReportInfo를 추가
+            reportInfoMap.put(reportDate, reportInfos);
         }
 
         return new ReportInfoResponse(reportInfoMap);
+    }
+
+    @Transactional(readOnly = true)
+    public ReportDetailInfoResponse getReportDetailInfo(User user, Long reportId) {
+        Report report = reportRepository.findByReportIdAndUser(reportId, user).orElseThrow(
+            () -> new CustomException(ErrorCode.NOT_FOUND_REPORT));
+
+        return ReportDetailInfoResponse.builder()
+            .reportStatus(report.getReportStatus())
+            .reportTitle(report.getReportTitle())
+            .reportContent(report.getReportContent())
+            .reportCategory(report.getReportCategory())
+            .reportLocation(report.getReportLocation())
+            .reportImageUrls(report.getReportImageUrls())
+            .build();
     }
 
     /* 추후에 변경을 고려해서 소스만 남겨놓음
