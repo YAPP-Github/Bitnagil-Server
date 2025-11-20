@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.report.response;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import bitnagil.bitnagil_backend.report.domain.enums.ReportCategory;
@@ -13,6 +14,10 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class ReportDetailInfoResponse {
+
+    @Schema(description = "제보 날짜",
+        example = "2025-11-16")
+    private LocalDate reportDate;
 
     @Schema(description = "현재 제보 상태",
         example = "IN_PROGRESS")

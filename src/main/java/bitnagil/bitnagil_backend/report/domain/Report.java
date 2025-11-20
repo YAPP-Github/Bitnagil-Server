@@ -27,7 +27,7 @@ import java.util.List;
 @Getter
 @SQLDelete(sql = "UPDATE report SET deleted_at = NOW() WHERE report_id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class Report extends BaseTimeEntity {
+public class    Report extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reportId; // 제보ID

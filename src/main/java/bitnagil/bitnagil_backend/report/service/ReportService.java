@@ -86,6 +86,7 @@ public class ReportService {
             () -> new CustomException(ErrorCode.NOT_FOUND_REPORT));
 
         return ReportDetailInfoResponse.builder()
+            .reportDate(report.getCreatedAt().toLocalDate())
             .reportStatus(report.getReportStatus())
             .reportTitle(report.getReportTitle())
             .reportContent(report.getReportContent())
