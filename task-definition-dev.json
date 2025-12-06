@@ -70,8 +70,8 @@
   "requiresCompatibilities": [
     "EC2"
   ],
-  "cpu": "512",
-  "memory": "512",
+  "cpu": "1024",
+  "memory": "800",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"

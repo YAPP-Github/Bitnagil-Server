@@ -50,6 +50,8 @@ public class User extends BaseTimeEntity {
     private Boolean agreedToPrivacyPolicy; // 개인정보 수집 동의
     private Boolean isOverFourteen; // 14세 이상 여부
 
+    private String reasonOfWithdrawal; // 탈퇴 사유
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "onboarding_id")
     private Onboarding onboarding;
@@ -74,6 +76,10 @@ public class User extends BaseTimeEntity {
     public void updateOnboarding(Onboarding onboarding) {
         this.onboarding = onboarding;
         this.role = Role.USER; // 온보딩 완료 후 권한을 USER로 변경
+    }
+
+    public void updateUserReasonOfWithdrawal(String reasonOfWithdrawal) {
+        this.reasonOfWithdrawal = reasonOfWithdrawal;
     }
 
     // todo: 운영 반영 후 이슈가 없으면 제거
