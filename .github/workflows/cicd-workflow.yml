@@ -65,56 +65,56 @@ jobs:
 #          sudo apt-get update
 #          sudo apt-get install -y awscli
 
-      # AWS SSM으로 현재 redis의 포트 확인 커멘드 설정
-      - name: Get Redis port from AWS SSM
-        if: github.ref == 'refs/heads/develop'
-        id: send_cmd
-        run: |
-          cmd_id=$(aws ssm send-command \
-            --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceIds,Values=${{ secrets.EC2_INSTANCE_ID }}" \
-            --comment "Deploy script via CI" \
-            --parameters 'commands=[
-              "if netstat -tuln | grep -q \":6379 \"; then echo 6379; \
-              elif netstat -tuln | grep -q \":6380 \"; then echo 6380; \
-              else echo none; fi"
-            ]' \
-            --region ap-northeast-2 \
-            --query "Command.CommandId" --output text)
-          echo "cmd_id=$cmd_id" >> $GITHUB_OUTPUT    
-
-      # AWS SSM 커멘드를 실행하여 현재 redis의 포트 확인 및 교체할 port 저장
-      - name: Get Redis port command result
-        if: github.ref == 'refs/heads/develop'
-        id: get_cmd_result
-        run: |
-          redis_port=$(aws ssm get-command-invocation \
-            --command-id ${{ steps.send_cmd.outputs.cmd_id }} \
-            --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
-            --region ap-northeast-2 \
-            --query 'StandardOutputContent' \
-            --output text | tr -d '\n')
-          echo "현재 열려있는 Redis 포트: $redis_port"
-          if [ "$redis_port" = "6379" ]; then
-          next_port="6380"
-          elif [ "$redis_port" = "6380" ]; then
-          next_port="6379"
-          else
-          next_port="6379"
-          echo "Redis를 신규로 띄웁니다"
-          fi
-          echo "next_redis_port=$next_port" >> $GITHUB_OUTPUT
-
-      # 호스트 포트 수정
-      - name: Update Redis hostPort in task-definition-dev.json
-        if: github.ref == 'refs/heads/develop'
-        run: | 
-          jq --arg port "${{ steps.get_cmd_result.outputs.next_redis_port }}" \
-            '(.containerDefinitions[] | select(.name == "redis-dev").portMappings[] | select(.containerPort == 6379)).hostPort = ($port | tonumber)' \
-            task-definition-dev.json > tmp.json && mv tmp.json task-definition-dev.json
-          
-          echo "수정된 task-definition.json의 Redis portMappings:"
-          jq '.containerDefinitions[] | select(.name == "redis-dev") | .portMappings[].hostPort' task-definition-dev.json    
+#      # AWS SSM으로 현재 redis의 포트 확인 커멘드 설정
+#      - name: Get Redis port from AWS SSM
+#        if: github.ref == 'refs/heads/develop'
+#        id: send_cmd
+#        run: |
+#          cmd_id=$(aws ssm send-command \
+#            --document-name "AWS-RunShellScript" \
+#            --targets "Key=instanceIds,Values=${{ secrets.EC2_INSTANCE_ID }}" \
+#            --comment "Deploy script via CI" \
+#            --parameters 'commands=[
+#              "if netstat -tuln | grep -q \":6379 \"; then echo 6379; \
+#              elif netstat -tuln | grep -q \":6380 \"; then echo 6380; \
+#              else echo none; fi"
+#            ]' \
+#            --region ap-northeast-2 \
+#            --query "Command.CommandId" --output text)
+#          echo "cmd_id=$cmd_id" >> $GITHUB_OUTPUT
+#
+#      # AWS SSM 커멘드를 실행하여 현재 redis의 포트 확인 및 교체할 port 저장
+#      - name: Get Redis port command result
+#        if: github.ref == 'refs/heads/develop'
+#        id: get_cmd_result
+#        run: |
+#          redis_port=$(aws ssm get-command-invocation \
+#            --command-id ${{ steps.send_cmd.outputs.cmd_id }} \
+#            --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
+#            --region ap-northeast-2 \
+#            --query 'StandardOutputContent' \
+#            --output text | tr -d '\n')
+#          echo "현재 열려있는 Redis 포트: $redis_port"
+#          if [ "$redis_port" = "6379" ]; then
+#          next_port="6380"
+#          elif [ "$redis_port" = "6380" ]; then
+#          next_port="6379"
+#          else
+#          next_port="6379"
+#          echo "Redis를 신규로 띄웁니다"
+#          fi
+#          echo "next_redis_port=$next_port" >> $GITHUB_OUTPUT
+#
+#      # 호스트 포트 수정
+#      - name: Update Redis hostPort in task-definition-dev.json
+#        if: github.ref == 'refs/heads/develop'
+#        run: |
+#          jq --arg port "${{ steps.get_cmd_result.outputs.next_redis_port }}" \
+#            '(.containerDefinitions[] | select(.name == "redis-dev").portMappings[] | select(.containerPort == 6379)).hostPort = ($port | tonumber)' \
+#            task-definition-dev.json > tmp.json && mv tmp.json task-definition-dev.json
+#
+#          echo "수정된 task-definition.json의 Redis portMappings:"
+#          jq '.containerDefinitions[] | select(.name == "redis-dev") | .portMappings[].hostPort' task-definition-dev.json
 
 #      - name: Update spring.data.redis.port in application.yml
 #        if: github.ref == 'refs/heads/develop'

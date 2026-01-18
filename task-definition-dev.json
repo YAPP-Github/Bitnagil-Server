@@ -53,7 +53,7 @@
         {
           "name": "redis-dev-6379-tcp",
           "containerPort": 6379,
-          "hostPort": 6379,
+          "hostPort": 0,
           "protocol": "tcp"
         }
       ],
