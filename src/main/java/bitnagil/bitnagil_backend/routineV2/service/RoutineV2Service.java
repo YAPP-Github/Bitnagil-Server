@@ -62,6 +62,10 @@ public class RoutineV2Service {
     @Transactional
     public void registerRoutineV2(User user, RoutineV2RegisterRequest request) {
 
+        if(request.getRoutineStartDate().isAfter(request.getRoutineEndDate())) {
+            throw new CustomException(ErrorCode.INVALID_ROUTINE_DATE_RANGE);
+        }
+
         LocalDate today = LocalDate.now();
 
         // repeatDay가 비어 있으면 빈 리스트, 아니면 요청값 사용
