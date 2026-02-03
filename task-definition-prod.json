@@ -4,7 +4,7 @@
   "containerDefinitions": [
     {
       "name": "bitnagil",
-      "cpu": 1,
+      "cpu": 1024,
       "portMappings": [
         {
           "containerPort": 8080,
@@ -61,7 +61,7 @@
     {
       "name": "grafana",
       "image": "grafana/grafana:10.4.1",
-      "cpu": 128,
+      "cpu": 256,
       "memoryReservation": 256,
       "portMappings": [
         {
@@ -86,8 +86,8 @@
   "requiresCompatibilities": [
     "EC2"
   ],
-  "cpu": "1024",
-  "memory": "512",
+  "cpu": "2048",
+  "memory": "1028",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
