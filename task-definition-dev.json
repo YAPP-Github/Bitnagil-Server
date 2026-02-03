@@ -4,7 +4,7 @@
   "containerDefinitions": [
     {
       "name": "bitnagil-dev",
-      "cpu": 1,
+      "cpu": 1024,
       "portMappings": [
         {
           "containerPort": 8081,
@@ -48,7 +48,7 @@
     {
       "name": "redis-dev",
       "image": "redis:7-alpine",
-      "cpu": 1,
+      "cpu": 512,
       "portMappings": [
         {
           "name": "redis-dev-6379-tcp",
@@ -63,6 +63,44 @@
       "mountPoints": [],
       "volumesFrom": [],
       "systemControls": []
+    },
+    {
+      "name": "prometheus",
+      "image": "prometheus-image-placeholder",
+      "cpu": 256,
+      "memoryReservation": 256,
+      "essential": false,
+      "portMappings": [ { "containerPort": 9090, "protocol": "tcp" } ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/prometheus-dev",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    },
+    {
+      "name": "grafana",
+      "image": "grafana/grafana:10.4.1",
+      "cpu": 128,
+      "memoryReservation": 256,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": false,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/grafana-dev",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
     }
   ],
   "taskRoleArn": "arn:aws:iam::750819668269:role/ecsTaskExecutionRole",
