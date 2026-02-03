@@ -127,6 +127,27 @@ jobs:
 #          echo "After modification:"
 #          grep "spring.data.redis.port" config/dev/application-dev.yml
 
+      # 4. Prometheus Docker 이미지 빌드 및 푸시
+      - name: Build Prometheus image - release
+        if: github.ref == 'refs/heads/release'
+        id: build-prom-image-release
+        run: |
+          cp config/prod/application-prometheus-prod.yml ./prometheus.yml
+          docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }} . 
+          docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
+          echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest" >> $GITHUB_OUTPUT
+
+      - name: Build Prometheus image - develop
+        if: github.ref == 'refs/heads/develop'
+        id: build-prom-image-develop
+        run: |
+          cp config/dev/application-prometheus-dev.yml ./prometheus.yml
+          docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }} . 
+          docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
+          echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest" >> $GITHUB_OUTPUT
+
 
       # 5. Gradle 실행 권한 부여
       - name: Grant execute permission for Gradle
@@ -159,27 +180,6 @@ jobs:
           docker tag ${{ secrets.ECR_REPO_NAME_DEV }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest  # 이미지를 ECR 리포지토리로 태깅합니다.
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest  # 이미지를 ECR에 푸시합니다.
           echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest" >> $GITHUB_OUTPUT          
-
-      # 8-1. Prometheus Docker 이미지 빌드 및 푸시
-      - name: Build Prometheus image - release
-        if: github.ref == 'refs/heads/release'
-        id: build-prom-image-release
-        run: |
-          cp config/prod/application-prometheus-prod.yml ./prometheus.yml
-          docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }} . 
-          docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
-          echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest" >> $GITHUB_OUTPUT
-
-      - name: Build Prometheus image - develop
-        if: github.ref == 'refs/heads/develop'
-        id: build-prom-image-develop
-        run: |
-          cp config/dev/application-prometheus-dev.yml ./prometheus.yml
-          docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }} . 
-          docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
-          echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest" >> $GITHUB_OUTPUT
 
       # 9. Amazon ECS 태스크 정의에 새 이미지 ID 채우기
       - name: Fill in the new image ID in the Amazon ECS task definition - release
