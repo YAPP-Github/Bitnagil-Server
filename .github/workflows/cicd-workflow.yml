@@ -165,7 +165,7 @@ jobs:
         if: github.ref == 'refs/heads/release'
         id: build-prom-image-release
         run: |
-          cp ../config/prod/application-prometheus-prod.yml ./prometheus.yml
+          cp config/prod/application-prometheus-prod.yml ./prometheus.yml
           docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }} . 
           docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
@@ -175,7 +175,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         id: build-prom-image-develop
         run: |
-          cp ../config/dev/application-prometheus-dev.yml ./prometheus.yml
+          cp config/dev/application-prometheus-dev.yml ./prometheus.yml
           docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }} . 
           docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
