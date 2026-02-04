@@ -4,7 +4,7 @@
   "containerDefinitions": [
     {
       "name": "bitnagil",
-      "cpu": 1024,
+      "cpu": 700,
       "portMappings": [
         {
           "containerPort": 8080,
@@ -45,10 +45,18 @@
     {
       "name": "prometheus",
       "image": "prometheus-image-placeholder",
-      "cpu": 256,
-      "memoryReservation": 256,
+      "cpu": 200,
       "essential": false,
-      "portMappings": [ { "containerPort": 9090, "protocol": "tcp" } ],
+      "portMappings": [ {
+        "containerPort": 9090,
+        "hostPort": 0,
+        "protocol": "tcp" } ],
+      "mountPoints": [
+        {
+          "sourceVolume": "prometheus-storage",
+          "containerPath": "/prometheus"
+        }
+      ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -61,13 +69,18 @@
     {
       "name": "grafana",
       "image": "grafana/grafana:10.4.1",
-      "cpu": 256,
-      "memoryReservation": 256,
+      "cpu": 100,
       "portMappings": [
         {
           "containerPort": 3000,
-          "hostPort": 3000,
+          "hostPort": 0,
           "protocol": "tcp"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "grafana-storage",
+          "containerPath": "/var/lib/grafana"
         }
       ],
       "essential": false,
@@ -86,8 +99,8 @@
   "requiresCompatibilities": [
     "EC2"
   ],
-  "cpu": "2048",
-  "memory": "1028",
+  "cpu": "1024",
+  "memory": "1024",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
