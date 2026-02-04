@@ -67,7 +67,7 @@
     {
       "name": "prometheus",
       "image": "prometheus-image-placeholder",
-      "cpu": 200,
+      "cpu": 100,
       "essential": false,
       "portMappings": [
         {
