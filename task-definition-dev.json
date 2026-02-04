@@ -72,7 +72,7 @@
       "portMappings": [
         {
           "containerPort": 9090,
-          "hostPort": 9090,
+          "hostPort": 0,
           "protocol": "tcp"
         }
       ],
@@ -95,7 +95,7 @@
       "portMappings": [
         {
           "containerPort": 3000,
-          "hostPort": 3000,
+          "hostPort": 0,
           "protocol": "tcp"
         }
       ],
