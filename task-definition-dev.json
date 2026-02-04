@@ -122,6 +122,20 @@
       }
     }
   ],
+  "volumes": [
+    {
+      "name": "prometheus-storage",
+      "host": {
+        "sourcePath": "/ecs/prometheus-data"
+      }
+    },
+    {
+      "name": "grafana-storage",
+      "host": {
+        "sourcePath": "/ecs/grafana-data"
+      }
+    }
+  ],
   "taskRoleArn": "arn:aws:iam::750819668269:role/ecsTaskExecutionRole",
   "executionRoleArn": "arn:aws:iam::750819668269:role/ecsTaskExecutionRole",
   "requiresCompatibilities": [
