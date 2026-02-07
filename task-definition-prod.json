@@ -77,6 +77,16 @@
           "protocol": "tcp"
         }
       ],
+      "environment": [
+        {
+          "name": "GF_SERVER_ROOT_URL",
+          "value": "https://www.bitnagil.com/grafana"
+        },
+        {
+          "name": "GF_SERVER_SERVE_FROM_SUB_PATH",
+          "value": "true"
+        }
+      ],
       "mountPoints": [
         {
           "sourceVolume": "grafana-storage",
