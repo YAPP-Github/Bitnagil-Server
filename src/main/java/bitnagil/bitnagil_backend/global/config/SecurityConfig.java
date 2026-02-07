@@ -67,6 +67,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/onboardings", "/api/v2/onboardings", "/api/v1/onboardings/routines", "/api/v2/onboardings/routines", "/api/v1/users/infos").hasAnyRole("USER", "ONBOARDING")
                 // USER 권한으로만 접근 가능한 경로(전체)
                 .requestMatchers("/**").hasRole("USER")
+                .requestMatchers("/actuator/prometheus").permitAll() // Prometheus가 ecs 내부에서 접근할 수 있도록 설정(alb 단에서 외부 접근은 제어함. 보안 문제 없음)
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
