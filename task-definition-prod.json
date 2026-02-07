@@ -4,7 +4,6 @@
   "containerDefinitions": [
     {
       "name": "bitnagil",
-      "cpu": 700,
       "portMappings": [
         {
           "containerPort": 8080,
@@ -41,81 +40,6 @@
         "secretOptions": []
       },
       "systemControls": []
-    },
-    {
-      "name": "prometheus",
-      "image": "prometheus-image-placeholder",
-      "cpu": 200,
-      "essential": false,
-      "portMappings": [ {
-        "containerPort": 9090,
-        "hostPort": 0,
-        "protocol": "tcp" } ],
-      "mountPoints": [
-        {
-          "sourceVolume": "prometheus-storage",
-          "containerPath": "/prometheus"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/prometheus-dev",
-          "awslogs-region": "ap-northeast-2",
-          "awslogs-stream-prefix": "ecs"
-        }
-      }
-    },
-    {
-      "name": "grafana",
-      "image": "grafana/grafana:10.4.1",
-      "cpu": 100,
-      "portMappings": [
-        {
-          "containerPort": 3000,
-          "hostPort": 0,
-          "protocol": "tcp"
-        }
-      ],
-      "environment": [
-        {
-          "name": "GF_SERVER_ROOT_URL",
-          "value": "https://www.bitnagil.com/grafana"
-        },
-        {
-          "name": "GF_SERVER_SERVE_FROM_SUB_PATH",
-          "value": "true"
-        }
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "grafana-storage",
-          "containerPath": "/var/lib/grafana"
-        }
-      ],
-      "essential": false,
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/grafana-dev",
-          "awslogs-region": "ap-northeast-2",
-          "awslogs-stream-prefix": "ecs"
-        }
-      }
-    }
-  ],
-  "volumes": [
-    {
-      "name": "prometheus-storage",
-      "host": {
-        "sourcePath": "/ecs/prometheus-data"
-      }
-    },
-    {
-      "name": "grafana-storage",
-      "host": {
-        "sourcePath": "/ecs/grafana-data"
-      }
     }
   ],
   "taskRoleArn": "arn:aws:iam::750819668269:role/ecsTaskExecutionRole",
@@ -123,8 +47,8 @@
   "requiresCompatibilities": [
     "EC2"
   ],
-  "cpu": "1024",
-  "memory": "962",
+  "cpu": "824",
+  "memory": "662",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
