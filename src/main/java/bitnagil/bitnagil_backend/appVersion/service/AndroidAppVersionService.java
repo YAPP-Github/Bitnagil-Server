@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import bitnagil.bitnagil_backend.appVersion.Repository.AndroidAppVersionRepository;
 import bitnagil.bitnagil_backend.appVersion.domain.AndroidAppVersion;
 import bitnagil.bitnagil_backend.appVersion.response.ForceUpdateResponse;
+import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.bitnagil_backend.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,7 +19,8 @@ public class AndroidAppVersionService {
     @Transactional(readOnly = true)
     public ForceUpdateResponse validateForceUpdateRequired(Integer clientMajor, Integer clientMinor) {
 
-        AndroidAppVersion latestVersion = androidAppVersionRepository.findFirstByOrderByMajorDescMinorDesc();
+        AndroidAppVersion latestVersion = androidAppVersionRepository.findFirstByOrderByMajorDescMinorDesc()
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ANDROID_APP_VERSION));
 
         // major 비교
         if (clientMajor < latestVersion.getMajor()) {

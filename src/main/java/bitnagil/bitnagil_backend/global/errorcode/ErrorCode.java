@@ -87,7 +87,10 @@ public enum ErrorCode {
     JSON_PARSE_ERROR("ETC001", HttpStatus.INTERNAL_SERVER_ERROR, "JSON 문자열을 List<String> 으로 변환하는 데 실패했습니다."),
 
     // 제보 관련 에러코드
-    NOT_FOUND_REPORT("RP001", HttpStatus.NOT_FOUND, "존재하지 않는 제보입니다.");
+    NOT_FOUND_REPORT("RP001", HttpStatus.NOT_FOUND, "존재하지 않는 제보입니다."),
+
+    // 안드로이드 버전 관련 에러코드
+    NOT_FOUND_ANDROID_APP_VERSION("AAV001", HttpStatus.NOT_FOUND, "안드로이드 앱 버전을 찾을 수 없습니다.");
 
 
 
