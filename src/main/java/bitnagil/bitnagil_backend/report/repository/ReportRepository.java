@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
-    List<Report> findByUserOrderByCreatedAtDesc(User user);
+    List<Report> findByUserOrderByUpdatedAtDesc(User user);
 
     Optional<Report> findByReportIdAndUser(Long reportId, User user);
 }

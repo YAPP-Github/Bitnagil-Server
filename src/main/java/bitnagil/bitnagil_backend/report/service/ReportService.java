@@ -9,7 +9,6 @@ import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
 import bitnagil.bitnagil_backend.report.response.ReportDetailInfoResponse;
 import bitnagil.bitnagil_backend.report.response.ReportInfo;
 import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
-import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.bitnagil_backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class ReportService {
     // 제보 전체 목록 조회
     @Transactional(readOnly = true)
     public ReportInfoResponse getAllReportInfo(User user) {
-        List<Report> reports = reportRepository.findByUserOrderByCreatedAtDesc(user);
+        List<Report> reports = reportRepository.findByUserOrderByUpdatedAtDesc(user);
 
         Map<LocalDate, List<ReportInfo>> reportInfoMap = new HashMap<>();
 
