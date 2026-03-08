@@ -15,4 +15,5 @@ public class ApiTags {
     public static final String APP_VERSION = "앱 버전 API";
     public static final String REPORT = "제보 API";
     public static final String FILE = "파일 API";
+    public static final String KPI = "KPI API";
 }

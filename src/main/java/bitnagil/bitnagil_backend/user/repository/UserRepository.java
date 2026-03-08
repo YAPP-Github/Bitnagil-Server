@@ -1,5 +1,6 @@
 package bitnagil.bitnagil_backend.user.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
     Optional<User> findByUserId(Long userId);
+
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    long countByCreatedAtBefore(LocalDateTime endExclusive);
 }
