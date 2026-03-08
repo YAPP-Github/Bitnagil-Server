@@ -62,14 +62,7 @@ public class MonthlyKpi {
     private BigDecimal outingRoutineCompletionRate;
 
     /**
-     * 지표 5: 감정 구슬 기록한 날 비율 (%)
-     * (감정 구슬 기록한 날 / 앱 접속한 날) × 100 — 유저별 비율 평균
-     */
-    @Column(precision = 5, scale = 2)
-    private BigDecimal emotionRecordDayRate;
-
-    /**
-     * 지표 6: 긍정 감정 비율 (%)
+     * 지표 5: 긍정 감정 비율 (%)
      * (긍정 감정 기록 수 / 전체 감정 기록 수) × 100 — 활기, 만족, 평온
      */
     @Column(precision = 5, scale = 2)
@@ -81,14 +74,12 @@ public class MonthlyKpi {
         BigDecimal monthlyRoutineActiveUserRate,
         BigDecimal routineRegistrationRate,
         BigDecimal outingRoutineCompletionRate,
-        BigDecimal emotionRecordDayRate,
         BigDecimal positiveEmotionRate) {
         this.targetMonth = targetMonth;
         this.routineCompletionWithinSevenDaysRate = routineCompletionWithinSevenDaysRate;
         this.monthlyRoutineActiveUserRate = monthlyRoutineActiveUserRate;
         this.routineRegistrationRate = routineRegistrationRate;
         this.outingRoutineCompletionRate = outingRoutineCompletionRate;
-        this.emotionRecordDayRate = emotionRecordDayRate;
         this.positiveEmotionRate = positiveEmotionRate;
     }
 }

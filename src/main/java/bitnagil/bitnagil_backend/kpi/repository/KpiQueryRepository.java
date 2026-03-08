@@ -41,19 +41,4 @@ public interface KpiQueryRepository {
      * 전월 신규 가입자 중 가입 후 7일 이내 V2 루틴 1회 이상 완료한 user_id 목록
      */
     List<Long> findUserIdsWithRoutineCompletionWithin7DaysV2(LocalDateTime monthStart, LocalDateTime monthEnd);
-
-    /**
-     * 전월 기간 내 감정 구슬 기록 (user_id, date) 쌍 목록 (지표 5 계산용)
-     */
-    List<Object[]> findEmotionUserIdDatePairsInPeriod(LocalDate start, LocalDate end);
-
-    /**
-     * 전월 기간 내 V1 루틴 완료 (user_id, performed_date) 쌍 목록 (지표 5 접속한 날용)
-     */
-    List<Object[]> findRoutineCompletionV1UserIdDatePairsInPeriod(LocalDate start, LocalDate end);
-
-    /**
-     * 전월 기간 내 V2 루틴 (user_id, routine_date) 쌍 목록 (지표 5 접속한 날용)
-     */
-    List<Object[]> findRoutineV2UserIdDatePairsInPeriod(LocalDate start, LocalDate end);
 }

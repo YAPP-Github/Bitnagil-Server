@@ -160,42 +160,4 @@ public class KpiQueryRepositoryImpl implements KpiQueryRepository {
         List<Number> rows = q.getResultList();
         return toLongList(rows);
     }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Object[]> findEmotionUserIdDatePairsInPeriod(LocalDate start, LocalDate end) {
-        Query q = entityManager.createNativeQuery("""
-            SELECT em.user_id, em.date FROM emotion_marble em
-            WHERE em.deleted_at IS NULL AND em.date BETWEEN ?1 AND ?2
-            """);
-        q.setParameter(1, start);
-        q.setParameter(2, end);
-        return q.getResultList();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Object[]> findRoutineCompletionV1UserIdDatePairsInPeriod(LocalDate start, LocalDate end) {
-        Query q = entityManager.createNativeQuery("""
-            SELECT r.user_id, rc.performed_date FROM routine_completion rc
-            INNER JOIN routine r ON r.routine_id = rc.routine_id AND r.history_seq = rc.routine_history_seq
-            WHERE rc.complete_yn = 1 AND rc.performed_date BETWEEN ?1 AND ?2
-            """);
-        q.setParameter(1, start);
-        q.setParameter(2, end);
-        return q.getResultList();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Object[]> findRoutineV2UserIdDatePairsInPeriod(LocalDate start, LocalDate end) {
-        Query q = entityManager.createNativeQuery("""
-            SELECT ri.user_id, r2.routine_date FROM routinev2 r2
-            INNER JOIN routine_infov2 ri ON ri.routine_info_id = r2.routine_info_id AND ri.deleted_at IS NULL
-            WHERE r2.routine_date BETWEEN ?1 AND ?2
-            """);
-        q.setParameter(1, start);
-        q.setParameter(2, end);
-        return q.getResultList();
-    }
 }

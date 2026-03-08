@@ -11,7 +11,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +58,6 @@ public class KpiService {
         long mauCount = countMonthlyActiveUsers(start, end, monthStartDt, monthEndDt);
         BigDecimal kpi3 = calculateRoutineRegistrationRate(start, end, monthStartDt, monthEndDt, mauCount);
         BigDecimal kpi4 = calculateOutingRoutineCompletionRate(start, end, mauCount);
-        BigDecimal kpi5 = calculateEmotionRecordDayRate(start, end);
         BigDecimal kpi6 = calculatePositiveEmotionRate(start, end);
 
         MonthlyKpi entity = MonthlyKpi.builder()
@@ -68,7 +66,6 @@ public class KpiService {
             .monthlyRoutineActiveUserRate(kpi2)
             .routineRegistrationRate(kpi3)
             .outingRoutineCompletionRate(kpi4)
-            .emotionRecordDayRate(kpi5)
             .positiveEmotionRate(kpi6)
             .build();
 
@@ -142,74 +139,6 @@ public class KpiService {
         }
         long count = kpiQueryRepository.countDistinctUsersWithOutingCompletionInPeriod(start, end);
         return percent(count, mauCount);
-    }
-
-    /**
-     * 지표 5: 감정 구슬 기록한 날 비율 (%) — 유저별 (감정 기록한 날 / 접속한 날) 비율의 평균
-     */
-    private BigDecimal calculateEmotionRecordDayRate(LocalDate start, LocalDate end) {
-        List<Long> activeUserIds = kpiQueryRepository.findDistinctActiveUserIdsInPeriod(
-            start, end,
-            start.atStartOfDay(),
-            end.atTime(23, 59, 59));
-        if (activeUserIds.isEmpty()) {
-            return null;
-        }
-
-        List<Object[]> emotionPairs = kpiQueryRepository.findEmotionUserIdDatePairsInPeriod(start, end);
-        List<Object[]> v1Pairs = kpiQueryRepository.findRoutineCompletionV1UserIdDatePairsInPeriod(start, end);
-        List<Object[]> v2Pairs = kpiQueryRepository.findRoutineV2UserIdDatePairsInPeriod(start, end);
-
-        java.util.Map<Long, Set<LocalDate>> emotionDaysByUser = toUserIdDateMap(emotionPairs);
-        java.util.Map<Long, Set<LocalDate>> accessDaysByUser = new java.util.HashMap<>();
-        mergeUserIdDatePairs(accessDaysByUser, emotionPairs);
-        mergeUserIdDatePairs(accessDaysByUser, v1Pairs);
-        mergeUserIdDatePairs(accessDaysByUser, v2Pairs);
-
-        List<BigDecimal> ratios = new ArrayList<>();
-        for (Long userId : activeUserIds) {
-            Set<LocalDate> accessDays = accessDaysByUser.getOrDefault(userId, Set.of());
-            if (accessDays.isEmpty()) {
-                continue;
-            }
-            Set<LocalDate> emotionDays = emotionDaysByUser.getOrDefault(userId, Set.of());
-            if (emotionDays.isEmpty()) {
-                ratios.add(BigDecimal.ZERO);
-                continue;
-            }
-            double ratio = (double) emotionDays.size() / accessDays.size();
-            ratios.add(BigDecimal.valueOf(ratio * 100).setScale(2, RoundingMode.HALF_UP));
-        }
-        if (ratios.isEmpty()) {
-            return null;
-        }
-        return ratios.stream()
-            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            .divide(BigDecimal.valueOf(ratios.size()), 2, RoundingMode.HALF_UP);
-    }
-
-    private static java.util.Map<Long, Set<LocalDate>> toUserIdDateMap(List<Object[]> pairs) {
-        java.util.Map<Long, Set<LocalDate>> map = new java.util.HashMap<>();
-        mergeUserIdDatePairs(map, pairs);
-        return map;
-    }
-
-    private static void mergeUserIdDatePairs(java.util.Map<Long, Set<LocalDate>> map, List<Object[]> pairs) {
-        for (Object[] row : pairs) {
-            Long userId = ((Number) row[0]).longValue();
-            LocalDate d = toLocalDate(row[1]);
-            map.computeIfAbsent(userId, k -> new HashSet<>()).add(d);
-        }
-    }
-
-    private static LocalDate toLocalDate(Object value) {
-        if (value instanceof LocalDate) {
-            return (LocalDate) value;
-        }
-        if (value instanceof java.sql.Date) {
-            return ((java.sql.Date) value).toLocalDate();
-        }
-        throw new IllegalArgumentException("Unexpected date type: " + (value != null ? value.getClass() : "null"));
     }
 
     /**
