@@ -6,13 +6,20 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +46,22 @@ public class FileService {
             responseMap.put(fileName, url.toString());
         }
         return responseMap;
+    }
+
+    public String uploadBytes(String key, byte[] data, String contentType) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(data.length);
+        metadata.setContentType(contentType);
+
+        PutObjectRequest request = new PutObjectRequest(
+                bucket,
+                key,
+                new ByteArrayInputStream(data),
+                metadata
+        ).withCannedAcl(CannedAccessControlList.PublicRead);
+
+        amazonS3.putObject(request);
+        return amazonS3.getUrl(bucket, key).toString();
     }
 
     // S3 Presigned URL 생성
@@ -74,4 +97,3 @@ public class FileService {
         return String.format("%s/%s", prefix, fileId + "-" + fileName);
     }
 }
-
