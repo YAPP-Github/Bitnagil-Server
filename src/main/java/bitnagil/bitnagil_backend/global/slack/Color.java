@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.global;
+package bitnagil.bitnagil_backend.global.slack;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,7 @@
 package bitnagil.bitnagil_backend.global.handler;
 
-import bitnagil.bitnagil_backend.global.SlackService;
+import bitnagil.bitnagil_backend.global.slack.SlackMessageOptions;
+import bitnagil.bitnagil_backend.global.slack.SlackService;
 import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.exception.CustomException;
 import bitnagil.bitnagil_backend.global.response.ErrorResponseDto;
@@ -197,7 +198,11 @@ public class GlobalExceptionHandler {
         String title = "에러 코드: " + errorCode.getCode() + "\n"
                 + "상태 코드: " + errorCode.getHttpStatus().value() + "\n"
                 + "메시지: " + errorCode.getMessage();
-        slackService.sendMessage(title, messageMap);
+        SlackMessageOptions options = SlackMessageOptions.builder()
+                .title(title)
+                .data(messageMap)
+                .build();
+        slackService.sendMessage(options);
     }
 
     /**
@@ -212,7 +217,11 @@ public class GlobalExceptionHandler {
                 + "상태 코드: " + errorCode.getHttpStatus().value() + "\n"
                 + "메시지: " + errorCode.getMessage() + "\n"
                 + "추가 메시지: " + message;
-        slackService.sendMessage(title, messageMap);
+        SlackMessageOptions options = SlackMessageOptions.builder()
+                .title(title)
+                .data(messageMap)
+                .build();
+        slackService.sendMessage(options);
     }
 
     /**
