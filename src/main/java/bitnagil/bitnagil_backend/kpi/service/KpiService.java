@@ -3,6 +3,7 @@ package bitnagil.bitnagil_backend.kpi.service;
 import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
 import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
 import bitnagil.bitnagil_backend.kpi.domain.MonthlyKpi;
+import bitnagil.bitnagil_backend.kpi.event.MonthlyKpiSavedEvent;
 import bitnagil.bitnagil_backend.kpi.repository.KpiQueryRepository;
 import bitnagil.bitnagil_backend.kpi.repository.MonthlyKpiRepository;
 import bitnagil.bitnagil_backend.user.repository.UserRepository;
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ public class KpiService {
     private final KpiQueryRepository kpiQueryRepository;
     private final UserRepository userRepository;
     private final EmotionMarbleRepository emotionMarbleRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 지정한 월에 대한 KPI를 계산하여 저장합니다.
@@ -70,6 +73,7 @@ public class KpiService {
             .build();
 
         monthlyKpiRepository.save(entity);
+        eventPublisher.publishEvent(new MonthlyKpiSavedEvent(entity));
     }
 
     /**
@@ -81,7 +85,7 @@ public class KpiService {
         LocalDateTime monthEndDt) {
         long newUserCount = userRepository.countByCreatedAtBetween(monthStartDt, monthEndDt);
         if (newUserCount == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
         List<Long> v1 = kpiQueryRepository.findUserIdsWithRoutineCompletionWithin7DaysV1(monthStartDt, monthEndDt);
         List<Long> v2 = kpiQueryRepository.findUserIdsWithRoutineCompletionWithin7DaysV2(monthStartDt, monthEndDt);
@@ -100,7 +104,7 @@ public class KpiService {
         LocalDateTime monthEndDt) {
         long totalUsers = userRepository.countByCreatedAtBefore(monthEndDt.plusSeconds(1));
         if (totalUsers == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
         long count = kpiQueryRepository.countDistinctUsersWithRoutineCompletionInPeriod(start, end);
         return percent(count, totalUsers);
@@ -124,7 +128,7 @@ public class KpiService {
         LocalDateTime monthEndDt,
         long mauCount) {
         if (mauCount == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
         long count = kpiQueryRepository.countDistinctUsersWithRoutineRegistrationInPeriod(monthStartDt, monthEndDt);
         return percent(count, mauCount);
@@ -135,7 +139,7 @@ public class KpiService {
      */
     private BigDecimal calculateOutingRoutineCompletionRate(LocalDate start, LocalDate end, long mauCount) {
         if (mauCount == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
         long count = kpiQueryRepository.countDistinctUsersWithOutingCompletionInPeriod(start, end);
         return percent(count, mauCount);
@@ -147,7 +151,7 @@ public class KpiService {
     private BigDecimal calculatePositiveEmotionRate(LocalDate start, LocalDate end) {
         long total = emotionMarbleRepository.countByDateBetween(start, end);
         if (total == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
         long positive = emotionMarbleRepository.countByDateBetweenAndEmotionMarbleTypeIn(
             start, end, POSITIVE_EMOTION_TYPES);
@@ -156,7 +160,7 @@ public class KpiService {
 
     private static BigDecimal percent(long numerator, long denominator) {
         if (denominator == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
         return BigDecimal.valueOf(numerator * 100.0 / denominator)
             .setScale(2, RoundingMode.HALF_UP);
