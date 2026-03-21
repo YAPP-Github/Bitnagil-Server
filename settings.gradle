@@ -1,1 +1,3 @@
 rootProject.name = 'bitnagil-backend'
+include 'bitnagil-common'
+include 'bitnagil-domain'
