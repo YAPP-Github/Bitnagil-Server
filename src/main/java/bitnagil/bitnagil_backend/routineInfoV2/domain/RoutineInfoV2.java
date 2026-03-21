@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.common.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_backend.user.domain.User;

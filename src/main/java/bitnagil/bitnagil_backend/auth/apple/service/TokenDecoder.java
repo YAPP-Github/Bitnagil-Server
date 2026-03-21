@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.auth.apple.service;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.common.exception.CustomException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Base64;

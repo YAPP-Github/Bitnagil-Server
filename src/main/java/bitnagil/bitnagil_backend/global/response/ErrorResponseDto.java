@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.global.response;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.ConstraintViolation;
 import lombok.Builder;

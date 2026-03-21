@@ -4,8 +4,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.common.exception.CustomException;
 import bitnagil.bitnagil_backend.routineV2.domain.enums.UpdateApplyDate;
 import bitnagil.bitnagil_backend.routineInfoV2.request.RoutineInfoV2UpdateRequest;
 import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionInfo;

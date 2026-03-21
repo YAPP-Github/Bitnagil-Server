@@ -1,8 +1,8 @@
 package bitnagil.bitnagil_backend.emotionMarble.domain;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
-import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import bitnagil.common.entity.BaseTimeEntity;
+import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

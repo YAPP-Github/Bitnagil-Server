@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.appVersion.domain;
 
-import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.common.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

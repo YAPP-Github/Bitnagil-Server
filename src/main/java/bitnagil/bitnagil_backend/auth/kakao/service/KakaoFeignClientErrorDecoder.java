@@ -3,8 +3,8 @@ package bitnagil.bitnagil_backend.auth.kakao.service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.common.exception.CustomException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.RequiredArgsConstructor;

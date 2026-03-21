@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.global.swagger;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

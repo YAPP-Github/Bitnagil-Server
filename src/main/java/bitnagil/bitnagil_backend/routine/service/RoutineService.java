@@ -31,8 +31,8 @@ import bitnagil.bitnagil_backend.routine.response.SubRoutineSearchResultDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.common.exception.CustomException;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;

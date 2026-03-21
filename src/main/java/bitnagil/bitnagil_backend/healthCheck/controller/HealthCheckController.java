@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.healthCheck.controller;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.common.exception.CustomException;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.healthCheck.request.HealthCheckRequest;
 import bitnagil.bitnagil_backend.healthCheck.controller.spec.HealthCheckSpec;

@@ -6,8 +6,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
-import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import bitnagil.common.entity.BaseTimeEntity;
+import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import jakarta.persistence.AttributeOverride;

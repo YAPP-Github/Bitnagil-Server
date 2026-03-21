@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;

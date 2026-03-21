@@ -3,7 +3,7 @@ package bitnagil.bitnagil_backend.auth.jwt;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.global.response;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

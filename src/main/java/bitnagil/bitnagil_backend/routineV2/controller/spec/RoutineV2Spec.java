@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.routineV2.controller.spec;
 
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;

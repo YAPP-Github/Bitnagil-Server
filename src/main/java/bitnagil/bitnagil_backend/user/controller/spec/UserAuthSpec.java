@@ -5,7 +5,7 @@ import bitnagil.bitnagil_backend.user.request.UserLoginRequest;
 
 import bitnagil.bitnagil_backend.user.request.UserWithdrawalRequest;
 import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;

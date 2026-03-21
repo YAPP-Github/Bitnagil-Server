@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.domain;
 
-import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.common.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.Emotion;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineLevel;

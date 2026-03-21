@@ -8,7 +8,7 @@ import java.util.UUID;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 
 public interface SubRoutineRepository extends JpaRepository<SubRoutine, HistoryPk> {

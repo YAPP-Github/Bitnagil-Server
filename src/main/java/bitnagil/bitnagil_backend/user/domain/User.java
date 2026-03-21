@@ -2,7 +2,7 @@ package bitnagil.bitnagil_backend.user.domain;
 
 import bitnagil.bitnagil_backend.user.domain.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.enums.SocialType;
-import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.common.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

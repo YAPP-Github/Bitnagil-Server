@@ -4,7 +4,7 @@ import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequ
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponseV2;
 import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;

@@ -3,7 +3,7 @@ package bitnagil.bitnagil_backend.routine.domain;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import bitnagil.bitnagil_backend.global.entity.BaseTimeEntity;
+import bitnagil.common.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.routine.domain.enums.RoutineType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

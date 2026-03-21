@@ -3,7 +3,7 @@ package bitnagil.bitnagil_backend.routine.controller.spec;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
+import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;

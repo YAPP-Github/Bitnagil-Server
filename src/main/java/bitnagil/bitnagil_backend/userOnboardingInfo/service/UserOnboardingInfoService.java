@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.userOnboardingInfo.service;
 
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.common.exception.CustomException;
 import bitnagil.bitnagil_backend.user.domain.User;
 import bitnagil.bitnagil_backend.userOnboardingInfo.domain.UserOnboardingInfo;
 import bitnagil.bitnagil_backend.userOnboardingInfo.repository.UserOnboardingInfoRepository;

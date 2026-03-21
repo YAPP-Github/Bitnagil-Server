@@ -8,8 +8,8 @@ import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeRespons
 import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponseV2;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
 import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
-import bitnagil.bitnagil_backend.global.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.exception.CustomException;
+import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.common.exception.CustomException;
 
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineManager;
 import bitnagil.bitnagil_backend.user.domain.User;

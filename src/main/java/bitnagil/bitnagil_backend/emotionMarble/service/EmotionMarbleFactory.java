@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.onboarding.domain.Case;
 import bitnagil.bitnagil_backend.user.domain.User;
 

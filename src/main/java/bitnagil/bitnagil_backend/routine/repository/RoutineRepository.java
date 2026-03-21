@@ -7,7 +7,7 @@ import java.util.UUID;
 import bitnagil.bitnagil_backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import bitnagil.bitnagil_backend.global.entity.HistoryPk;
+import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 
 import java.util.List;
