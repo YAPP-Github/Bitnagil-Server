@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.user.controller.spec.UserSpec;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.bitnagil_backend.user.response.UserInfoResponse;
 import bitnagil.bitnagil_backend.user.response.UserOnboardingResponse;
 import bitnagil.bitnagil_backend.user.service.UserService;

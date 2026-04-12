@@ -6,7 +6,7 @@ import bitnagil.bitnagil_backend.kpi.domain.MonthlyKpi;
 import bitnagil.bitnagil_backend.kpi.event.MonthlyKpiSavedEvent;
 import bitnagil.bitnagil_backend.kpi.repository.KpiQueryRepository;
 import bitnagil.bitnagil_backend.kpi.repository.MonthlyKpiRepository;
-import bitnagil.bitnagil_backend.user.repository.UserRepository;
+import bitnagil.bitnagil_domain.user.repository.UserRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;

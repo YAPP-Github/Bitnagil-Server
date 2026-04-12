@@ -2,8 +2,8 @@ package bitnagil.bitnagil_backend.user.response;
 
 import java.time.LocalTime;
 
-import bitnagil.bitnagil_backend.onboarding.domain.enums.EmotionType;
-import bitnagil.bitnagil_backend.onboarding.domain.enums.TargetOutingFrequency;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.EmotionType;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.TargetOutingFrequency;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

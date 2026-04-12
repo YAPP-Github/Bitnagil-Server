@@ -2,7 +2,7 @@ package bitnagil.bitnagil_backend.userOnboardingInfo.controller;
 
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.bitnagil_backend.userOnboardingInfo.controller.spec.UserOnboardingInfoSpec;
 import bitnagil.bitnagil_backend.userOnboardingInfo.response.UserOnboardingInfoSearchResponse;
 import bitnagil.bitnagil_backend.userOnboardingInfo.service.UserOnboardingInfoService;

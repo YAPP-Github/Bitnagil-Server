@@ -6,22 +6,22 @@ import java.util.*;
 
 import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.common.exception.CustomException;
-import bitnagil.bitnagil_backend.routineV2.domain.enums.UpdateApplyDate;
-import bitnagil.bitnagil_backend.routineInfoV2.request.RoutineInfoV2UpdateRequest;
-import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionInfo;
-import bitnagil.bitnagil_backend.routineV2.request.RoutineV2UpdateCompletionRequest;
-import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
-import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
+import bitnagil.bitnagil_domain.rountineV2.domain.enums.UpdateApplyDate;
+import bitnagil.bitnagil_domain.routineInfoV2.dto.request.RoutineInfoV2UpdateRequest;
+import bitnagil.bitnagil_domain.rountineV2.dto.request.RoutineV2UpdateCompletionInfo;
+import bitnagil.bitnagil_domain.rountineV2.dto.request.RoutineV2UpdateCompletionRequest;
+import bitnagil.bitnagil_domain.rountineV2.dto.response.RoutineV2SearchResponse;
+import bitnagil.bitnagil_domain.rountineV2.dto.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
-import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repository;
+import bitnagil.bitnagil_domain.routineInfoV2.domain.RoutineInfoV2;
+import bitnagil.bitnagil_domain.routineInfoV2.repository.RoutineInfoV2Repository;
 import bitnagil.bitnagil_backend.routineInfoV2.service.RoutineInfoV2Factory;
-import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
-import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
-import bitnagil.bitnagil_backend.routineV2.request.RoutineV2RegisterRequest;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.rountineV2.domain.RoutineV2;
+import bitnagil.bitnagil_domain.rountineV2.repository.RoutineV2Repository;
+import bitnagil.bitnagil_domain.rountineV2.dto.request.RoutineV2RegisterRequest;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 /**

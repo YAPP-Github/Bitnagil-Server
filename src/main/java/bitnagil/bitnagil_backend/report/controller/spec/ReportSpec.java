@@ -6,7 +6,7 @@ import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
 import bitnagil.bitnagil_backend.report.response.ReportDetailInfoResponse;
 import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;

@@ -1,8 +1,8 @@
 package bitnagil.bitnagil_backend.routineInfoV2.service;
 
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
-import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.common.enums.RecommendedRoutineType;
+import bitnagil.bitnagil_domain.routineInfoV2.domain.RoutineInfoV2;
+import bitnagil.bitnagil_domain.user.domain.User;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;

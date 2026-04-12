@@ -3,7 +3,7 @@ package bitnagil.bitnagil_backend.emotionMarble.domain;
 import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
 import bitnagil.common.entity.BaseTimeEntity;
 import bitnagil.common.entity.HistoryPk;
-import bitnagil.bitnagil_backend.onboarding.domain.Case;
+import bitnagil.bitnagil_domain.onboarding.domain.Case;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

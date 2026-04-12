@@ -1,8 +1,8 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.repository;
 
-import bitnagil.bitnagil_backend.onboarding.domain.Case;
+import bitnagil.bitnagil_domain.onboarding.domain.Case;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
+import bitnagil.common.enums.RecommendedRoutineType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

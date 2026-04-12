@@ -1,11 +1,11 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.service;
 
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
-import bitnagil.bitnagil_backend.onboarding.domain.Case;
-import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
+import bitnagil.bitnagil_domain.onboarding.domain.Case;
+import bitnagil.bitnagil_domain.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
+import bitnagil.common.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;

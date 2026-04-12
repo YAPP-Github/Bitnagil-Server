@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 /**

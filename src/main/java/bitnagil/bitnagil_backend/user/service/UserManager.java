@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.common.exception.CustomException;
-import bitnagil.bitnagil_backend.user.domain.User;
-import bitnagil.bitnagil_backend.user.repository.UserRepository;
+import bitnagil.bitnagil_domain.user.domain.User;
+import bitnagil.bitnagil_domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 /**

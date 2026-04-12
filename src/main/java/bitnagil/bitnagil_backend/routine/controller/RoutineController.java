@@ -24,7 +24,7 @@ import bitnagil.bitnagil_backend.routine.controller.spec.RoutineSpec;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
 import bitnagil.bitnagil_backend.routine.service.RoutineService;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 @RestController

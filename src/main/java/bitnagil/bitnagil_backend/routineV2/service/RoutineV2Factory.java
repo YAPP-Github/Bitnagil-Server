@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.routineV2.service;
 
-import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
-import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
+import bitnagil.bitnagil_domain.routineInfoV2.domain.RoutineInfoV2;
+import bitnagil.bitnagil_domain.rountineV2.domain.RoutineV2;
 
 import org.springframework.stereotype.Component;
 

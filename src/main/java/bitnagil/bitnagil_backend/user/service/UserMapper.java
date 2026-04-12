@@ -4,9 +4,9 @@ import java.time.LocalTime;
 
 import org.springframework.stereotype.Component;
 
-import bitnagil.bitnagil_backend.onboarding.domain.enums.EmotionType;
-import bitnagil.bitnagil_backend.onboarding.domain.enums.TargetOutingFrequency;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.EmotionType;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.TargetOutingFrequency;
+import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.bitnagil_backend.user.response.UserInfoResponse;
 import bitnagil.bitnagil_backend.user.response.UserOnboardingResponse;
 

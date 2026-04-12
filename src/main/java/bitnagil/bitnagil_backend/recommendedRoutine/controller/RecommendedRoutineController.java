@@ -6,7 +6,7 @@ import bitnagil.bitnagil_backend.recommendedRoutine.controller.spec.RecommendedR
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResponse;
 import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineService;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

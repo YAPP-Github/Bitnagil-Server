@@ -8,7 +8,7 @@ import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleRes
 import bitnagil.bitnagil_backend.emotionMarble.service.EmotionMarbleService;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.format.annotation.DateTimeFormat;

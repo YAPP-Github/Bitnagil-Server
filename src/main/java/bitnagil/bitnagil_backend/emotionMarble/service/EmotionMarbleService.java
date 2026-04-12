@@ -12,7 +12,7 @@ import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.common.exception.CustomException;
 
 import bitnagil.bitnagil_backend.recommendedRoutine.service.RecommendedRoutineManager;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;

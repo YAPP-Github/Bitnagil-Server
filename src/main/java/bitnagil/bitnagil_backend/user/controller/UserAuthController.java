@@ -8,7 +8,7 @@ import bitnagil.bitnagil_backend.user.request.UserWithdrawalRequest;
 import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.user.controller.spec.UserAuthSpec;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.bitnagil_backend.user.service.UserAuthService;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import lombok.RequiredArgsConstructor;

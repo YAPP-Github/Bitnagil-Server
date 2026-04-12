@@ -9,7 +9,7 @@ import bitnagil.bitnagil_backend.report.request.ReportRegisterRequest;
 import bitnagil.bitnagil_backend.report.response.ReportDetailInfoResponse;
 import bitnagil.bitnagil_backend.report.response.ReportInfo;
 import bitnagil.bitnagil_backend.report.response.ReportInfoResponse;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,8 +1,8 @@
 package bitnagil.bitnagil_backend.onboarding.request;
 
 
-import bitnagil.bitnagil_backend.onboarding.domain.enums.RealOutingFrequency;
-import bitnagil.bitnagil_backend.onboarding.domain.enums.TargetOutingFrequency;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.RealOutingFrequency;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.TargetOutingFrequency;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

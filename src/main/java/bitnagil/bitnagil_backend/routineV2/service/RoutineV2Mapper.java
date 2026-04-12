@@ -1,8 +1,8 @@
 package bitnagil.bitnagil_backend.routineV2.service;
 
-import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
-import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResponse;
-import bitnagil.bitnagil_backend.routineV2.response.RoutineV2SearchResultDto;
+import bitnagil.bitnagil_domain.rountineV2.domain.RoutineV2;
+import bitnagil.bitnagil_domain.rountineV2.dto.response.RoutineV2SearchResponse;
+import bitnagil.bitnagil_domain.rountineV2.dto.response.RoutineV2SearchResultDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

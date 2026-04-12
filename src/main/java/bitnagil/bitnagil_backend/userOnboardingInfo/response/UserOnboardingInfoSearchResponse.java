@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.userOnboardingInfo.response;
 
-import bitnagil.bitnagil_backend.onboarding.domain.enums.TargetOutingFrequency;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.TargetOutingFrequency;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

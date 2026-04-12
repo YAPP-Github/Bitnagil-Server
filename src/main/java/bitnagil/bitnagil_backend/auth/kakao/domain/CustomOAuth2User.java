@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
-import bitnagil.bitnagil_backend.user.domain.enums.Role;
+import bitnagil.bitnagil_domain.user.domain.enums.Role;
 import lombok.Getter;
 
 /**

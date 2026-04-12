@@ -40,11 +40,11 @@ import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.SubRoutineInfo;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
-import bitnagil.bitnagil_backend.routineInfoV2.domain.RoutineInfoV2;
-import bitnagil.bitnagil_backend.routineInfoV2.repository.RoutineInfoV2Repository;
-import bitnagil.bitnagil_backend.routineV2.domain.RoutineV2;
-import bitnagil.bitnagil_backend.routineV2.repository.RoutineV2Repository;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.routineInfoV2.domain.RoutineInfoV2;
+import bitnagil.bitnagil_domain.routineInfoV2.repository.RoutineInfoV2Repository;
+import bitnagil.bitnagil_domain.rountineV2.domain.RoutineV2;
+import bitnagil.bitnagil_domain.rountineV2.repository.RoutineV2Repository;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

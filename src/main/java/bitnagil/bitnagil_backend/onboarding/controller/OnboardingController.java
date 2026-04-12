@@ -8,7 +8,7 @@ import bitnagil.bitnagil_backend.onboarding.request.OnboardingRequestV2;
 import bitnagil.bitnagil_backend.onboarding.request.RegistrationRoutinesRequest;
 import bitnagil.bitnagil_backend.onboarding.response.OnboardingResponse;
 import bitnagil.bitnagil_backend.onboarding.service.OnboardingService;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

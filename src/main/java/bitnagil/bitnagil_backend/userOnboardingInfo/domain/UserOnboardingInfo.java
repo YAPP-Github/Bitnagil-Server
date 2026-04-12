@@ -2,9 +2,9 @@ package bitnagil.bitnagil_backend.userOnboardingInfo.domain;
 
 import bitnagil.common.entity.BaseTimeEntity;
 import bitnagil.bitnagil_backend.global.utils.StringListConverter;
-import bitnagil.bitnagil_backend.onboarding.domain.Onboarding;
-import bitnagil.bitnagil_backend.onboarding.domain.enums.TargetOutingFrequency;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.onboarding.domain.Onboarding;
+import bitnagil.bitnagil_domain.onboarding.domain.enums.TargetOutingFrequency;
+import bitnagil.bitnagil_domain.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

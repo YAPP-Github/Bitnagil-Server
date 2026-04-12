@@ -22,7 +22,7 @@ import bitnagil.bitnagil_backend.routine.request.RoutineCompletionInfo;
 import bitnagil.bitnagil_backend.routine.request.SubRoutineInfo;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 
 /**
  * 루틴 관련 엔티티 생성, 초기화 책임을 담당하는 클래스입니다.

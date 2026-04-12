@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.response;
 
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineLevel;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
+import bitnagil.common.enums.RecommendedRoutineType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

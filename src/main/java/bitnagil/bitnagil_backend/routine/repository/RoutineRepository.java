@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import bitnagil.common.entity.HistoryPk;

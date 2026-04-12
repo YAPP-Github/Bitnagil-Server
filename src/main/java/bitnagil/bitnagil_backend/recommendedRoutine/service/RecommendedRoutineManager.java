@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.common.exception.CustomException;
-import bitnagil.bitnagil_backend.onboarding.domain.Case;
+import bitnagil.bitnagil_domain.onboarding.domain.Case;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedRoutineRepository;
 import bitnagil.bitnagil_backend.recommendedRoutine.repository.RecommendedSubRoutineRepository;

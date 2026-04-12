@@ -1,10 +1,10 @@
 package bitnagil.bitnagil_backend.recommendedRoutine.domain;
 
 import bitnagil.common.entity.BaseTimeEntity;
-import bitnagil.bitnagil_backend.onboarding.domain.Case;
+import bitnagil.bitnagil_domain.onboarding.domain.Case;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.Emotion;
 import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineLevel;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.enums.RecommendedRoutineType;
+import bitnagil.common.enums.RecommendedRoutineType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

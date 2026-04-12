@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
 import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
 import bitnagil.common.entity.HistoryPk;
-import bitnagil.bitnagil_backend.onboarding.domain.Case;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.onboarding.domain.Case;
+import bitnagil.bitnagil_domain.user.domain.User;
 
 /**
  * 감정 구슬 관련 엔티티 생성 책임을 담당하는 클래스입니다.

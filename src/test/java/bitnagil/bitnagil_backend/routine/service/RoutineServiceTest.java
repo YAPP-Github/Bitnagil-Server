@@ -18,7 +18,7 @@ import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;
 import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
-import bitnagil.bitnagil_backend.user.domain.User;
+import bitnagil.bitnagil_domain.user.domain.User;
 
 class RoutineServiceTest {
     @Mock
