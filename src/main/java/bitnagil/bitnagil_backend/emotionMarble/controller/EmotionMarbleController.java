@@ -1,10 +1,10 @@
 package bitnagil.bitnagil_backend.emotionMarble.controller;
 
 import bitnagil.bitnagil_backend.emotionMarble.controller.spec.EmotionMarbleSpec;
-import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
-import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
-import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponseV2;
-import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
+import bitnagil.bitnagil_domain.emotionMarble.dto.request.RegisterEmotionMarbleRequest;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.EmotionMarbleTypeResponse;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.EmotionMarbleTypeResponseV2;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.RegisterEmotionMarbleResponse;
 import bitnagil.bitnagil_backend.emotionMarble.service.EmotionMarbleService;
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;

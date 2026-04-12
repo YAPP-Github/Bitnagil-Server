@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.kpi.service;
 
-import bitnagil.bitnagil_backend.kpi.domain.MonthlyKpi;
+import bitnagil.bitnagil_domain.kpi.domain.MonthlyKpi;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;

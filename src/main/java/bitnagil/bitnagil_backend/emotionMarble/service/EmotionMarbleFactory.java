@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
-import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
+import bitnagil.bitnagil_domain.emotionMarble.domain.EmotionMarble;
+import bitnagil.bitnagil_domain.emotionMarble.dto.request.RegisterEmotionMarbleRequest;
 import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_domain.onboarding.domain.Case;
 import bitnagil.bitnagil_domain.user.domain.User;

@@ -1,13 +1,13 @@
 package bitnagil.bitnagil_backend.emotionMarble.service;
 
-import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
-import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
-import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
-import bitnagil.bitnagil_backend.emotionMarble.request.RegisterEmotionMarbleRequest;
-import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
-import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponseV2;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
-import bitnagil.bitnagil_backend.emotionMarble.response.RegisterEmotionMarbleResponse;
+import bitnagil.bitnagil_domain.emotionMarble.domain.EmotionMarble;
+import bitnagil.bitnagil_domain.emotionMarble.domain.enums.EmotionMarbleType;
+import bitnagil.bitnagil_domain.emotionMarble.repository.EmotionMarbleRepository;
+import bitnagil.bitnagil_domain.emotionMarble.dto.request.RegisterEmotionMarbleRequest;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.EmotionMarbleTypeResponse;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.EmotionMarbleTypeResponseV2;
+import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedRoutineDto;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.RegisterEmotionMarbleResponse;
 import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.common.exception.CustomException;
 

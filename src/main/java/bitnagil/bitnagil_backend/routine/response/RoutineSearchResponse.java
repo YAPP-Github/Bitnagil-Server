@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.routine.response;
 
-import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
+import bitnagil.bitnagil_domain.emotionMarble.domain.enums.EmotionMarbleType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

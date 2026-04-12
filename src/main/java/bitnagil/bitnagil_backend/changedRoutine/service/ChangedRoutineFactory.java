@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.changedRoutine.service;
+package bitnagil.bitnagil_domain.changedRoutine.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,13 +7,13 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
-import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
-import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
+import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedRoutine;
+import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedSubRoutine;
+import bitnagil.bitnagil_domain.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.TimeUtils;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
+import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedRoutine;
+import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedSubRoutine;
 import bitnagil.bitnagil_domain.user.domain.User;
 
 @Service

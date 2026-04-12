@@ -5,14 +5,14 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedRoutine;
-import bitnagil.bitnagil_backend.recommendedRoutine.domain.RecommendedSubRoutine;
+import bitnagil.bitnagil_domain.emotionMarble.domain.EmotionMarble;
+import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedRoutine;
+import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedSubRoutine;
 import bitnagil.common.enums.RecommendedRoutineType;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineDto;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResponse;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedRoutineSearchResult;
-import bitnagil.bitnagil_backend.recommendedRoutine.response.RecommendedSubRoutineSearchResult;
+import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedRoutineDto;
+import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedRoutineSearchResponse;
+import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedRoutineSearchResult;
+import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedSubRoutineSearchResult;
 
 /**
  * 추천 루틴 관련해서 DB에서 조회해오거나 가공된 데이터를 DTO로 변환하는 Mapper 클래스입니다.

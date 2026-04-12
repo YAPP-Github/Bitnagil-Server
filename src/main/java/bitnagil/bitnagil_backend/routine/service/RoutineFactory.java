@@ -8,9 +8,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
-import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
-import bitnagil.bitnagil_backend.changedRoutine.domain.enums.ChangedDivCode;
+import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedRoutine;
+import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedSubRoutine;
+import bitnagil.bitnagil_domain.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.common.entity.HistoryPk;
 import bitnagil.bitnagil_backend.global.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;

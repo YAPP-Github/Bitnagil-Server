@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.appVersion.controller.spec;
 
-import bitnagil.bitnagil_backend.appVersion.response.ForceUpdateResponse;
+import bitnagil.bitnagil_domain.appVersion.dto.response.ForceUpdateResponse;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.global.swagger.ApiTags;
 import io.swagger.v3.oas.annotations.Operation;

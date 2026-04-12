@@ -1,11 +1,11 @@
 package bitnagil.bitnagil_backend.kpi.service;
 
-import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
-import bitnagil.bitnagil_backend.emotionMarble.repository.EmotionMarbleRepository;
-import bitnagil.bitnagil_backend.kpi.domain.MonthlyKpi;
+import bitnagil.bitnagil_domain.emotionMarble.domain.enums.EmotionMarbleType;
+import bitnagil.bitnagil_domain.emotionMarble.repository.EmotionMarbleRepository;
+import bitnagil.bitnagil_domain.kpi.domain.MonthlyKpi;
 import bitnagil.bitnagil_backend.kpi.event.MonthlyKpiSavedEvent;
-import bitnagil.bitnagil_backend.kpi.repository.KpiQueryRepository;
-import bitnagil.bitnagil_backend.kpi.repository.MonthlyKpiRepository;
+import bitnagil.bitnagil_domain.kpi.repository.KpiQueryRepository;
+import bitnagil.bitnagil_domain.kpi.repository.MonthlyKpiRepository;
 import bitnagil.bitnagil_domain.user.repository.UserRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

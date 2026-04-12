@@ -1,9 +1,9 @@
 package bitnagil.bitnagil_backend.emotionMarble.service;
 
-import bitnagil.bitnagil_backend.emotionMarble.domain.EmotionMarble;
-import bitnagil.bitnagil_backend.emotionMarble.domain.enums.EmotionMarbleType;
-import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponse;
-import bitnagil.bitnagil_backend.emotionMarble.response.EmotionMarbleTypeResponseV2;
+import bitnagil.bitnagil_domain.emotionMarble.domain.EmotionMarble;
+import bitnagil.bitnagil_domain.emotionMarble.domain.enums.EmotionMarbleType;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.EmotionMarbleTypeResponse;
+import bitnagil.bitnagil_domain.emotionMarble.dto.response.EmotionMarbleTypeResponseV2;
 import org.springframework.stereotype.Component;
 
 /**

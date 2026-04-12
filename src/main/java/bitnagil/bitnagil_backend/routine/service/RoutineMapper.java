@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedRoutine;
-import bitnagil.bitnagil_backend.changedRoutine.domain.ChangedSubRoutine;
+import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedRoutine;
+import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;

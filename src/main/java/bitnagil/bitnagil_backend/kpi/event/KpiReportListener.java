@@ -3,7 +3,7 @@ package bitnagil.bitnagil_backend.kpi.event;
 import bitnagil.bitnagil_backend.file.service.FileService;
 import bitnagil.bitnagil_backend.global.slack.SlackFileSender;
 import bitnagil.bitnagil_backend.global.slack.SlackFileUploadOptions;
-import bitnagil.bitnagil_backend.kpi.domain.MonthlyKpi;
+import bitnagil.bitnagil_domain.kpi.domain.MonthlyKpi;
 import bitnagil.bitnagil_backend.kpi.service.KpiExcelExporterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
