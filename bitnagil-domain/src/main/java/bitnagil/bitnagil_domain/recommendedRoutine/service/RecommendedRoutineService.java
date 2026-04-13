@@ -5,6 +5,7 @@ import bitnagil.bitnagil_domain.emotionMarble.repository.EmotionMarbleRepository
 import bitnagil.bitnagil_domain.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedRoutine;
 import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedSubRoutine;
+import bitnagil.bitnagil_domain.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedRoutineSearchResponse;
 import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedRoutineSearchResult;
 import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedSubRoutineSearchResult;
@@ -12,7 +13,6 @@ import bitnagil.bitnagil_domain.recommendedRoutine.repository.RecommendedRoutine
 import bitnagil.bitnagil_domain.recommendedRoutine.repository.RecommendedSubRoutineRepository;
 import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.bitnagil_domain.user.service.UserManager;
-import bitnagil.common.enums.RecommendedRoutineType;
 import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;

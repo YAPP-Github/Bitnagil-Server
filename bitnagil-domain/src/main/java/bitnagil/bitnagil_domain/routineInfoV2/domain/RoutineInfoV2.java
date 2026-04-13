@@ -6,9 +6,9 @@ import java.time.LocalTime;
 import java.util.List;
 
 import bitnagil.bitnagil_backend.global.utils.DayOfWeekConverter;
+import bitnagil.bitnagil_domain.recommendedRoutine.domain.enums.RecommendedRoutineType;
 import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.common.entity.BaseTimeEntity;
-import bitnagil.common.enums.RecommendedRoutineType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

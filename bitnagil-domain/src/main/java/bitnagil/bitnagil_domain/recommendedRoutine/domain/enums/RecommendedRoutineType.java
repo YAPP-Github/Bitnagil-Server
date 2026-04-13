@@ -1,5 +1,6 @@
-package bitnagil.common.enums;
+package bitnagil.bitnagil_domain.recommendedRoutine.domain.enums;
 
+import bitnagil.common.enums.EnumType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
