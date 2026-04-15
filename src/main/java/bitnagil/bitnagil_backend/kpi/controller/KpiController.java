@@ -2,7 +2,7 @@ package bitnagil.bitnagil_backend.kpi.controller;
 
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.kpi.controller.spec.KpiSpec;
-import bitnagil.bitnagil_backend.kpi.service.KpiService;
+import bitnagil.bitnagil_domain.kpi.service.KpiService;
 import java.time.YearMonth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;

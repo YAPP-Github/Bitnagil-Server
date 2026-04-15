@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bitnagil.bitnagil_backend.appVersion.controller.spec.AndroidAppVersionSpec;
 import bitnagil.bitnagil_domain.appVersion.dto.response.ForceUpdateResponse;
-import bitnagil.bitnagil_backend.appVersion.service.AndroidAppVersionService;
+import bitnagil.bitnagil_domain.appVersion.service.AndroidAppVersionService;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import lombok.RequiredArgsConstructor;
 

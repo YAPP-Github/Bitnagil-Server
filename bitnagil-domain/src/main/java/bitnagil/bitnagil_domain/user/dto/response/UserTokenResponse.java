@@ -1,6 +1,5 @@
-package bitnagil.bitnagil_backend.user.response;
+package bitnagil.bitnagil_domain.user.dto.response;
 
-import bitnagil.bitnagil_backend.auth.jwt.Token;
 import bitnagil.bitnagil_domain.user.domain.enums.Role;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -22,12 +21,4 @@ public class UserTokenResponse {
 
     @NotEmpty
     private Role role;
-
-    public static UserTokenResponse of(Token token, Role role) {
-        return UserTokenResponse.builder()
-                .accessToken(token.getAccessToken())
-                .refreshToken(token.getRefreshToken())
-                .role(role)
-                .build();
-    }
 }

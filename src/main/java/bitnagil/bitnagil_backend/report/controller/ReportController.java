@@ -6,7 +6,7 @@ import bitnagil.bitnagil_backend.report.controller.spec.ReportSpec;
 import bitnagil.bitnagil_domain.report.dto.request.ReportRegisterRequest;
 import bitnagil.bitnagil_domain.report.dto.response.ReportDetailInfoResponse;
 import bitnagil.bitnagil_domain.report.dto.response.ReportInfoResponse;
-import bitnagil.bitnagil_backend.report.service.ReportService;
+import bitnagil.bitnagil_domain.report.service.ReportService;
 import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

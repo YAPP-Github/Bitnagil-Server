@@ -1,17 +1,17 @@
 package bitnagil.bitnagil_backend.routineV2.controller;
 
 import bitnagil.bitnagil_domain.routineInfoV2.dto.request.RoutineInfoV2UpdateRequest;
-import bitnagil.bitnagil_domain.rountineV2.dto.request.RoutineV2UpdateCompletionRequest;
-import bitnagil.bitnagil_domain.rountineV2.dto.response.RoutineV2SearchResponse;
-import bitnagil.bitnagil_domain.rountineV2.dto.response.RoutineV2SearchResultDto;
+import bitnagil.bitnagil_domain.routineV2.dto.request.RoutineV2RegisterRequest;
+import bitnagil.bitnagil_domain.routineV2.dto.request.RoutineV2UpdateCompletionRequest;
+import bitnagil.bitnagil_domain.routineV2.dto.response.RoutineV2SearchResponse;
+import bitnagil.bitnagil_domain.routineV2.dto.response.RoutineV2SearchResultDto;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.routineV2.controller.spec.RoutineV2Spec;
-import bitnagil.bitnagil_domain.rountineV2.dto.request.RoutineV2RegisterRequest;
-import bitnagil.bitnagil_backend.routineV2.service.RoutineV2Service;
+import bitnagil.bitnagil_domain.routineV2.service.RoutineV2Service;
 import bitnagil.bitnagil_domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 

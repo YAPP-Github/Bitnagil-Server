@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.onboarding.request;
+package bitnagil.bitnagil_domain.onboarding.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

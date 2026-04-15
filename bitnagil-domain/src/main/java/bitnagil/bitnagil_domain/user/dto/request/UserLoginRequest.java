@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.user.request;
+package bitnagil.bitnagil_domain.user.dto.request;
 
 import bitnagil.bitnagil_domain.user.domain.enums.SocialType;
 import io.swagger.v3.oas.annotations.media.Schema;

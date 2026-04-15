@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.onboarding.request;
+package bitnagil.bitnagil_domain.onboarding.dto.request;
 
 
 import bitnagil.bitnagil_domain.onboarding.domain.enums.EmotionType;

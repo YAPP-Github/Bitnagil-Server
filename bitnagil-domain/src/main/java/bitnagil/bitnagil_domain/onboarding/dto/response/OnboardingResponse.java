@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.onboarding.response;
+package bitnagil.bitnagil_domain.onboarding.dto.response;
 
 import bitnagil.bitnagil_domain.recommendedRoutine.dto.response.RecommendedRoutineDto;
 import lombok.AllArgsConstructor;

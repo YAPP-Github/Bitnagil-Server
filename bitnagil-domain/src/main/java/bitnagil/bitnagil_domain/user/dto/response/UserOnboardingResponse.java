@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.user.response;
+package bitnagil.bitnagil_domain.user.dto.response;
 
 import java.time.LocalTime;
 
