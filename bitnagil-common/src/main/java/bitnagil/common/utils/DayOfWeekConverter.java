@@ -1,4 +1,4 @@
-package bitnagil.bitnagil_backend.global.utils;
+package bitnagil.common.utils;
 
 
 import java.time.DayOfWeek;
