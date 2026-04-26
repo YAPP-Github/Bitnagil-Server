@@ -2,6 +2,7 @@ package bitnagil.bitnagil_domain.user.service;
 
 import bitnagil.bitnagil_domain.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_domain.user.dto.request.UserAgreementsRequest;
+import bitnagil.bitnagil_domain.user.dto.response.UserInfoResponse;
 import bitnagil.bitnagil_domain.user.dto.response.UserOnboardingResponse;
 import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.bitnagil_domain.user.repository.UserRepository;
@@ -21,6 +22,11 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserManager userManager;
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public UserInfoResponse getUserInfo(User user) {
+        return userMapper.toUserInfoResponse(user);
+    }
 
     // 회원탈퇴 - 회원 관련 정보 삭제
     // 토큰 무효화 및 unlinking은 API 모듈에서 구현

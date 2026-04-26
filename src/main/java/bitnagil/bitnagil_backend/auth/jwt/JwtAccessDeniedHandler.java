@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
-import bitnagil.bitnagil_backend.global.response.ErrorResponseDto;
+import bitnagil.api.global.response.CustomResponseDto;
+import bitnagil.api.global.response.ErrorResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

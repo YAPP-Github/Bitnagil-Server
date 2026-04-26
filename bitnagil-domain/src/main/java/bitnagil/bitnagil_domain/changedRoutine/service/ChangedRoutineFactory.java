@@ -11,10 +11,8 @@ import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_domain.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.common.entity.HistoryPk;
-import bitnagil.bitnagil_backend.global.utils.TimeUtils;
-import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedRoutine;
-import bitnagil.bitnagil_domain.recommendedRoutine.domain.RecommendedSubRoutine;
 import bitnagil.bitnagil_domain.user.domain.User;
+import bitnagil.common.utils.TimeUtils;
 
 @Service
 public class ChangedRoutineFactory {

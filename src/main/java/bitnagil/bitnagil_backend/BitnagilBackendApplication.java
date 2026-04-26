@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(scanBasePackages = {"bitnagil.bitnagil_backend", "bitnagil.bitnagil_domain", "bitnagil.common"})
+@SpringBootApplication(scanBasePackages = {"bitnagil.bitnagil_backend", "bitnagil.bitnagil_domain", "bitnagil.common", "bitnagil.api"})
 @EntityScan(basePackages = {"bitnagil.bitnagil_backend", "bitnagil.bitnagil_domain"})
 @EnableJpaRepositories(basePackages = {"bitnagil.bitnagil_backend", "bitnagil.bitnagil_domain"})
 @EnableFeignClients

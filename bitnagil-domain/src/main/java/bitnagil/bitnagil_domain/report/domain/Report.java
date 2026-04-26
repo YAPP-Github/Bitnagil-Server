@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_domain.report.domain;
 
-import bitnagil.bitnagil_backend.global.utils.StringListConverter;
+import bitnagil.common.utils.StringListConverter;
 import bitnagil.bitnagil_domain.report.domain.enums.ReportCategory;
 import bitnagil.bitnagil_domain.report.domain.enums.ReportStatus;
 import bitnagil.bitnagil_domain.user.domain.User;

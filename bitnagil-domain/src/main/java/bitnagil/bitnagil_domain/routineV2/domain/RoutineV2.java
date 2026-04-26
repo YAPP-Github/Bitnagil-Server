@@ -3,8 +3,8 @@ package bitnagil.bitnagil_domain.routineV2.domain;
 import java.time.LocalDate;
 import java.util.List;
 
-import bitnagil.bitnagil_backend.global.utils.BooleanListConverter;
-import bitnagil.bitnagil_backend.global.utils.StringListConverter;
+import bitnagil.common.utils.BooleanListConverter;
+import bitnagil.common.utils.StringListConverter;
 import bitnagil.bitnagil_domain.routineInfoV2.domain.RoutineInfoV2;
 import bitnagil.common.entity.BaseTimeEntity;
 import jakarta.persistence.Convert;

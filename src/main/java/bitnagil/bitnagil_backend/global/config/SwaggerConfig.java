@@ -1,11 +1,11 @@
 package bitnagil.bitnagil_backend.global.config;
 
 
-import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExample;
-import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
+import bitnagil.api.global.swagger.ApiErrorCodeExample;
+import bitnagil.api.global.swagger.ApiErrorCodeExamples;
 import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.response.ErrorResponseDto;
-import bitnagil.bitnagil_backend.global.swagger.ExampleHolder;
+import bitnagil.api.global.response.ErrorResponseDto;
+import bitnagil.api.global.swagger.ExampleHolder;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

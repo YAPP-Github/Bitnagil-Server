@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import bitnagil.bitnagil_backend.routine.response.RoutineSearchResponse;
 import org.springframework.web.bind.annotation.*;
 
-import bitnagil.bitnagil_backend.global.annotation.CurrentUser;
-import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
+import bitnagil.api.global.annotation.CurrentUser;
+import bitnagil.api.global.response.CustomResponseDto;
 import bitnagil.bitnagil_backend.routine.controller.spec.RoutineSpec;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;

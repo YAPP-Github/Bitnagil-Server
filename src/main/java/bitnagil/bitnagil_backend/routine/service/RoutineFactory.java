@@ -12,7 +12,7 @@ import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedRoutine;
 import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedSubRoutine;
 import bitnagil.bitnagil_domain.changedRoutine.domain.enums.ChangedDivCode;
 import bitnagil.common.entity.HistoryPk;
-import bitnagil.bitnagil_backend.global.utils.TimeUtils;
+import bitnagil.common.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;

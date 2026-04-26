@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.bitnagil_backend.global.response.CustomResponseDto;
-import bitnagil.bitnagil_backend.global.swagger.ApiErrorCodeExamples;
-import bitnagil.bitnagil_backend.global.swagger.ApiTags;
+import bitnagil.api.global.response.CustomResponseDto;
+import bitnagil.api.global.swagger.ApiErrorCodeExamples;
+import bitnagil.api.global.swagger.ApiTags;
 import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.RegisterRoutineRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;

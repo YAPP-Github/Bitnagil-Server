@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import bitnagil.bitnagil_domain.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_domain.user.domain.User;
-import bitnagil.bitnagil_backend.user.response.UserInfoResponse;
-import bitnagil.bitnagil_backend.user.response.UserOnboardingResponse;
+import bitnagil.bitnagil_domain.user.dto.response.UserInfoResponse;
+import bitnagil.bitnagil_domain.user.dto.response.UserOnboardingResponse;
 import lombok.RequiredArgsConstructor;
 
 /**

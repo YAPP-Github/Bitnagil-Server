@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_domain.userOnboardingInfo.domain;
 
-import bitnagil.bitnagil_backend.global.utils.StringListConverter;
+import bitnagil.common.utils.StringListConverter;
 import bitnagil.bitnagil_domain.onboarding.domain.Onboarding;
 import bitnagil.bitnagil_domain.onboarding.domain.enums.TargetOutingFrequency;
 import bitnagil.bitnagil_domain.user.domain.User;

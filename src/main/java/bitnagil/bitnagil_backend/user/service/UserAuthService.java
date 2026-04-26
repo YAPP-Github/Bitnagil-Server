@@ -2,7 +2,7 @@ package bitnagil.bitnagil_backend.user.service;
 
 import java.time.LocalDateTime;
 
-import bitnagil.bitnagil_backend.user.request.UserAgreementsRequest;
+import bitnagil.bitnagil_domain.user.dto.request.UserAgreementsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +18,8 @@ import bitnagil.common.errorcode.ErrorCode;
 import bitnagil.common.exception.CustomException;
 import bitnagil.bitnagil_domain.user.repository.UserRepository;
 import bitnagil.bitnagil_domain.user.domain.enums.SocialType;
-import bitnagil.bitnagil_backend.user.request.UserWithdrawalRequest;
-import bitnagil.bitnagil_backend.user.response.UserTokenResponse;
+import bitnagil.bitnagil_domain.user.dto.request.UserWithdrawalRequest;
+import bitnagil.bitnagil_domain.user.dto.response.UserTokenResponse;
 import bitnagil.bitnagil_domain.user.domain.User;
 import bitnagil.bitnagil_domain.user.domain.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
@@ -50,7 +50,11 @@ public class UserAuthService {
 
         Token token = jwtUtil.generateToken(user.getUserId());
 
-        return UserTokenResponse.of(token, user.getRole());
+        return UserTokenResponse.builder()
+            .accessToken(token.getAccessToken())
+            .refreshToken(token.getRefreshToken())
+            .role(user.getRole())
+            .build();
     }
 
     // refreshToken으로 accessToken 재발행
@@ -72,7 +76,11 @@ public class UserAuthService {
 
         Token token = jwtUtil.generateToken(user.getUserId());
 
-        return UserTokenResponse.of(token, user.getRole());
+        return UserTokenResponse.builder()
+            .accessToken(token.getAccessToken())
+            .refreshToken(token.getRefreshToken())
+            .role(user.getRole())
+            .build();
     }
 
     // refreshToken 삭제 및 카카오 토큰 무효화

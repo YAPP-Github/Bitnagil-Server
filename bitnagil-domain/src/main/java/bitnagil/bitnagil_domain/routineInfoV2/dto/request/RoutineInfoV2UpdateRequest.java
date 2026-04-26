@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import bitnagil.bitnagil_domain.rountineV2.domain.enums.UpdateApplyDate;
+import bitnagil.bitnagil_domain.routineV2.domain.enums.UpdateApplyDate;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
