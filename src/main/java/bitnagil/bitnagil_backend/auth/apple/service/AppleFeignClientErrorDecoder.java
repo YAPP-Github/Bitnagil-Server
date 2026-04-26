@@ -1,7 +1,7 @@
 package bitnagil.bitnagil_backend.auth.apple.service;
 
-import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.common.exception.CustomException;
+import bitnagil.errorcode.ErrorCode;
+import bitnagil.exception.CustomException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;

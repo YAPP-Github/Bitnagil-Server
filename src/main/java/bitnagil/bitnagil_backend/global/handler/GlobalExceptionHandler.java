@@ -2,9 +2,9 @@ package bitnagil.bitnagil_backend.global.handler;
 
 import bitnagil.bitnagil_backend.global.slack.SlackMessageOptions;
 import bitnagil.bitnagil_backend.global.slack.SlackService;
-import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.common.exception.CustomException;
-import bitnagil.api.global.response.ErrorResponseDto;
+import bitnagil.errorcode.ErrorCode;
+import bitnagil.exception.CustomException;
+import bitnagil.global.response.ErrorResponseDto;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

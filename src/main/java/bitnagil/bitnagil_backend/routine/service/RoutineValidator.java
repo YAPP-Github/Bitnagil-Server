@@ -6,20 +6,20 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedRoutine;
-import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedSubRoutine;
-import bitnagil.bitnagil_domain.changedRoutine.repository.ChangedRoutineRepository;
-import bitnagil.bitnagil_domain.changedRoutine.repository.ChangedSubRoutineRepository;
-import bitnagil.common.entity.HistoryPk;
-import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.common.exception.CustomException;
+import bitnagil.changedRoutine.domain.ChangedRoutine;
+import bitnagil.changedRoutine.domain.ChangedSubRoutine;
+import bitnagil.changedRoutine.repository.ChangedRoutineRepository;
+import bitnagil.changedRoutine.repository.ChangedSubRoutineRepository;
+import bitnagil.entity.HistoryPk;
+import bitnagil.errorcode.ErrorCode;
+import bitnagil.exception.CustomException;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
 import bitnagil.bitnagil_backend.routine.repository.RoutineRepository;
 import bitnagil.bitnagil_backend.routine.repository.SubRoutineRepository;
 import bitnagil.bitnagil_backend.routine.request.DeleteRoutineByDayRequest;
 import bitnagil.bitnagil_backend.routine.request.RoutineCompletionInfo;
-import bitnagil.bitnagil_domain.user.domain.User;
+import bitnagil.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 /**

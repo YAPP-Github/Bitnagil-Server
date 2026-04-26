@@ -3,10 +3,10 @@ package bitnagil.bitnagil_backend.user.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import bitnagil.bitnagil_domain.onboarding.domain.Onboarding;
-import bitnagil.bitnagil_domain.user.domain.User;
-import bitnagil.bitnagil_domain.user.dto.response.UserInfoResponse;
-import bitnagil.bitnagil_domain.user.dto.response.UserOnboardingResponse;
+import bitnagil.onboarding.domain.Onboarding;
+import bitnagil.user.domain.User;
+import bitnagil.user.dto.response.UserInfoResponse;
+import bitnagil.user.dto.response.UserOnboardingResponse;
 import lombok.RequiredArgsConstructor;
 
 /**

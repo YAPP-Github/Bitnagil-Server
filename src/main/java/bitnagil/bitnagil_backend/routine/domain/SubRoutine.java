@@ -4,8 +4,8 @@ package bitnagil.bitnagil_backend.routine.domain;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import bitnagil.common.entity.BaseTimeEntity;
-import bitnagil.common.entity.HistoryPk;
+import bitnagil.entity.BaseTimeEntity;
+import bitnagil.entity.HistoryPk;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;

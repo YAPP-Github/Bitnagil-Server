@@ -1,15 +1,15 @@
 package bitnagil.bitnagil_backend.user.controller.spec;
 
-import bitnagil.bitnagil_domain.user.dto.request.UserAgreementsRequest;
-import bitnagil.bitnagil_domain.user.dto.request.UserLoginRequest;
+import bitnagil.user.dto.request.UserAgreementsRequest;
+import bitnagil.user.dto.request.UserLoginRequest;
 
-import bitnagil.bitnagil_domain.user.dto.request.UserWithdrawalRequest;
-import bitnagil.bitnagil_domain.user.dto.response.UserTokenResponse;
-import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.api.global.response.CustomResponseDto;
-import bitnagil.api.global.swagger.ApiErrorCodeExamples;
-import bitnagil.api.global.swagger.ApiTags;
-import bitnagil.bitnagil_domain.user.domain.User;
+import bitnagil.user.dto.request.UserWithdrawalRequest;
+import bitnagil.user.dto.response.UserTokenResponse;
+import bitnagil.errorcode.ErrorCode;
+import bitnagil.global.response.CustomResponseDto;
+import bitnagil.global.swagger.ApiErrorCodeExamples;
+import bitnagil.global.swagger.ApiTags;
+import bitnagil.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;

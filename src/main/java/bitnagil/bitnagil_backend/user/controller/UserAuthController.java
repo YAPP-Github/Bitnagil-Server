@@ -1,16 +1,16 @@
 package bitnagil.bitnagil_backend.user.controller;
 
-import bitnagil.bitnagil_domain.user.dto.request.UserAgreementsRequest;
-import bitnagil.bitnagil_domain.user.dto.request.UserLoginRequest;
+import bitnagil.user.dto.request.UserAgreementsRequest;
+import bitnagil.user.dto.request.UserLoginRequest;
 import org.springframework.web.bind.annotation.*;
 
-import bitnagil.bitnagil_domain.user.dto.request.UserWithdrawalRequest;
-import bitnagil.bitnagil_domain.user.dto.response.UserTokenResponse;
-import bitnagil.api.global.annotation.CurrentUser;
+import bitnagil.user.dto.request.UserWithdrawalRequest;
+import bitnagil.user.dto.response.UserTokenResponse;
+import bitnagil.global.annotation.CurrentUser;
 import bitnagil.bitnagil_backend.user.controller.spec.UserAuthSpec;
-import bitnagil.bitnagil_domain.user.domain.User;
+import bitnagil.user.domain.User;
 import bitnagil.bitnagil_backend.user.service.UserAuthService;
-import bitnagil.api.global.response.CustomResponseDto;
+import bitnagil.global.response.CustomResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController

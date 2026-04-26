@@ -3,7 +3,7 @@ package bitnagil.bitnagil_backend.auth.jwt;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import bitnagil.common.errorcode.ErrorCode;
+import bitnagil.errorcode.ErrorCode;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import bitnagil.api.global.response.CustomResponseDto;
-import bitnagil.api.global.response.ErrorResponseDto;
+import bitnagil.global.response.CustomResponseDto;
+import bitnagil.global.response.ErrorResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

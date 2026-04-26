@@ -4,11 +4,11 @@ import java.time.LocalTime;
 
 import org.springframework.stereotype.Component;
 
-import bitnagil.bitnagil_domain.onboarding.domain.enums.EmotionType;
-import bitnagil.bitnagil_domain.onboarding.domain.enums.TargetOutingFrequency;
-import bitnagil.bitnagil_domain.user.domain.User;
-import bitnagil.bitnagil_domain.user.dto.response.UserInfoResponse;
-import bitnagil.bitnagil_domain.user.dto.response.UserOnboardingResponse;
+import bitnagil.onboarding.domain.enums.EmotionType;
+import bitnagil.onboarding.domain.enums.TargetOutingFrequency;
+import bitnagil.user.domain.User;
+import bitnagil.user.dto.response.UserInfoResponse;
+import bitnagil.user.dto.response.UserOnboardingResponse;
 
 /*
  * 유저 관련 DTO로 변환하는 클래스입니다.

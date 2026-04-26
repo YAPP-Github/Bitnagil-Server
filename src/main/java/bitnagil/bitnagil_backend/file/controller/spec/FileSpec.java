@@ -1,8 +1,8 @@
 package bitnagil.bitnagil_backend.file.controller.spec;
 
 import bitnagil.bitnagil_backend.file.request.PresignedUrlRequest;
-import bitnagil.api.global.response.CustomResponseDto;
-import bitnagil.api.global.swagger.ApiTags;
+import bitnagil.global.response.CustomResponseDto;
+import bitnagil.global.swagger.ApiTags;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 

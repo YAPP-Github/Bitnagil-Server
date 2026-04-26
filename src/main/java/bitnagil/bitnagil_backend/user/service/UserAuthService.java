@@ -2,7 +2,7 @@ package bitnagil.bitnagil_backend.user.service;
 
 import java.time.LocalDateTime;
 
-import bitnagil.bitnagil_domain.user.dto.request.UserAgreementsRequest;
+import bitnagil.user.dto.request.UserAgreementsRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +14,14 @@ import bitnagil.bitnagil_backend.auth.jwt.JwtUtil;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
 import bitnagil.bitnagil_backend.auth.kakao.response.KakaoUserInfoResponse;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
-import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.common.exception.CustomException;
-import bitnagil.bitnagil_domain.user.repository.UserRepository;
-import bitnagil.bitnagil_domain.user.domain.enums.SocialType;
-import bitnagil.bitnagil_domain.user.dto.request.UserWithdrawalRequest;
-import bitnagil.bitnagil_domain.user.dto.response.UserTokenResponse;
-import bitnagil.bitnagil_domain.user.domain.User;
-import bitnagil.bitnagil_domain.user.domain.enums.Role;
+import bitnagil.errorcode.ErrorCode;
+import bitnagil.exception.CustomException;
+import bitnagil.user.repository.UserRepository;
+import bitnagil.user.domain.enums.SocialType;
+import bitnagil.user.dto.request.UserWithdrawalRequest;
+import bitnagil.user.dto.response.UserTokenResponse;
+import bitnagil.user.domain.User;
+import bitnagil.user.domain.enums.Role;
 import bitnagil.bitnagil_backend.user.domain.UserAuthInfo;
 import lombok.RequiredArgsConstructor;
 

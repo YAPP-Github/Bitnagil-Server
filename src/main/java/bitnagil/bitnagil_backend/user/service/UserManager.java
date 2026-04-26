@@ -2,10 +2,10 @@ package bitnagil.bitnagil_backend.user.service;
 
 import org.springframework.stereotype.Service;
 
-import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.common.exception.CustomException;
-import bitnagil.bitnagil_domain.user.domain.User;
-import bitnagil.bitnagil_domain.user.repository.UserRepository;
+import bitnagil.errorcode.ErrorCode;
+import bitnagil.exception.CustomException;
+import bitnagil.user.domain.User;
+import bitnagil.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 /**

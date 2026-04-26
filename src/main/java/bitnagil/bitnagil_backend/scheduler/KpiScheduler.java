@@ -1,6 +1,6 @@
 package bitnagil.bitnagil_backend.scheduler;
 
-import bitnagil.bitnagil_domain.kpi.service.KpiService;
+import bitnagil.kpi.service.KpiService;
 import java.time.YearMonth;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

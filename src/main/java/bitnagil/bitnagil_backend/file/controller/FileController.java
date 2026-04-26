@@ -3,7 +3,7 @@ package bitnagil.bitnagil_backend.file.controller;
 import bitnagil.bitnagil_backend.file.controller.spec.FileSpec;
 import bitnagil.bitnagil_backend.file.request.PresignedUrlRequest;
 import bitnagil.bitnagil_backend.file.service.FileService;
-import bitnagil.api.global.response.CustomResponseDto;
+import bitnagil.global.response.CustomResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

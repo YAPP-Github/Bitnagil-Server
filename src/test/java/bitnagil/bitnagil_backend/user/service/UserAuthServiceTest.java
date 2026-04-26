@@ -4,7 +4,7 @@ import bitnagil.bitnagil_backend.auth.apple.service.AppleUserInfoService;
 import bitnagil.bitnagil_backend.auth.jwt.AuthRedisService;
 import bitnagil.bitnagil_backend.auth.jwt.JwtUtil;
 import bitnagil.bitnagil_backend.auth.kakao.service.KakaoUserInfoService;
-import bitnagil.bitnagil_domain.user.repository.UserRepository;
+import bitnagil.user.repository.UserRepository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

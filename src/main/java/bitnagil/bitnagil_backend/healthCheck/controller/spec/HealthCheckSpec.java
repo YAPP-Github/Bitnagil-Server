@@ -1,10 +1,10 @@
 package bitnagil.bitnagil_backend.healthCheck.controller.spec;
 
-import bitnagil.api.global.swagger.ApiTags;
-import bitnagil.api.global.swagger.ApiErrorCodeExample;
-import bitnagil.common.errorcode.ErrorCode;
-import bitnagil.api.global.response.CustomResponseDto;
-import bitnagil.api.global.swagger.ApiErrorCodeExamples;
+import bitnagil.global.swagger.ApiTags;
+import bitnagil.global.swagger.ApiErrorCodeExample;
+import bitnagil.errorcode.ErrorCode;
+import bitnagil.global.response.CustomResponseDto;
+import bitnagil.global.swagger.ApiErrorCodeExamples;
 import bitnagil.bitnagil_backend.healthCheck.request.HealthCheckRequest;
 import bitnagil.bitnagil_backend.healthCheck.response.HealthCheckResponse;
 import io.swagger.v3.oas.annotations.Operation;

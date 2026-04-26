@@ -8,11 +8,11 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedRoutine;
-import bitnagil.bitnagil_domain.changedRoutine.domain.ChangedSubRoutine;
-import bitnagil.bitnagil_domain.changedRoutine.domain.enums.ChangedDivCode;
-import bitnagil.common.entity.HistoryPk;
-import bitnagil.common.utils.TimeUtils;
+import bitnagil.changedRoutine.domain.ChangedRoutine;
+import bitnagil.changedRoutine.domain.ChangedSubRoutine;
+import bitnagil.changedRoutine.domain.enums.ChangedDivCode;
+import bitnagil.entity.HistoryPk;
+import bitnagil.utils.TimeUtils;
 import bitnagil.bitnagil_backend.routine.domain.Routine;
 import bitnagil.bitnagil_backend.routine.domain.RoutineCompletion;
 import bitnagil.bitnagil_backend.routine.domain.SubRoutine;
@@ -22,7 +22,7 @@ import bitnagil.bitnagil_backend.routine.request.RoutineCompletionInfo;
 import bitnagil.bitnagil_backend.routine.request.SubRoutineInfo;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineCompletionRequest;
 import bitnagil.bitnagil_backend.routine.request.UpdateRoutineRequest;
-import bitnagil.bitnagil_domain.user.domain.User;
+import bitnagil.user.domain.User;
 
 /**
  * 루틴 관련 엔티티 생성, 초기화 책임을 담당하는 클래스입니다.
