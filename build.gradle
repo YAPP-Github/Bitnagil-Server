@@ -28,6 +28,7 @@ dependencies {
 	implementation project(':bitnagil-common')
 	implementation project(':bitnagil-domain')
 	implementation project(':bitnagil-api')
+	implementation project(':bitnagil-infrastructure')
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
