@@ -1,2 +1,0 @@
-ALTER TABLE report
-    ADD COLUMN report_status VARCHAR(50) NOT NULL;
