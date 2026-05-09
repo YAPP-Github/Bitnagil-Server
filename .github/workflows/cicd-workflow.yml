@@ -133,8 +133,8 @@ jobs:
         run: chmod +x ./gradlew
 
       # 6. Gradle로 빌드
-      - name: Build with Gradle
-        run: ./gradlew clean build
+      - name: Build app jar with Gradle
+        run: ./gradlew clean :bitnagil-api:bootJar
 
       # 7. Amazon ECR에 로그인
       - name: Login to Amazon ECR
@@ -146,7 +146,7 @@ jobs:
         if: github.ref == 'refs/heads/release'
         id: build-image-release
         run: |
-          docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_PROD }} . 
+          docker build --platform linux/amd64 -f deploy/docker/Dockerfile -t ${{ secrets.ECR_REPO_NAME_PROD }} .
           docker tag ${{ secrets.ECR_REPO_NAME_PROD }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROD }}:latest  # 이미지를 ECR 리포지토리로 태깅합니다.
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROD }}:latest  # 이미지를 ECR에 푸시합니다.
           echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROD }}:latest" >> $GITHUB_OUTPUT
@@ -155,7 +155,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         id: build-image-develop
         run: |
-          docker build --platform linux/amd64 -t ${{ secrets.ECR_REPO_NAME_DEV }} . 
+          docker build --platform linux/amd64 -f deploy/docker/Dockerfile -t ${{ secrets.ECR_REPO_NAME_DEV }} .
           docker tag ${{ secrets.ECR_REPO_NAME_DEV }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest  # 이미지를 ECR 리포지토리로 태깅합니다.
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest  # 이미지를 ECR에 푸시합니다.
           echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_DEV }}:latest" >> $GITHUB_OUTPUT          
@@ -187,7 +187,7 @@ jobs:
         id: task-def-release
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition-prod.json
+          task-definition: deploy/ecs/task-definition-prod.json
           container-name: ${{ secrets.ECS_CONTAINER_NAME_PROD }}
           image: ${{ steps.build-image-release.outputs.image }}
 
@@ -213,7 +213,7 @@ jobs:
         id: task-def-develop
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition-dev.json
+          task-definition: deploy/ecs/task-definition-dev.json
           container-name: ${{ secrets.ECS_CONTAINER_NAME_DEV }}
           image: ${{ steps.build-image-develop.outputs.image }}
 
