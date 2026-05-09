@@ -50,7 +50,7 @@ jobs:
         if: github.ref == 'refs/heads/release'
         id: build-prometheus-release
         run: |
-          docker build --platform linux/amd64 -f monitoring/Dockerfile -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }} . 
+          docker build --platform linux/amd64 -f deploy/monitoring/Dockerfile -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }} .
           docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest
           echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_PROD }}:latest" >> $GITHUB_OUTPUT
@@ -59,7 +59,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         id: build-prometheus-dev
         run: |
-          docker build --platform linux/amd64 -f monitoring/Dockerfile -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }} . 
+          docker build --platform linux/amd64 -f deploy/monitoring/Dockerfile -t ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }} .
           docker tag ${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest
           echo "image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME_PROMETHEUS_DEV }}:latest" >> $GITHUB_OUTPUT
@@ -70,7 +70,7 @@ jobs:
         id: task-def-monitoring-prod
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition-monitoring-prod.json
+          task-definition: deploy/ecs/task-definition-monitoring-prod.json
           container-name: prometheus
           image: ${{ steps.build-prometheus-release.outputs.image }}
 
@@ -79,7 +79,7 @@ jobs:
         id: task-def-monitoring-dev
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition-monitoring-dev.json
+          task-definition: deploy/ecs/task-definition-monitoring-dev.json
           container-name: prometheus
           image: ${{ steps.build-prometheus-dev.outputs.image }}
 
