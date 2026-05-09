@@ -2,6 +2,10 @@ plugins {
 	id 'base'
 }
 
+ext {
+	swaggerAnnotationsVersion = '2.2.30'
+}
+
 allprojects {
 	group = 'bitnagil'
 	version = '0.0.1-SNAPSHOT'
