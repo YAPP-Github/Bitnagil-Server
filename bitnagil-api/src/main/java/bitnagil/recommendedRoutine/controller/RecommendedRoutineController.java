@@ -27,7 +27,7 @@ public class RecommendedRoutineController implements RecommendedRoutineSpec {
 
     // 추천 루틴 단건 조회
     @GetMapping("/{recommendedRoutineId}")
-    public CustomResponseDto<RecommendedRoutineSearchResult> searchRecommendedRoutine(@PathVariable Long recommendedRoutineId) {
+    public CustomResponseDto<RecommendedRoutineSearchResult> searchRecommendedRoutine(@PathVariable(name = "recommendedRoutineId") Long recommendedRoutineId) {
         return CustomResponseDto.from(recommendedRoutineService.searchRecommendedRoutine(recommendedRoutineId));
     }
 }

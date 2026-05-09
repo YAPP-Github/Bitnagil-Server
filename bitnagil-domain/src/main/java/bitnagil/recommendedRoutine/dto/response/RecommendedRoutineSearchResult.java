@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Builder
+@Jacksonized
 public class RecommendedRoutineSearchResult {
     @Schema(description = "추천 루틴 ID", example = "1")
     private Long recommendedRoutineId;
