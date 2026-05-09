@@ -57,7 +57,8 @@ public class UserService {
     // 회원 온보딩 정보 조회
     @Transactional(readOnly = true)
     public UserOnboardingResponse getUserOnboarding(User user) {
-        Onboarding onboarding = user.getOnboarding();
+        User persistedUser = userManager.getPersistedUser(user);
+        Onboarding onboarding = persistedUser.getOnboarding();
 
         return userMapper.toUserOnboardingResponse(
             onboarding.getTimeSlot(),
